@@ -22,7 +22,7 @@ open class ContainerDecorator<UiState, SideEffect, UiAction>(
 }
 
 @Suppress("UNCHECKED_CAST")
-internal fun <T> Container<*, *, *>.seek(predicate: (Any) -> Boolean): T {
+fun <T> Container<*, *, *>.seek(predicate: (Any) -> Boolean): T {
     if (this is ContainerDecorator) {
         if (predicate(this)) return this as T
         return this.container.seek(predicate)
