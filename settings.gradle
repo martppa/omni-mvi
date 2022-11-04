@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 rootProject.name = "omni-mvi"
 include ':app'
 include ':omni-mvi'
+include ':omni-mvi-android'
