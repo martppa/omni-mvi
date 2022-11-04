@@ -9,5 +9,5 @@ interface Container<UiState, SideEffect, UiAction> {
     val coroutineExceptionHandler: CoroutineExceptionHandler
 }
 
-internal fun <UiState, SideEffect, UiAction> Container<UiState, SideEffect, UiAction>
+fun <UiState, SideEffect, UiAction> Container<UiState, SideEffect, UiAction>
         .asStateContainer() = this as StateContainer
