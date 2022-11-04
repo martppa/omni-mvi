@@ -16,3 +16,4 @@ rootProject.name = "omni-mvi"
 include ':app'
 include ':omni-mvi'
 include ':omni-mvi-android'
+include ':omni-mvi-deco'

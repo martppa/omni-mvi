@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/omni-mvi" />
             <option value="$PROJECT_DIR$/omni-mvi-android" />
+            <option value="$PROJECT_DIR$/omni-mvi-deco" />
           </set>
         </option>
       </GradleProjectSettings>
