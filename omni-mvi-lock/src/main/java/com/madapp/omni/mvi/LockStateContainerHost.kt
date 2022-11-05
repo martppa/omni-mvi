@@ -76,9 +76,7 @@ fun <UiState, SideEffect, UiAction>
         LockContainerHost<UiState, SideEffect, UiAction>.lockIntent(
     intentId: Any = Unit,
     block: suspend IntentScope<UiState, SideEffect>.() -> Unit
-) = intent {
-    container.asLockContainer().lockIntent(intentId, block)
-}
+) = container.asLockContainer().lockIntent(intentId, block)
 
 internal class LockableIntent(
     internal val job: Job,
