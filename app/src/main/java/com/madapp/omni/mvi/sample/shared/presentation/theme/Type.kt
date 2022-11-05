@@ -1,4 +1,4 @@
-package com.madapp.omni.mvi.sample.ui.theme
+package com.madapp.omni.mvi.sample.shared.presentation.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

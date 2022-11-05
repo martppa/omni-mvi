@@ -1,4 +1,4 @@
-package com.madapp.omni.mvi.sample.ui.theme
+package com.madapp.omni.mvi.sample.shared.presentation.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

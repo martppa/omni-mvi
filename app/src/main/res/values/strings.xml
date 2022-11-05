@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">omni-mvi</string>
+    <string name="app_name">MVI Sample App</string>
+    <string name="name">Name: %s</string>
+    <string name="fetch_error">Oops, something went wrong: %s</string>
+    <string name="try_again">Try again</string>
+    <string name="description">Description: %s</string>
+    <string name="owner">Owner: %s</string>
 </resources>

@@ -14,6 +14,7 @@
             <option value="$PROJECT_DIR$/omni-mvi" />
             <option value="$PROJECT_DIR$/omni-mvi-android" />
             <option value="$PROJECT_DIR$/omni-mvi-decorator" />
+            <option value="$PROJECT_DIR$/omni-mvi-lock" />
             <option value="$PROJECT_DIR$/omni-mvi-override" />
             <option value="$PROJECT_DIR$/omni-mvi-queue" />
           </set>
