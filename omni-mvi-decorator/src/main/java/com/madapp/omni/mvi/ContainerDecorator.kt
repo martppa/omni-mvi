@@ -20,19 +20,3 @@ open class ContainerDecorator<UiState, SideEffect, UiAction>(
 
     override fun post(effect: SideEffect) = container.asStateContainer().post(effect)
 }
-
-@Suppress("UNCHECKED_CAST")
-fun <T> Container<*, *, *>.seek(predicate: (Any) -> Boolean): T {
-    if (this is ContainerDecorator) {
-        if (predicate(this)) return this as T
-        return this.container.seek(predicate)
-    } else throw RuntimeException("Container decorator fails. Have you wrapped all containers?")
-}
-
-fun<UiState, SideEffect, UiAction> Container<UiState, SideEffect, UiAction>.decorate(
-    block: (
-        Container<UiState, SideEffect, UiAction>
-    ) -> Container<UiState, SideEffect, UiAction>
-): Container<UiState, SideEffect, UiAction> {
-    return block(this)
-}
