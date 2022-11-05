@@ -1,10 +1,13 @@
 package com.madapp.omni.mvi
 
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
-import kotlinx.coroutines.launch
+
+@OptIn(ExperimentalCoroutinesApi::class)
+fun Channel<*>.isClosed() = this.isClosedForReceive && this.isClosedForSend
 
 fun <UiState, SideEffect, UiAction> queueContainer(
     container: Container<UiState, SideEffect, UiAction>
@@ -17,50 +20,53 @@ interface QueueContainerHost<UiState, SideEffect, UiAction>
 
 internal fun <UiState, SideEffect, UiAction>
         Container<UiState, SideEffect, UiAction>.asQueueContainer() =
-    seek<QueueContainer<*, *, *>> { it is QueueContainer<*, *, *> }
+    seek<QueueContainer<UiState, SideEffect, UiAction>> { it is QueueContainer<*, *, *> }
 
 open class QueueContainer<UiState, SideEffect, UiAction> internal constructor(
-    container: Container<UiState, SideEffect, UiAction>,
+    override val container: Container<UiState, SideEffect, UiAction>,
 ) : ContainerDecorator<UiState, SideEffect, UiAction>(
     container
-), Container<UiState, SideEffect, UiAction> {
+), Container<UiState, SideEffect, UiAction>,
+    QueueContainerHost<UiState, SideEffect, UiAction> {
 
-    internal lateinit var jobQueue: Channel<Job>
-    internal lateinit var consumeJob: Job
+    private lateinit var intentQueue: Channel<Job>
+    private lateinit var consumeJob: Job
 
     init {
-        buildQueue()
-        consumeQueue()
+        startIntentQueue()
     }
 
-    private fun buildQueue() {
-        jobQueue = Channel(capacity = Channel.UNLIMITED)
-    }
-
-    private fun consumeQueue() {
-        consumeJob = coroutineScope.launch {
-            jobQueue.consumeEach { it.join() }
+    private fun startIntentQueue() {
+        intentQueue = Channel(capacity = Channel.UNLIMITED)
+        consumeJob = intent {
+            intentQueue.consumeEach { consumeIntent(it).join() }
         }
     }
 
-    internal suspend fun clearQueue() {
+    private fun consumeIntent(job: Job) = intent { job.join() }
+
+    internal fun clearQueue() = intent {
         consumeJob.cancel()
         consumeJob.join()
-        jobQueue.cancel()
+        intentQueue.cancel()
+    }
+
+    internal fun enqueue(
+        block: suspend IntentScope<UiState, SideEffect>.() -> Unit
+    ) = intent {
+        if (intentQueue.isClosed()) startIntentQueue()
+        intentQueue.send(
+            intent(start = CoroutineStart.LAZY) { block() }
+        )
     }
 }
 
 fun <UiState, SideEffect, UiAction>
-        QueueContainerHost<UiState, SideEffect, UiAction>.clearQueue() = intent {
+        QueueContainerHost<UiState, SideEffect, UiAction>.clearQueue() =
     container.asQueueContainer().clearQueue()
-}
 
 @StateHostDsl
 fun <UiState, SideEffect, UiAction>
         QueueContainerHost<UiState, SideEffect, UiAction>.queuedIntent(
     block: suspend IntentScope<UiState, SideEffect>.() -> Unit
-) = intent {
-    container.asQueueContainer().jobQueue.send(
-        intent(start = CoroutineStart.LAZY) { block() }
-    )
-}
+) = container.asQueueContainer().enqueue(block)

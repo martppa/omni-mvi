@@ -4,31 +4,43 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import com.madapp.omni.mvi.OnEffect
+import com.madapp.omni.mvi.on
 import com.madapp.omni.mvi.sample.list.presentation.component.LoadingComponent
 import com.madapp.omni.mvi.sample.list.presentation.component.RepoItem
 import com.madapp.omni.mvi.sample.list.presentation.component.RetryComponent
+import com.madapp.omni.mvi.sample.list.presentation.extension.showSnackbar
+import com.madapp.omni.mvi.state
 import org.koin.androidx.compose.getViewModel
 
 @Composable
 fun ListScreen(
+    scaffoldState: ScaffoldState = rememberScaffoldState(),
     viewModel: ListViewModel = getViewModel()
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state()
+    viewModel.OnEffect {
+        when (it) {
+            is ListEffect.ShowMessage -> scaffoldState.showSnackbar(it.text)
+        }
+    }
 
     Scaffold(
+        scaffoldState = scaffoldState,
         backgroundColor = Color.White
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
             itemsIndexed(state.items) { index, item ->
-                if (index == state.items.lastIndex) {
-                    viewModel.nextPage()
+                if (index >= state.items.lastIndex - 10) {
+                    viewModel.on(ListAction.NextPage) // Call next page intent
                 }
                 RepoItem(repo = item)
             }
@@ -39,7 +51,7 @@ fun ListScreen(
         if (state.error.isNotEmpty()) {
             RetryComponent(
                 errorMessage = state.error,
-                onRetry = { viewModel.onRetry() }
+                onRetry = { viewModel.on(ListAction.Retry) } // Call next page intent
             )
         }
     }

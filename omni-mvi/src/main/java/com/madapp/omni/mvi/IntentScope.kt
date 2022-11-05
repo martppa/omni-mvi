@@ -14,3 +14,8 @@ fun <SideEffect> IntentScope<*, SideEffect>.onError(
 fun <UiState> IntentScope<UiState, *>.postState(
     function: UiState.() -> UiState
 ) = container.update(function)
+
+@StateHostDsl
+fun <SideEffect> IntentScope<*, SideEffect>.postEffect(
+    effect:  SideEffect
+) = container.post(effect)

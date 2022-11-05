@@ -31,6 +31,11 @@ fun <UiState, SideEffect> StateContainerHost<UiState, SideEffect, *>.intent(
     }
 }
 
+fun <UiState, SideEffect, UiAction>
+        StateContainerHost<UiState, SideEffect, UiAction>.on(action: UiAction) {
+    container.onAction(action)
+}
+
 fun <T> Result<T>.onCoroutineFailure(block: (Throwable) -> Unit): Result<T> {
     onFailure {
         if (it is CancellationException) throw it

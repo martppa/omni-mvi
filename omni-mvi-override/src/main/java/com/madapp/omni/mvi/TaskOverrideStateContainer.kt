@@ -15,29 +15,36 @@ interface TaskOverrideContainerHost<UiState, SideEffect, UiAction>
 
 internal fun <UiState, SideEffect, UiAction>
         Container<UiState, SideEffect, UiAction>.asTaskOverrideContainer() =
-    seek<TaskOverrideContainer<*, *, *>> { it is TaskOverrideContainer<*, *, *> }
+    seek<TaskOverrideContainer<UiState, SideEffect, UiAction>> {
+        it is TaskOverrideContainer<*, *, *>
+    }
 
 open class TaskOverrideContainer<UiState, SideEffect, UiAction> internal constructor(
-    container: Container<UiState, SideEffect, UiAction>,
+    override val container: Container<UiState, SideEffect, UiAction>,
 ) : ContainerDecorator<UiState, SideEffect, UiAction>(
     container
-), Container<UiState, SideEffect, UiAction> {
-    internal val mutex = Mutex()
-    internal val jobs = mutableMapOf<Any, Job>()
+), Container<UiState, SideEffect, UiAction>,
+    TaskOverrideContainerHost<UiState, SideEffect, UiAction> {
+
+    private val mutex = Mutex()
+    private val intents = mutableMapOf<Any, Job>()
+
+    internal fun overrideIntent(
+        intentId: Any = Unit,
+        block: suspend IntentScope<UiState, SideEffect>.() -> Unit
+    ) = intent {
+        mutex.withLock {
+            val job = intents[intentId]
+            job?.cancel()
+            job?.join()
+            intents[intentId] = intent { block() }
+        }
+    }
 }
 
 @StateHostDsl
 fun <UiState, SideEffect, UiAction>
         TaskOverrideContainerHost<UiState, SideEffect, UiAction>.overrideIntent(
-    jobId: Any = Unit,
+    intentId: Any = Unit,
     block: suspend IntentScope<UiState, SideEffect>.() -> Unit
-) = intent {
-    with(container.asTaskOverrideContainer()) {
-        mutex.withLock {
-            val job = jobs[jobId]
-            job?.cancel()
-            job?.join()
-            jobs[jobId] = intent { block() }
-        }
-    }
-}
+) = container.asTaskOverrideContainer().overrideIntent(intentId, block)
