@@ -1,6 +1,8 @@
 package com.madapp.omni.mvi
 
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 fun <UiState, SideEffect, UiAction> taskOverrideContainer(
     container: Container<UiState, SideEffect, UiAction>
@@ -20,6 +22,7 @@ open class TaskOverrideContainer<UiState, SideEffect, UiAction> internal constru
 ) : ContainerDecorator<UiState, SideEffect, UiAction>(
     container
 ), Container<UiState, SideEffect, UiAction> {
+    internal val mutex = Mutex()
     internal val jobs = mutableMapOf<Any, Job>()
 }
 
@@ -29,9 +32,12 @@ fun <UiState, SideEffect, UiAction>
     jobId: Any = Unit,
     block: suspend IntentScope<UiState, SideEffect>.() -> Unit
 ) = intent {
-    val jobs = container.asTaskOverrideContainer().jobs
-    val job = jobs[jobId]
-    job?.cancel()
-    job?.join()
-    jobs[jobId] = intent { block() }
+    with(container.asTaskOverrideContainer()) {
+        mutex.withLock {
+            val job = jobs[jobId]
+            job?.cancel()
+            job?.join()
+            jobs[jobId] = intent { block() }
+        }
+    }
 }
