@@ -44,8 +44,6 @@ open class QueueContainer<UiState, SideEffect, UiAction> internal constructor(
     }
 
     internal suspend fun clearQueue() {
-        val jobQueue = jobQueue
-        val consumeJob = consumeJob
         consumeJob.cancel()
         consumeJob.join()
         jobQueue.cancel()
