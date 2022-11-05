@@ -10,6 +10,6 @@ java {
 
 dependencies {
     implementation project(path: ':omni-mvi')
-    implementation project(path: ':omni-mvi-deco')
+    implementation project(path: ':omni-mvi-decorator')
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
 }

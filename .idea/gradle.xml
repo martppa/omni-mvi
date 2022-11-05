@@ -13,8 +13,9 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/omni-mvi" />
             <option value="$PROJECT_DIR$/omni-mvi-android" />
-            <option value="$PROJECT_DIR$/omni-mvi-deco" />
-            <option value="$PROJECT_DIR$/omni-mvi-over" />
+            <option value="$PROJECT_DIR$/omni-mvi-decorator" />
+            <option value="$PROJECT_DIR$/omni-mvi-override" />
+            <option value="$PROJECT_DIR$/omni-mvi-queue" />
           </set>
         </option>
       </GradleProjectSettings>
