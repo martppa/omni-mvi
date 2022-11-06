@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.madapp.omni.mvi.sample'
+    namespace 'net.asere.omni.mvi.sample'
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.madapp.omni.mvi.sample"
+        applicationId "net.asere.omni.mvi.sample"
         minSdk 21
         targetSdk 33
         versionCode 1

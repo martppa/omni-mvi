@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace 'com.madapp.omni.mvi'
+    namespace 'net.asere.omni.mvi'
     compileSdk 33
 
     defaultConfig {
