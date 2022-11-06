@@ -13,20 +13,21 @@ java {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = 'org.company'
-            artifactId = 'sample'
-            version = "0.9-SNAPSHOT"
+            groupId = 'net.asere.omni.mvi'
+            artifactId = 'mvi'
+            version = "1.0.0-SNAPSHOT"
             from components.java
 
             pom {
-                name = 'My Library'
-                description = 'A description of my library'
+                name = 'Omni-MVI'
+                description = 'Omni MVI is a light weight set of tools inspired by Orbit ' +
+                        'that allows Kotlin/Java developers turn any object into a MVI like object.'
             }
         }
     }
     repositories {
         maven {
-            url = uri("https://maven.pkg.github.com/google/secrets-gradle-plugin")
+            url = uri("https://s01.oss.sonatype.org")
             credentials {
                 username = project.findProperty("USERNAME")
                 password = project.findProperty("PASSWORD")
