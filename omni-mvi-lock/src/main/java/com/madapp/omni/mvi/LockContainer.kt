@@ -41,11 +41,3 @@ open class LockContainer<UiState, SideEffect, UiAction> internal constructor(
         mutex.withLock { intents[intentId]?.unlock() }
     }
 }
-
-fun <UiState, SideEffect, UiAction> lockContainer(
-    container: Container<UiState, SideEffect, UiAction>
-) = LockContainer(container)
-
-internal fun <UiState, SideEffect, UiAction>
-        Container<UiState, SideEffect, UiAction>.asLockContainer() =
-    seek<LockContainer<UiState, SideEffect, UiAction>> { it is LockContainer<*, *, *> }

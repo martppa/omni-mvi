@@ -4,21 +4,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-fun <UiState, SideEffect, UiAction> taskOverrideContainer(
-    container: Container<UiState, SideEffect, UiAction>
-) = TaskOverrideContainer(container)
-
-interface TaskOverrideContainerHost<UiState, SideEffect, UiAction>
-    : StateContainerHost<UiState, SideEffect, UiAction> {
-    override val container: Container<UiState, SideEffect, UiAction>
-}
-
-internal fun <UiState, SideEffect, UiAction>
-        Container<UiState, SideEffect, UiAction>.asTaskOverrideContainer() =
-    seek<TaskOverrideContainer<UiState, SideEffect, UiAction>> {
-        it is TaskOverrideContainer<*, *, *>
-    }
-
 open class TaskOverrideContainer<UiState, SideEffect, UiAction> internal constructor(
     override val container: Container<UiState, SideEffect, UiAction>,
 ) : ContainerDecorator<UiState, SideEffect, UiAction>(
@@ -41,10 +26,3 @@ open class TaskOverrideContainer<UiState, SideEffect, UiAction> internal constru
         }
     }
 }
-
-@StateHostDsl
-fun <UiState, SideEffect, UiAction>
-        TaskOverrideContainerHost<UiState, SideEffect, UiAction>.overrideIntent(
-    intentId: Any = Unit,
-    block: suspend IntentScope<UiState, SideEffect>.() -> Unit
-) = container.asTaskOverrideContainer().overrideIntent(intentId, block)
