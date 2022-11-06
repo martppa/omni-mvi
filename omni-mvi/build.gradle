@@ -1,11 +1,38 @@
 plugins {
     id 'java-library'
     id 'org.jetbrains.kotlin.jvm'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id 'maven-publish'
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_7
     targetCompatibility = JavaVersion.VERSION_1_7
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'org.company'
+            artifactId = 'sample'
+            version = "0.9-SNAPSHOT"
+            from components.java
+
+            pom {
+                name = 'My Library'
+                description = 'A description of my library'
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = uri("https://maven.pkg.github.com/google/secrets-gradle-plugin")
+            credentials {
+                username = project.findProperty("USERNAME")
+                password = project.findProperty("PASSWORD")
+            }
+        }
+    }
 }
 
 dependencies {

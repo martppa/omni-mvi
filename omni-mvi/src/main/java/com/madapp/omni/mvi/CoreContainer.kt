@@ -24,16 +24,3 @@ open class CoreContainer<UiState, SideEffect, UiAction> internal constructor(
     override fun update(function: UiState.() -> UiState) = _uiState.update { it.function() }
     override fun post(effect: SideEffect) { _uiEffect.trySend(effect) }
 }
-
-fun <UiState, SideEffect, UiAction>
-        StateContainerHost<UiState, SideEffect, UiAction>.stateContainer(
-    initialState: UiState,
-    onAction: (UiAction) -> Unit = {},
-    coroutineScope: CoroutineScope,
-    coroutineExceptionHandler: CoroutineExceptionHandler
-) = CoreContainer<UiState, SideEffect, UiAction>(
-    initialState,
-    onAction,
-    coroutineScope,
-    coroutineExceptionHandler
-)

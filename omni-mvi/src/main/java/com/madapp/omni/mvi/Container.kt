@@ -8,6 +8,3 @@ interface Container<UiState, SideEffect, UiAction> {
     val coroutineScope: CoroutineScope
     val coroutineExceptionHandler: CoroutineExceptionHandler
 }
-
-fun <UiState, SideEffect, UiAction> Container<UiState, SideEffect, UiAction>
-        .asStateContainer() = this as StateContainer
