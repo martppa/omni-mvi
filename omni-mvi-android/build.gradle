@@ -2,9 +2,78 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'com.google.devtools.ksp'
+    id 'maven-publish'
+    id 'signing'
+}
+
+task androidSourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    if (project.plugins.findPlugin("com.android.library")) {
+        from android.sourceSets.main.java.srcDirs
+    } else {
+        from sourceSets.main.java.srcDirs
+    }
+}
+
+artifacts {
+    archives androidSourcesJar
+}
+
+version = 1.0
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId = 'net.asere.omni.mvi'
+                artifactId = 'mvi-android'
+                version = 1.0
+
+                if (project.plugins.findPlugin("com.android.library")) {
+                    from components.release
+                } else {
+                    artifact("$buildDir/libs/${project.getName()}-${version}.jar")
+                }
+
+                artifact androidSourcesJar
+
+                pom {
+                    name = 'Omni-MVI-Android'
+                    description = 'Omni MVI Android is a Omni MVI interface that allows developers ' +
+                            'listen to Omni MVI exposed states as composables'
+                    url = 'https://github.com/martppa/omni-mvi'
+                    licenses {
+                        license {
+                            name = 'MIT License'
+                            url = 'https://opensource.org/licenses/MIT'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'martppa'
+                            name = 'Humberto Martín Dieppa'
+                            email = 'hm.dieppa@gmail.com'
+                        }
+                    }
+
+                    scm {
+                        connection = 'scm:git:git://github.com/martppa/omni-mvi.git'
+                        developerConnection = 'scm:git:ssh://github.com/martppa/omni-mvi.git'
+                        url = 'https://github.com/martppa/omni-mvi'
+                    }
+                }
+            }
+        }
+    }
+}
+
+signing {
+    useGpgCmd()
+    sign publishing.publications
 }
 
 android {
+
     namespace 'net.asere.omni.mvi'
     compileSdk 33
 
