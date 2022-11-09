@@ -34,8 +34,8 @@ publishing {
 
             pom {
                 name = 'Omni-MVI-Decorator'
-                description = 'Omni MVI decorator allows developers to add new functionalities and' +
-                        'behaviours to Omni-MVI tool'
+                description = 'Omni MVI Decorator allows developers to add new functionalities and' +
+                        'behaviours to Omni MVI tool'
                 url = 'https://github.com/martppa/omni-mvi'
                 licenses {
                     license {

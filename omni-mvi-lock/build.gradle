@@ -1,11 +1,74 @@
 plugins {
     id 'java-library'
     id 'org.jetbrains.kotlin.jvm'
+    id 'maven-publish'
+    id 'signing'
 }
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_7
     targetCompatibility = JavaVersion.VERSION_1_7
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier.set('sources')
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    archiveClassifier.set('javadoc')
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'net.asere.omni.mvi'
+            artifactId = 'mvi-lock'
+            version = version
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom {
+                name = 'Omni-MVI-Lock'
+                description = 'Omni MVI Lock is a Omni MVI decorator that allows developers ' +
+                        'execute intents and lock any parallel execution until it finishes'
+                url = 'https://github.com/martppa/omni-mvi'
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'martppa'
+                        name = 'Humberto Martín Dieppa'
+                        email = 'hm.dieppa@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/martppa/omni-mvi.git'
+                    developerConnection = 'scm:git:ssh://github.com/martppa/omni-mvi.git'
+                    url = 'https://github.com/martppa/omni-mvi'
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                username = project.localProperties["ossrhUsername"]
+                password = project.localProperties["ossrhPassword"]
+            }
+        }
+    }
+}
+signing {
+    useGpgCmd()
+    sign publishing.publications.mavenJava
 }
 
 dependencies {
