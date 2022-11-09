@@ -48,15 +48,3 @@ allprojects {
         project.ext.localProperties = rootProject.ext.localProperties
     }
 }
-
-nexusPublishing {
-    repositories {
-        sonatype {
-            stagingProfileId = project.localProperties["ossrhStagingProfileId"]
-            username = project.localProperties["ossrhUsername"]
-            password = project.localProperties["ossrhPassword"]
-            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-        }
-    }
-}

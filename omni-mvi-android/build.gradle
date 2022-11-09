@@ -6,71 +6,17 @@ plugins {
     id 'signing'
 }
 
-task androidSourcesJar(type: Jar) {
-    archiveClassifier.set('sources')
-    if (project.plugins.findPlugin("com.android.library")) {
-        from android.sourceSets.main.java.srcDirs
-    } else {
-        from sourceSets.main.java.srcDirs
-    }
+version = '1.0'
+
+ext {
+    VERSION = version
+    ARTIFACT_ID = 'mvi-android'
+    POM_NAME = 'Omni-MVI-Android'
+    POM_DESCRIPTON = 'Omni MVI Android is a Omni MVI interface that allows developers ' +
+            'listen to Omni MVI exposed states as composables'
 }
 
-artifacts {
-    archives androidSourcesJar
-}
-
-version = 1.0
-
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-                groupId = 'net.asere.omni.mvi'
-                artifactId = 'mvi-android'
-                version = 1.0
-
-                if (project.plugins.findPlugin("com.android.library")) {
-                    from components.release
-                } else {
-                    artifact("$buildDir/libs/${project.getName()}-${version}.jar")
-                }
-
-                artifact androidSourcesJar
-
-                pom {
-                    name = 'Omni-MVI-Android'
-                    description = 'Omni MVI Android is a Omni MVI interface that allows developers ' +
-                            'listen to Omni MVI exposed states as composables'
-                    url = 'https://github.com/martppa/omni-mvi'
-                    licenses {
-                        license {
-                            name = 'MIT License'
-                            url = 'https://opensource.org/licenses/MIT'
-                        }
-                    }
-                    developers {
-                        developer {
-                            id = 'martppa'
-                            name = 'Humberto Martín Dieppa'
-                            email = 'hm.dieppa@gmail.com'
-                        }
-                    }
-
-                    scm {
-                        connection = 'scm:git:git://github.com/martppa/omni-mvi.git'
-                        developerConnection = 'scm:git:ssh://github.com/martppa/omni-mvi.git'
-                        url = 'https://github.com/martppa/omni-mvi'
-                    }
-                }
-            }
-        }
-    }
-}
-
-signing {
-    useGpgCmd()
-    sign publishing.publications
-}
+apply from: "${rootProject.projectDir}/scripts/android_base_publish.gradle"
 
 android {
 

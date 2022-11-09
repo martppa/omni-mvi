@@ -10,66 +10,16 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_7
 }
 
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allJava
-    archiveClassifier.set('sources')
+version = '1.0'
+
+ext {
+    VERSION = version
+    ARTIFACT_ID = 'mvi-queue'
+    POM_NAME = 'Omni-MVI-Queue'
+    POM_DESCRIPTION = 'Omni MVI Queue is a Omni MVI decorator that allows developers enqueing intents executions'
 }
 
-task javadocJar(type: Jar) {
-    from javadoc
-    archiveClassifier.set('javadoc')
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            groupId = 'net.asere.omni.mvi'
-            artifactId = 'mvi-queue'
-            version = version
-            from components.java
-            artifact sourcesJar
-            artifact javadocJar
-
-            pom {
-                name = 'Omni-MVI-Queue'
-                description = 'Omni MVI Queue is a Omni MVI decorator that allows developers enqueing ' +
-                        'intents executions'
-                url = 'https://github.com/martppa/omni-mvi'
-                licenses {
-                    license {
-                        name = 'MIT License'
-                        url = 'https://opensource.org/licenses/MIT'
-                    }
-                }
-                developers {
-                    developer {
-                        id = 'martppa'
-                        name = 'Humberto Martín Dieppa'
-                        email = 'hm.dieppa@gmail.com'
-                    }
-                }
-                scm {
-                    connection = 'scm:git:git://github.com/martppa/omni-mvi.git'
-                    developerConnection = 'scm:git:ssh://github.com/martppa/omni-mvi.git'
-                    url = 'https://github.com/martppa/omni-mvi'
-                }
-            }
-        }
-    }
-    repositories {
-        maven {
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = project.localProperties["ossrhUsername"]
-                password = project.localProperties["ossrhPassword"]
-            }
-        }
-    }
-}
-signing {
-    useGpgCmd()
-    sign publishing.publications.mavenJava
-}
+apply from: "${rootProject.projectDir}/scripts/base_publish.gradle"
 
 dependencies {
     implementation project(path: ':omni-mvi')

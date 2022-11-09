@@ -1,0 +1,66 @@
+task androidSourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    if (project.plugins.findPlugin("com.android.library")) {
+        from android.sourceSets.main.java.srcDirs
+    } else {
+        from sourceSets.main.java.srcDirs
+    }
+}
+
+artifacts {
+    archives androidSourcesJar
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                groupId = 'net.asere.omni.mvi'
+                artifactId = ARTIFACT_ID
+                version = VERSION
+                from components.release
+
+                artifact androidSourcesJar
+
+                pom {
+                    name = POM_NAME
+                    description = POM_DESCRIPTON
+                    url = 'https://github.com/martppa/omni-mvi'
+                    licenses {
+                        license {
+                            name = 'MIT License'
+                            url = 'https://opensource.org/licenses/MIT'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'martppa'
+                            name = 'Humberto Martín Dieppa'
+                            email = 'hm.dieppa@gmail.com'
+                        }
+                    }
+
+                    scm {
+                        connection = 'scm:git:git://github.com/martppa/omni-mvi.git'
+                        developerConnection = 'scm:git:ssh://github.com/martppa/omni-mvi.git'
+                        url = 'https://github.com/martppa/omni-mvi'
+                    }
+                }
+            }
+        }
+        repositories {
+            maven {
+                url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+                credentials {
+                    username = project.localProperties["ossrhUsername"]
+                    password = project.localProperties["ossrhPassword"]
+                }
+            }
+        }
+    }
+}
+
+signing {
+    useGpgCmd()
+    sign publishing.publications
+}
