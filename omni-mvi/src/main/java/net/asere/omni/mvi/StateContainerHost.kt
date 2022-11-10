@@ -33,7 +33,7 @@ fun <UiState, SideEffect, UiAction>
     container.onAction(action)
 }
 
-fun <T> Result<T>.onCoroutineFailure(block: (Throwable) -> Unit): Result<T> {
+private fun <T> Result<T>.onCoroutineFailure(block: (Throwable) -> Unit): Result<T> {
     onFailure {
         if (it is CancellationException) throw it
         block(it)
