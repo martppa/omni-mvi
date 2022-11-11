@@ -6,6 +6,11 @@ import net.asere.omni.mvi.sample.shared.domain.extension.empty
 import net.asere.omni.mvi.sample.shared.domain.model.Repo
 
 @JsonClass(generateAdapter = true)
+data class SearchResultRepoJson(
+    val items: List<RepoJson>
+)
+
+@JsonClass(generateAdapter = true)
 data class RepoJson(
     val id: Long,
     val name: String,

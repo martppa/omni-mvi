@@ -12,4 +12,9 @@ class NetworkRepoListDataSource(
         val items = service.getRepositories(page).map { it.toDomain() }
         return PagedRepos(page, items)
     }
+
+    override suspend fun searchRepositories(query: String, page: Int): PagedRepos {
+        val items = service.searchRepositories(query, page).items.map { it.toDomain() }
+        return PagedRepos(page, items)
+    }
 }

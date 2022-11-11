@@ -6,5 +6,6 @@ class Routes {
     companion object {
         const val Host = BuildConfig.API_URL
         const val Repositories = "/orgs/microsoft/repos"
+        const val Search = "/search/repositories"
     }
 }

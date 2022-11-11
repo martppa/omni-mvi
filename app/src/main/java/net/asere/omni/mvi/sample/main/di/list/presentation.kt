@@ -8,5 +8,5 @@ import org.koin.dsl.module
 
 val listPresentationModule = module {
     factory<ExceptionHandler> { LogExceptionHandler() }
-    viewModel { ListViewModel(get(), get()) }
+    viewModel { ListViewModel(get(), get(), get()) }
 }
