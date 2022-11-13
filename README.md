@@ -1,3 +1,9 @@
+![](https://img.shields.io/badge/mvi_version-1.0-004475)
+![](https://img.shields.io/badge/mvi_decorator_version-1.0-EB6508)
+![](https://img.shields.io/badge/mvi_lock_version-1.0-11AA00)
+![](https://img.shields.io/badge/mvi_queue_version-1.0.1-6300AA)
+![](https://img.shields.io/badge/mvi_override_version-1.0.1-B41B00)
+
 # omni-mvi
 Omni MVI is a light weight set of tools inspired by [Orbit](https://orbit-mvi.org) that allows Kotlin/Java developer turn any object into a MVI like object.
 
