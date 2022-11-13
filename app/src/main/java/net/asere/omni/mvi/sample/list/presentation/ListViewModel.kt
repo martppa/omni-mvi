@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
 import net.asere.omni.mvi.LockContainerHost
 import net.asere.omni.mvi.StateContainerHost
-import net.asere.omni.mvi.TaskOverrideContainerHost
+import net.asere.omni.mvi.OverrideContainerHost
 import net.asere.omni.mvi.currentState
 import net.asere.omni.mvi.decorate
 import net.asere.omni.mvi.intent
@@ -22,7 +22,7 @@ import net.asere.omni.mvi.sample.list.presentation.exception.coroutineExceptionH
 import net.asere.omni.mvi.sample.shared.core.extension.requireMessage
 import net.asere.omni.mvi.sample.shared.domain.extension.empty
 import net.asere.omni.mvi.stateContainer
-import net.asere.omni.mvi.taskOverrideContainer
+import net.asere.omni.mvi.overrideContainer
 import net.asere.omni.mvi.unlockIntent
 
 class ListViewModel(
@@ -32,7 +32,7 @@ class ListViewModel(
 ) : ViewModel(),
     StateContainerHost<ListState, ListEffect, ListAction>,
     LockContainerHost<ListState, ListEffect, ListAction>,
-    TaskOverrideContainerHost<ListState, ListEffect, ListAction> {
+    OverrideContainerHost<ListState, ListEffect, ListAction> {
 
     companion object {
         private const val QUERY_DELAY = 300L
@@ -44,7 +44,7 @@ class ListViewModel(
         coroutineScope = viewModelScope,
         coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
     ).decorate { lockContainer(it) }
-        .decorate { taskOverrideContainer(it) }
+        .decorate { overrideContainer(it) }
 
     init {
         fetchContent()

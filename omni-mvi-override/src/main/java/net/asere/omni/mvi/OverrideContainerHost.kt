@@ -1,6 +1,6 @@
 package net.asere.omni.mvi
 
-interface TaskOverrideContainerHost<UiState, SideEffect, UiAction>
+interface OverrideContainerHost<UiState, SideEffect, UiAction>
     : StateContainerHost<UiState, SideEffect, UiAction> {
     override val container: Container<UiState, SideEffect, UiAction>
 }
