@@ -19,9 +19,7 @@ internal class IntentScopeKtTest {
         every { coroutineExceptionHandler } returns EmptyCoroutineExceptionHandler
         every { coroutineScope } returns CoroutineScope(EmptyCoroutineContext)
     }
-    private val containerHost = object : StateContainerHost<Any, Any, Any> {
-        override val container = stateContainer
-    }
+    private val containerHost = stateContainerHost(stateContainer)
 
     @Before
     fun setup() {

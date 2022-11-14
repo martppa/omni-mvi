@@ -12,9 +12,7 @@ internal class CurrentStateKtTest {
     private val stateContainer: StateContainer<Any, Any, Any> = mockk {
         every { uiState } returns MutableStateFlow(fakeState)
     }
-    private val stateContainerHost = object : StateContainerHost<Any, Any, Any> {
-        override val container = stateContainer
-    }
+    private val stateContainerHost = stateContainerHost(stateContainer)
 
     @Test
     fun `On currentState reference must return state at container`() {
