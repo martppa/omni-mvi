@@ -9,6 +9,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import net.asere.omni.mvi.shared.test.stateContainerHost
 import org.junit.Test
 
 internal class StateContainerHostKtTest {
