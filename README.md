@@ -1,5 +1,4 @@
-# omni-mvi
-![](https://img.shields.io/badge/mvi_version-1.0-004475)
+# omni-mvi ![](https://img.shields.io/badge/mvi_version-1.0-004475)
 Omni MVI is a light weight set of tools inspired by [Orbit](https://orbit-mvi.org) that allows Kotlin/Java developer turn any object into a MVI like object.
 
 ## Installation
@@ -119,8 +118,7 @@ LazyColumn(
 ## Testing
 As Omni MVI only adds an extra layer of behaviour to underlying coroutines infrastructure you don't need (until now) any special feature for testing. You can implement tests just like you would do it without Omni MVI.
 
-# omni-android
-![](https://img.shields.io/badge/mvi_android_version-1.0-EB6508)
+# omni-android ![](https://img.shields.io/badge/mvi_android_version-1.0-EB6508)
 Omni Android offers you an interface to interact with composable observers and collectors of state and effect.
 
 ## Installation
@@ -149,8 +147,7 @@ You can observe container host state using the composable extension `state()` wh
 val state by viewModel.state()
 ```
 
-# omni-mvi-decorator
-![](https://img.shields.io/badge/mvi_decorator_version-1.0-EB6508)
+# omni-mvi-decorator ![](https://img.shields.io/badge/mvi_decorator_version-1.0-EB6508)
 Omni MVI Decorator allows you decorate containers and add new feature behaviours to your containers like the ones described below.
 
 ## Installation
@@ -163,8 +160,7 @@ dependencies {
 }
 ```
 
-# omni-mvi-lock
-![](https://img.shields.io/badge/mvi_lock_version-1.0-11AA00)
+# omni-mvi-lock ![](https://img.shields.io/badge/mvi_lock_version-1.0-11AA00)
 Omni MVI Lock is a container host decorator that allows you execute locking intents using `lockIntent()` DSL.
 
 ## Installation
@@ -221,8 +217,7 @@ private fun fetchContent() = lockIntent {
 ## Locking/Unlocking an intent
 The lock container host allows you to lock/unlock any intent at any time by calling `lockIntent(id)` or `unlockIntent(id)`. Id parameter is optional, if none is provided then the default intent will be handled.
 
-# omni-mvi-override
-![](https://img.shields.io/badge/mvi_override_version-1.0.1-B41B00)
+# omni-mvi-override ![](https://img.shields.io/badge/mvi_override_version-1.0.1-B41B00)
 Omni MVI Override is a container host decorator that allows developers execute any intent replacing any previous ongoing execution of itself.
 
 ## Installation
@@ -271,8 +266,7 @@ private fun onQuery(value: String) = overrideIntent {
 }
 ```
 
-# omni-mvi-queue
-![](https://img.shields.io/badge/mvi_queue_version-1.0.1-6300AA)
+# omni-mvi-queue ![](https://img.shields.io/badge/mvi_queue_version-1.0.1-6300AA)
 Omni MVI Queue is a container host decorator that allows developers push intents into a queue of execution. Queue intents will be then executed one by one.
 
 ## Installation
