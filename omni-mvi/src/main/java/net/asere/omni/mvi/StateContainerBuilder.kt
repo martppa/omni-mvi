@@ -6,13 +6,13 @@ import kotlinx.coroutines.CoroutineScope
 
 val EmptyCoroutineExceptionHandler = CoroutineExceptionHandler { _, _ -> }
 
-fun <UiState, SideEffect, UiAction>
-        StateContainerHost<UiState, SideEffect, UiAction>.stateContainer(
-    initialState: UiState,
-    onAction: (UiAction) -> Unit = {},
+fun <State, Effect, Action>
+        StateContainerHost<State, Effect, Action>.stateContainer(
+    initialState: State,
+    onAction: (Action) -> Unit = {},
     coroutineScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext),
     coroutineExceptionHandler: CoroutineExceptionHandler = EmptyCoroutineExceptionHandler
-) = CoreContainer<UiState, SideEffect, UiAction>(
+) = CoreContainer<State, Effect, Action>(
     initialState,
     onAction,
     coroutineScope,

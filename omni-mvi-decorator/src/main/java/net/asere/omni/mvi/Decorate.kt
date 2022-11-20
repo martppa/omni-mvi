@@ -1,9 +1,9 @@
 package net.asere.omni.mvi
 
-fun<UiState, SideEffect, UiAction> Container<UiState, SideEffect, UiAction>.decorate(
+fun<State, Effect, Action> Container<State, Effect, Action>.decorate(
     block: (
-        Container<UiState, SideEffect, UiAction>
-    ) -> Container<UiState, SideEffect, UiAction>
-): Container<UiState, SideEffect, UiAction> {
+        Container<State, Effect, Action>
+    ) -> Container<State, Effect, Action>
+): Container<State, Effect, Action> {
     return block(this)
 }

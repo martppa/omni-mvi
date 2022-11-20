@@ -1,7 +1,7 @@
 package net.asere.omni.mvi
 
-internal fun <UiState, SideEffect, UiAction>
-        Container<UiState, SideEffect, UiAction>.asOverrideContainer() =
-    seek<OverrideContainer<UiState, SideEffect, UiAction>> {
+internal fun <State, Effect, Action>
+        Container<State, Effect, Action>.asOverrideContainer() =
+    seek<OverrideContainer<State, Effect, Action>> {
         it is OverrideContainer<*, *, *>
     }

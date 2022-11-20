@@ -4,12 +4,12 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-open class LockContainer<UiState, SideEffect, UiAction> internal constructor(
-    override val container: Container<UiState, SideEffect, UiAction>,
-) : ContainerDecorator<UiState, SideEffect, UiAction>(
+open class LockContainer<State, Effect, Action> internal constructor(
+    override val container: Container<State, Effect, Action>,
+) : ContainerDecorator<State, Effect, Action>(
     container
-), Container<UiState, SideEffect, UiAction>,
-    LockContainerHost<UiState, SideEffect, UiAction> {
+), Container<State, Effect, Action>,
+    LockContainerHost<State, Effect, Action> {
 
     private val mutex = Mutex()
     private val intents = mutableMapOf<Any, LockableIntent>()
@@ -26,7 +26,7 @@ open class LockContainer<UiState, SideEffect, UiAction> internal constructor(
 
     internal fun lockIntent(
         intentId: Any,
-        block: suspend IntentScope<UiState, SideEffect>.() -> Unit
+        block: suspend IntentScope<State, Effect>.() -> Unit
     ) = intent {
         if (!intents[intentId].isLocked()) {
             intents[intentId] = LockableIntent(intent { block() })

@@ -1,5 +1,5 @@
 package net.asere.omni.mvi
 
-internal fun <UiState, SideEffect, UiAction>
-        Container<UiState, SideEffect, UiAction>.asLockContainer() =
-    seek<LockContainer<UiState, SideEffect, UiAction>> { it is LockContainer<*, *, *> }
+internal fun <State, Effect, Action>
+        Container<State, Effect, Action>.asLockContainer() =
+    seek<LockContainer<State, Effect, Action>> { it is LockContainer<*, *, *> }

@@ -1,5 +1,5 @@
 package net.asere.omni.mvi
 
-fun <UiState, SideEffect, UiAction> lockContainer(
-    container: Container<UiState, SideEffect, UiAction>
+fun <State, Effect, Action> lockContainer(
+    container: Container<State, Effect, Action>
 ) = LockContainer(container)

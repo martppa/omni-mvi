@@ -1,4 +1,4 @@
 package net.asere.omni.mvi
 
-fun <UiState, SideEffect, UiAction> Container<UiState, SideEffect, UiAction>
+fun <State, Effect, Action> Container<State, Effect, Action>
         .asStateContainer() = this as StateContainer

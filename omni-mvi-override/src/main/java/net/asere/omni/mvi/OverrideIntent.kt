@@ -1,8 +1,8 @@
 package net.asere.omni.mvi
 
 @StateHostDsl
-fun <UiState, SideEffect, UiAction>
-        OverrideContainerHost<UiState, SideEffect, UiAction>.overrideIntent(
+fun <State, Effect, Action>
+        OverrideContainerHost<State, Effect, Action>.overrideIntent(
     intentId: Any = Unit,
-    block: suspend IntentScope<UiState, SideEffect>.() -> Unit
+    block: suspend IntentScope<State, Effect>.() -> Unit
 ) = container.asOverrideContainer().overrideIntent(intentId, block)

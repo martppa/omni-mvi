@@ -8,19 +8,19 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 
-open class CoreContainer<UiState, SideEffect, UiAction> internal constructor(
-    initialState: UiState,
-    override val onAction: (UiAction) -> Unit = {},
+open class CoreContainer<State, Effect, Action> internal constructor(
+    initialState: State,
+    override val onAction: (Action) -> Unit = {},
     override val coroutineScope: CoroutineScope,
     override val coroutineExceptionHandler: CoroutineExceptionHandler
-): StateContainer<UiState, SideEffect, UiAction> {
+): StateContainer<State, Effect, Action> {
 
-    private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(initialState)
-    override val uiState = _uiState.asStateFlow()
+    private val _state: MutableStateFlow<State> = MutableStateFlow(initialState)
+    override val state = _state.asStateFlow()
 
-    private val _uiEffect = Channel<SideEffect>(capacity = Channel.UNLIMITED)
-    override val uiEffect = _uiEffect.receiveAsFlow()
+    private val _effect = Channel<Effect>(capacity = Channel.UNLIMITED)
+    override val effect = _effect.receiveAsFlow()
 
-    override fun update(function: UiState.() -> UiState) = _uiState.update { it.function() }
-    override fun post(effect: SideEffect) { _uiEffect.trySend(effect) }
+    override fun update(function: State.() -> State) = _state.update { it.function() }
+    override fun post(effect: Effect) { _effect.trySend(effect) }
 }

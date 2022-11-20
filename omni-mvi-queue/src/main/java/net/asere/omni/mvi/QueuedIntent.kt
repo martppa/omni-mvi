@@ -1,7 +1,7 @@
 package net.asere.omni.mvi
 
 @StateHostDsl
-fun <UiState, SideEffect, UiAction>
-        QueueContainerHost<UiState, SideEffect, UiAction>.queueIntent(
-    block: suspend IntentScope<UiState, SideEffect>.() -> Unit
+fun <State, Effect, Action>
+        QueueContainerHost<State, Effect, Action>.queueIntent(
+    block: suspend IntentScope<State, Effect>.() -> Unit
 ) = container.asQueueContainer().enqueue(block)

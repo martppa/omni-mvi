@@ -5,12 +5,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 
-open class QueueContainer<UiState, SideEffect, UiAction> internal constructor(
-    override val container: Container<UiState, SideEffect, UiAction>,
-) : ContainerDecorator<UiState, SideEffect, UiAction>(
+open class QueueContainer<State, Effect, Action> internal constructor(
+    override val container: Container<State, Effect, Action>,
+) : ContainerDecorator<State, Effect, Action>(
     container
-), Container<UiState, SideEffect, UiAction>,
-    QueueContainerHost<UiState, SideEffect, UiAction> {
+), Container<State, Effect, Action>,
+    QueueContainerHost<State, Effect, Action> {
 
     private lateinit var intentQueue: Channel<Job>
     private lateinit var consumeJob: Job
@@ -35,7 +35,7 @@ open class QueueContainer<UiState, SideEffect, UiAction> internal constructor(
     }
 
     internal fun enqueue(
-        block: suspend IntentScope<UiState, SideEffect>.() -> Unit
+        block: suspend IntentScope<State, Effect>.() -> Unit
     ) = intent {
         if (intentQueue.isClosed()) startIntentQueue()
         intentQueue.send(

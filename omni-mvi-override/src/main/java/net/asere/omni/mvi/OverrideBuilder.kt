@@ -1,5 +1,5 @@
 package net.asere.omni.mvi
 
-fun <UiState, SideEffect, UiAction> overrideContainer(
-    container: Container<UiState, SideEffect, UiAction>
+fun <State, Effect, Action> overrideContainer(
+    container: Container<State, Effect, Action>
 ) = OverrideContainer(container)

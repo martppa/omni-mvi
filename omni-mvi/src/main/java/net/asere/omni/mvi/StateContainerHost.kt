@@ -6,15 +6,15 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 
-interface StateContainerHost<UiState, SideEffect, UiAction> {
-    val container: Container<UiState, SideEffect, UiAction>
+interface StateContainerHost<State, Effect, Action> {
+    val container: Container<State, Effect, Action>
 }
 
 @StateHostDsl
-fun <UiState, SideEffect> StateContainerHost<UiState, SideEffect, *>.intent(
+fun <State, Effect> StateContainerHost<State, Effect, *>.intent(
     context: CoroutineContext = EmptyCoroutineContext,
     start: CoroutineStart = CoroutineStart.DEFAULT,
-    block: suspend IntentScope<UiState, SideEffect>.() -> Unit
+    block: suspend IntentScope<State, Effect>.() -> Unit
 ) = container.coroutineScope.launch(
     context = context + container.coroutineExceptionHandler,
     start = start
@@ -28,8 +28,8 @@ fun <UiState, SideEffect> StateContainerHost<UiState, SideEffect, *>.intent(
     }
 }
 
-fun <UiState, SideEffect, UiAction>
-        StateContainerHost<UiState, SideEffect, UiAction>.on(action: UiAction) {
+fun <State, Effect, Action>
+        StateContainerHost<State, Effect, Action>.on(action: Action) {
     container.onAction(action)
 }
 

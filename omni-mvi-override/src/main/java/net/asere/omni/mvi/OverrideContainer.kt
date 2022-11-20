@@ -4,19 +4,19 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-open class OverrideContainer<UiState, SideEffect, UiAction> internal constructor(
-    override val container: Container<UiState, SideEffect, UiAction>,
-) : ContainerDecorator<UiState, SideEffect, UiAction>(
+open class OverrideContainer<State, Effect, Action> internal constructor(
+    override val container: Container<State, Effect, Action>,
+) : ContainerDecorator<State, Effect, Action>(
     container
-), Container<UiState, SideEffect, UiAction>,
-    OverrideContainerHost<UiState, SideEffect, UiAction> {
+), Container<State, Effect, Action>,
+    OverrideContainerHost<State, Effect, Action> {
 
     private val mutex = Mutex()
     private val intents = mutableMapOf<Any, Job>()
 
     internal fun overrideIntent(
         intentId: Any = Unit,
-        block: suspend IntentScope<UiState, SideEffect>.() -> Unit
+        block: suspend IntentScope<State, Effect>.() -> Unit
     ) = intent {
         mutex.withLock {
             val job = intents[intentId]

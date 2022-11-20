@@ -8,12 +8,12 @@ import net.asere.omni.mvi.StateContainer
 import net.asere.omni.mvi.StateContainerHost
 import net.asere.omni.mvi.stateContainer
 
-fun <UiState, SideEffect, UiAction> stateContainerHost(
-    initialState: UiState,
-    onAction: (UiAction) -> Unit = {},
+fun <State, Effect, Action> stateContainerHost(
+    initialState: State,
+    onAction: (Action) -> Unit = {},
     coroutineScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext),
     coroutineExceptionHandler: CoroutineExceptionHandler = EmptyCoroutineExceptionHandler
-) = object : StateContainerHost<UiState, SideEffect, UiAction> {
+) = object : StateContainerHost<State, Effect, Action> {
     override val container = stateContainer(
         initialState = initialState,
         onAction = onAction,
@@ -22,9 +22,9 @@ fun <UiState, SideEffect, UiAction> stateContainerHost(
     )
 }
 
-fun <UiState, SideEffect, UiAction> stateContainerHost(
-    stateContainer: StateContainer<UiState, SideEffect, UiAction>
-) = object : StateContainerHost<UiState, SideEffect, UiAction> {
+fun <State, Effect, Action> stateContainerHost(
+    stateContainer: StateContainer<State, Effect, Action>
+) = object : StateContainerHost<State, Effect, Action> {
     override val container = stateContainer
 }
 

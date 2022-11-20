@@ -1,5 +1,5 @@
 package net.asere.omni.mvi
 
-fun <UiState, SideEffect, UiAction> queueContainer(
-    container: Container<UiState, SideEffect, UiAction>
+fun <State, Effect, Action> queueContainer(
+    container: Container<State, Effect, Action>
 ) = QueueContainer(container)

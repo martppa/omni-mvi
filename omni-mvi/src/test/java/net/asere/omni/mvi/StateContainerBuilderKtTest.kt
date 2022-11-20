@@ -23,7 +23,7 @@ internal class StateContainerBuilderKtTest : StateContainerHost<Any, Any, Any> {
     @Test
     fun `On builder invocation must create a container with provided values`() {
         with(container) {
-            assertEquals(state, uiState.value)
+            assertEquals(state, state.value)
             assertEquals(action, onAction)
             assertEquals(scope, coroutineScope)
             assertEquals(exceptionHandler, coroutineExceptionHandler)

@@ -1,21 +1,21 @@
 package net.asere.omni.mvi
 
-class IntentScope<UiState, SideEffect>(
-    val container: StateContainer<UiState, SideEffect, *>,
+class IntentScope<State, Effect>(
+    val container: StateContainer<State, Effect, *>,
     internal var errorBlock: (Throwable) -> Unit = {}
 )
 
 @StateHostDsl
-fun <SideEffect> IntentScope<*, SideEffect>.onError(
+fun <Effect> IntentScope<*, Effect>.onError(
     block:  (Throwable) -> Unit
 ) { errorBlock = block }
 
 @StateHostDsl
-fun <UiState> IntentScope<UiState, *>.postState(
-    function: UiState.() -> UiState
+fun <State> IntentScope<State, *>.postState(
+    function: State.() -> State
 ) = container.update(function)
 
 @StateHostDsl
-fun <SideEffect> IntentScope<*, SideEffect>.postEffect(
-    effect:  SideEffect
+fun <Effect> IntentScope<*, Effect>.postEffect(
+    effect:  Effect
 ) = container.post(effect)
