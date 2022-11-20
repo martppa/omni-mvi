@@ -12,20 +12,23 @@ import kotlinx.coroutines.runBlocking
 import net.asere.omni.mvi.shared.test.stateContainerHost
 import org.junit.Test
 
-internal class StateContainerHostKtTest {
+internal class StateContainerHostKtTest : StateContainerHost<Any, Any, Any> {
 
+    private val coroutineScope = CoroutineScope(EmptyCoroutineContext)
     private val block: () -> Unit = mockk()
+    override val container: Container<Any, Any, Any> = stateContainer(
+        initialState = Unit,
+        coroutineScope = coroutineScope
+    )
 
     @Test
     fun `On intent invocation must call block`() = runBlocking {
-        val host = stateContainerHost<Any, Any, Any>(initialState = Unit)
-        host.intent { block() }.join()
+        intent { block() }.join()
         verify { block() }
     }
 
     @Test
     fun `On intent invocation must not happen with empty coroutine`() = runBlocking {
-        val coroutineScope = CoroutineScope(EmptyCoroutineContext)
         mockkStatic(coroutineScope::launch)
         every {
             coroutineScope.launch(
@@ -34,10 +37,7 @@ internal class StateContainerHostKtTest {
                 start = any()
             )
         } answers { launch { /* Empty body */ } }
-        stateContainerHost<Any, Any, Any>(
-            initialState = Unit,
-            coroutineScope = coroutineScope
-        ).intent { block() }.join()
+        intent { block() }.join()
         verify(exactly = 0) { block() }
         unmockkStatic(coroutineScope::launch)
     }

@@ -27,3 +27,11 @@ fun <UiState, SideEffect, UiAction> stateContainerHost(
 ) = object : StateContainerHost<UiState, SideEffect, UiAction> {
     override val container = stateContainer
 }
+
+fun anyStateContainerHost(
+    initialState: Any = Unit,
+) = object : StateContainerHost<Any, Any, Any> {
+    override val container = stateContainer(
+        initialState = initialState
+    )
+}

@@ -6,17 +6,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Test
 import org.junit.Assert.assertEquals
 
-internal class CurrentStateKtTest {
+internal class CurrentStateKtTest : StateContainerHost<Any, Any, Any> {
 
     private val fakeState: Any = mockk()
-    private val stateContainer: StateContainer<Any, Any, Any> = mockk {
+    override val container: StateContainer<Any, Any, Any> = mockk {
         every { uiState } returns MutableStateFlow(fakeState)
     }
-    private val stateContainerHost = stateContainerHost(stateContainer)
 
     @Test
     fun `On currentState reference must return state at container`() {
-        val currentState = stateContainerHost.currentState
+        val currentState = currentState
         assertEquals(currentState, fakeState)
     }
 }
