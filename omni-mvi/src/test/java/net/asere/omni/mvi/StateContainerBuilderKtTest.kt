@@ -8,13 +8,13 @@ import org.junit.Test
 
 internal class StateContainerBuilderKtTest : StateContainerHost<Any, Any, Any> {
 
-    private val state: Any = mockk()
+    private val initialState: Any = mockk()
     private val scope: CoroutineScope = mockk()
     private val exceptionHandler: CoroutineExceptionHandler = mockk()
     private val action: (Any) -> Unit = mockk()
 
     override val container = stateContainer(
-        initialState = state,
+        initialState = initialState,
         onAction = action,
         coroutineScope = scope,
         coroutineExceptionHandler = exceptionHandler
@@ -23,7 +23,7 @@ internal class StateContainerBuilderKtTest : StateContainerHost<Any, Any, Any> {
     @Test
     fun `On builder invocation must create a container with provided values`() {
         with(container) {
-            assertEquals(state, state.value)
+            assertEquals(initialState, state.value)
             assertEquals(action, onAction)
             assertEquals(scope, coroutineScope)
             assertEquals(exceptionHandler, coroutineExceptionHandler)
