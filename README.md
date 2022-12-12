@@ -301,4 +301,5 @@ override val container = stateContainer(
         coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
     ).decorate { queueContainer(it) }
 ```
+Queue container host will allow you enqueue intents and let them execute each. Whenever you want to enqueue an intent use `queueIntent()` DSL.
 
