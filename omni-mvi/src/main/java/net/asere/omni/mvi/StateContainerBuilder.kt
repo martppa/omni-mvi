@@ -12,9 +12,9 @@ fun <State, Effect, Action>
     onAction: (Action) -> Unit = {},
     coroutineScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext),
     coroutineExceptionHandler: CoroutineExceptionHandler = EmptyCoroutineExceptionHandler
-) = CoreContainer<State, Effect, Action>(
+) = StateEmitterContainer<State, Effect, Action>(
     initialState,
     onAction,
     coroutineScope,
     coroutineExceptionHandler
-)
+).decorate { DelegatorContainer(it) }

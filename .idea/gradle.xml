@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/omni-mvi-lock" />
             <option value="$PROJECT_DIR$/omni-mvi-override" />
             <option value="$PROJECT_DIR$/omni-mvi-queue" />
+            <option value="$PROJECT_DIR$/omni-mvi-test" />
             <option value="$PROJECT_DIR$/shared-test" />
           </set>
         </option>

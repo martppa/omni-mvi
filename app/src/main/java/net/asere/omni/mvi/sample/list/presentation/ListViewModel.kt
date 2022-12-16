@@ -58,7 +58,7 @@ class ListViewModel(
         }
     }
 
-    // We are using overrideIntent since we want any ongoing execution to be overriden
+    // We are using overrideIntent since we want any ongoing execution to be overridden
     private fun onQuery(value: String) = overrideIntent {
         postState { copy(query = value, currentPage = 1) }
         delay(QUERY_DELAY) // Apply a delay to the intent to reduce query rate
