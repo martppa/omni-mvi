@@ -24,7 +24,6 @@ apply from: "${rootProject.projectDir}/scripts/base_publish.gradle"
 
 dependencies {
     implementation project(path: ':omni-mvi')
-    implementation project(path: ':omni-mvi-decorator')
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
     testImplementation 'io.mockk:mockk:1.13.2'
     testImplementation 'junit:junit:4.13.2'
