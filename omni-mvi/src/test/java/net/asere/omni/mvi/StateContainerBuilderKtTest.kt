@@ -6,16 +6,14 @@ import kotlinx.coroutines.CoroutineScope
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-internal class StateContainerBuilderKtTest : StateContainerHost<Any, Any, Any> {
+internal class StateContainerBuilderKtTest : StateContainerHost<Any, Any> {
 
     private val initialState: Any = mockk()
-    private val scope: CoroutineScope = mockk()
-    private val exceptionHandler: CoroutineExceptionHandler = mockk()
-    private val action: (Any) -> Unit = mockk()
+    private val exceptionHandler = EmptyCoroutineExceptionHandler
+    private val scope = CoroutineScope(exceptionHandler)
 
     override val container = stateContainer(
         initialState = initialState,
-        onAction = action,
         coroutineScope = scope,
         coroutineExceptionHandler = exceptionHandler
     )
@@ -23,8 +21,7 @@ internal class StateContainerBuilderKtTest : StateContainerHost<Any, Any, Any> {
     @Test
     fun `On builder invocation must create a container with provided values`() {
         with(container) {
-            assertEquals(initialState, state.value)
-            assertEquals(action, onAction)
+            assertEquals(initialState, container.asStateContainer().state.value)
             assertEquals(scope, coroutineScope)
             assertEquals(exceptionHandler, coroutineExceptionHandler)
         }

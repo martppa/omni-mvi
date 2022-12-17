@@ -3,7 +3,7 @@ package net.asere.omni.mvi
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class DecorateKtTest : StateContainerHost<Any, Any, Any> {
+class DecorateKtTest : StateContainerHost<Any, Any> {
 
     override val container = stateContainer(Unit)
 

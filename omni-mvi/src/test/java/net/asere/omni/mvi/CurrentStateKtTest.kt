@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Test
 import org.junit.Assert.assertEquals
 
-internal class CurrentStateKtTest : StateContainerHost<Any, Any, Any> {
+internal class CurrentStateKtTest : StateContainerHost<Any, Any> {
 
     private val fakeState: Any = mockk()
-    override val container: StateContainer<Any, Any, Any> = mockk {
+    override val container: StateContainer<Any, Any> = mockk {
         every { state } returns MutableStateFlow(fakeState)
     }
 

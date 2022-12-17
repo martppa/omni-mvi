@@ -11,11 +11,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 
-internal class StateContainerHostKtTest : StateContainerHost<Any, Any, Any> {
+internal class StateContainerHostKtTest : StateContainerHost<Any, Any> {
 
     private val coroutineScope = CoroutineScope(EmptyCoroutineContext)
     private val block: () -> Unit = mockk()
-    override val container: Container<Any, Any, Any> = stateContainer(
+    override val container: Container<Any, Any> = stateContainer(
         initialState = Unit,
         coroutineScope = coroutineScope
     )

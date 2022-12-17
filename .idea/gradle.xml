@@ -12,7 +12,6 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/omni-mvi" />
-            <option value="$PROJECT_DIR$/omni-mvi-action" />
             <option value="$PROJECT_DIR$/omni-mvi-android" />
             <option value="$PROJECT_DIR$/omni-mvi-lock" />
             <option value="$PROJECT_DIR$/omni-mvi-override" />

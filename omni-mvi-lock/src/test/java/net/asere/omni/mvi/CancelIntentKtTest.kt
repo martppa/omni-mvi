@@ -1,4 +1,5 @@
 package net.asere.omni.mvi
+
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -9,18 +10,18 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 
-class CancelIntentKtTest : LockContainerHost<Any, Any, Any> {
+class CancelIntentKtTest : LockContainerHost<Any, Any> {
 
     companion object {
-        private const val STATIC_SEEK = "net.asere.omni.mvi.SeekKt"
+        private const val STATIC_SEEK = "net.asere.omni.mvi.ContainerDecoratorKt"
     }
 
-    override val container: LockContainer<Any, Any, Any> = mockk(relaxed = true)
+    override val container: LockContainer<Any, Any> = mockk(relaxed = true)
 
     @Before
     fun setup() {
         mockkStatic(STATIC_SEEK)
-        every { container.seek<LockContainer<Any, Any, Any>>(any()) } returns container
+        every { container.seek<LockContainer<Any, Any>>(any()) } returns container
     }
 
     @Test
