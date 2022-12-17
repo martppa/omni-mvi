@@ -6,15 +6,13 @@ import kotlinx.coroutines.CoroutineScope
 
 val EmptyCoroutineExceptionHandler = CoroutineExceptionHandler { _, _ -> }
 
-fun <State, Effect, Action>
-        StateContainerHost<State, Effect, Action>.stateContainer(
+fun <State, Effect>
+        StateContainerHost<State, Effect>.stateContainer(
     initialState: State,
-    onAction: (Action) -> Unit = {},
     coroutineScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext),
     coroutineExceptionHandler: CoroutineExceptionHandler = EmptyCoroutineExceptionHandler
-) = StateEmitterContainer<State, Effect, Action>(
+) = StateEmitterContainer<State, Effect>(
     initialState,
-    onAction,
     coroutineScope,
     coroutineExceptionHandler
 ).decorate { DelegatorContainer(it) }

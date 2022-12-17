@@ -1,6 +1,6 @@
 package net.asere.omni.mvi
 
-fun <State, Effect, Action>
-        LockContainerHost<State, Effect, Action>.cancelIntent(
+fun <State, Effect>
+        LockContainerHost<State, Effect>.cancelIntent(
     intentId: Any = Unit,
 ) = container.asLockContainer().cancelIntent(intentId)

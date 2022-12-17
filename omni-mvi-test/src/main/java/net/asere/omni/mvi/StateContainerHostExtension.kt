@@ -1,39 +1,39 @@
 package net.asere.omni.mvi
 
-fun <State, Effect, Action> Container<State, Effect, Action>
+fun <State, Effect> Container<State, Effect>
         .asExecutableContainer(): ExecutableContainer =
     seek { it is ExecutableContainer }
 
-suspend fun <State, Effect, Action>
-        StateContainerHost<State, Effect, Action>.awaitJobs() =
+suspend fun <State, Effect>
+        StateContainerHost<State, Effect>.awaitJobs() =
     container.asExecutableContainer().awaitJobs()
 
-fun <State, Effect, Action>
-        StateContainerHost<State, Effect, Action>.launchJobs() =
+fun <State, Effect>
+        StateContainerHost<State, Effect>.launchJobs() =
     container.asExecutableContainer().launchJobs()
 
-fun <State, Effect, Action>
-        StateContainerHost<State, Effect, Action>.releaseExecution() =
+fun <State, Effect>
+        StateContainerHost<State, Effect>.releaseExecution() =
     container.asExecutableContainer().releaseExecution()
 
-fun <State, Effect, Action>
-        StateContainerHost<State, Effect, Action>.lockExecution() =
+fun <State, Effect>
+        StateContainerHost<State, Effect>.lockExecution() =
     container.asExecutableContainer().lockExecution()
 
-fun <State, Effect, Action> Container<State, Effect, Action>
-        .asDelegatorContainer(): DelegatorContainer<State, Effect, Action> =
-    seek { it is DelegatorContainer<*, *, *> }
+fun <State, Effect> Container<State, Effect>
+        .asDelegatorContainer(): DelegatorContainer<State, Effect> =
+    seek { it is DelegatorContainer<*, *> }
 
-fun <State, Effect, Action> Container<State, Effect, Action>.delegate(
-    container: StateContainer<State, Effect, Action>
+fun <State, Effect> Container<State, Effect>.delegate(
+    container: StateContainer<State, Effect>
 ) = asDelegatorContainer().delegate(container)
 
-fun <State, Effect, Action> Container<State, Effect, Action>.clearDelegate() =
+fun <State, Effect> Container<State, Effect>.clearDelegate() =
     asDelegatorContainer().clearDelegate()
 
-fun <State, Effect, Action> StateContainerHost<State, Effect, Action>.delegate(
-    container: StateContainer<State, Effect, Action>
+fun <State, Effect> StateContainerHost<State, Effect>.delegate(
+    container: StateContainer<State, Effect>
 ) = container.delegate(container)
 
-fun <State, Effect, Action> StateContainerHost<State, Effect, Action>.clearDelegate() =
+fun <State, Effect> StateContainerHost<State, Effect>.clearDelegate() =
     container.clearDelegate()

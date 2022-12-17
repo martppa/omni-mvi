@@ -3,14 +3,15 @@ package net.asere.omni.mvi.sample.list.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
+import net.asere.omni.mvi.ActionContainerHost
 import net.asere.omni.mvi.LockContainerHost
-import net.asere.omni.mvi.StateContainerHost
 import net.asere.omni.mvi.OverrideContainerHost
 import net.asere.omni.mvi.currentState
 import net.asere.omni.mvi.decorate
 import net.asere.omni.mvi.intent
 import net.asere.omni.mvi.lockContainer
 import net.asere.omni.mvi.lockIntent
+import net.asere.omni.mvi.onAction
 import net.asere.omni.mvi.onError
 import net.asere.omni.mvi.overrideIntent
 import net.asere.omni.mvi.postEffect
@@ -30,9 +31,9 @@ class ListViewModel(
     private val searchRepositories: SearchRepositories,
     exceptionHandler: ExceptionHandler
 ) : ViewModel(),
-    StateContainerHost<ListState, ListEffect, ListAction>,
-    LockContainerHost<ListState, ListEffect, ListAction>,
-    OverrideContainerHost<ListState, ListEffect, ListAction> {
+    ActionContainerHost<ListState, ListEffect, ListAction>,
+    LockContainerHost<ListState, ListEffect>,
+    OverrideContainerHost<ListState, ListEffect> {
 
     companion object {
         private const val QUERY_DELAY = 300L
@@ -40,11 +41,11 @@ class ListViewModel(
 
     override val container = stateContainer(
         initialState = ListState(),
-        onAction = ::onAction,
         coroutineScope = viewModelScope,
         coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
     ).decorate { lockContainer(it) }
         .decorate { overrideContainer(it) }
+        .onAction(::onAction)
 
     init {
         fetchContent()

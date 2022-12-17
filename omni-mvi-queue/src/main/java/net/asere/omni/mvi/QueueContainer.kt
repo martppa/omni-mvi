@@ -5,12 +5,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 
-open class QueueContainer<State, Effect, Action> internal constructor(
-    override val container: Container<State, Effect, Action>,
-) : ContainerDecorator<State, Effect, Action>(
+open class QueueContainer<State, Effect> internal constructor(
+    override val container: Container<State, Effect>,
+) : ContainerDecorator<State, Effect>(
     container
-), Container<State, Effect, Action>,
-    QueueContainerHost<State, Effect, Action> {
+), Container<State, Effect>,
+    QueueContainerHost<State, Effect> {
 
     private lateinit var intentQueue: Channel<Job>
     private lateinit var consumeJob: Job

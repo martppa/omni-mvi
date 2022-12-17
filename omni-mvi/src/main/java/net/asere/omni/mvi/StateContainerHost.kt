@@ -5,12 +5,12 @@ import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 
-interface StateContainerHost<State, Effect, Action> {
-    val container: Container<State, Effect, Action>
+interface StateContainerHost<State, Effect> {
+    val container: Container<State, Effect>
 }
 
 @StateHostDsl
-fun <State, Effect> StateContainerHost<State, Effect, *>.intent(
+fun <State, Effect> StateContainerHost<State, Effect>.intent(
     context: CoroutineContext = EmptyCoroutineContext,
     start: CoroutineStart = CoroutineStart.DEFAULT,
     block: suspend IntentScope<State, Effect>.() -> Unit
@@ -27,9 +27,4 @@ fun <State, Effect> StateContainerHost<State, Effect, *>.intent(
     ) {
         scope.block()
     }
-}
-
-fun <State, Effect, Action>
-        StateContainerHost<State, Effect, Action>.on(action: Action) {
-    container.onAction(action)
 }

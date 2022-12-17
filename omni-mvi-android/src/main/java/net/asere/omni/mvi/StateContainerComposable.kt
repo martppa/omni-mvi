@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
 
 @Composable
-fun <Effect> StateContainerHost<*, Effect, *>.OnEffect(
+fun <Effect> StateContainerHost<*, Effect>.OnEffect(
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
     action: FlowCollector<Effect>
 ) {
@@ -28,7 +28,7 @@ fun <Effect> StateContainerHost<*, Effect, *>.OnEffect(
 }
 
 @Composable
-fun <UiState, Effect, Action> StateContainerHost<UiState, Effect, Action>.state(
+fun <UiState, Effect> StateContainerHost<UiState, Effect>.state(
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
 ): State<UiState> {
     val lifecycleOwner = LocalLifecycleOwner.current

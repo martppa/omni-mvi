@@ -23,7 +23,7 @@ abstract class ExecutableContainer(
         fun blockedContext() = newSingleThreadContext(BlockedExecutionThreadName)
     }
 
-    private var locked: Boolean = true
+    private var locked: Boolean = false
 
     fun releaseExecution() {
         locked = false

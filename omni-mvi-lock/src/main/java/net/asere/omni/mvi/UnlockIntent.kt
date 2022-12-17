@@ -1,6 +1,6 @@
 package net.asere.omni.mvi
 
-fun <State, Effect, Action>
-        LockContainerHost<State, Effect, Action>.unlockIntent(
+fun <State, Effect>
+        LockContainerHost<State, Effect>.unlockIntent(
     intentId: Any = Unit
 ) = container.asLockContainer().unlockIntent(intentId)

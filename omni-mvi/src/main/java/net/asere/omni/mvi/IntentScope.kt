@@ -1,7 +1,7 @@
 package net.asere.omni.mvi
 
 class IntentScope<State, Effect>(
-    val container: StateContainer<State, Effect, *>,
+    val container: StateContainer<State, Effect>,
     internal var errorBlock: (Throwable) -> Unit = {}
 )
 

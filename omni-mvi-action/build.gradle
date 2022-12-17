@@ -14,10 +14,10 @@ version = '1.0.0'
 
 ext {
     VERSION = version
-    ARTIFACT_ID = 'mvi'
-    POM_NAME = 'Omni-MVI-Test'
-    POM_DESCRIPTION = 'Omni MVI Test is a Omni MVI decorator that allows developers ' +
-            'test their intents states and effects'
+    ARTIFACT_ID = 'mvi-action'
+    POM_NAME = 'Omni-MVI-Action'
+    POM_DESCRIPTION = 'Omni MVI Action is a Omni MVI decorator that allows developers ' +
+            'centralize MVI invocations'
 }
 
 apply from: "${rootProject.projectDir}/scripts/base_publish.gradle"
@@ -25,7 +25,7 @@ apply from: "${rootProject.projectDir}/scripts/base_publish.gradle"
 dependencies {
     implementation project(path: ':omni-mvi')
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
-    testImplementation "io.mockk:mockk:1.13.2"
+    testImplementation 'io.mockk:mockk:1.13.2'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
     testImplementation project(path: ':shared-test')

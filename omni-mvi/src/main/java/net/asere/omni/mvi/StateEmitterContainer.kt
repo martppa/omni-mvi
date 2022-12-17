@@ -8,15 +8,14 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-open class StateEmitterContainer<State, Effect, Action> internal constructor(
+open class StateEmitterContainer<State, Effect> internal constructor(
     initialState: State,
-    override val onAction: (Action) -> Unit = {},
     override val coroutineScope: CoroutineScope,
     override val coroutineExceptionHandler: CoroutineExceptionHandler,
 ) : ExecutableContainer(
     coroutineScope = coroutineScope,
     coroutineExceptionHandler = coroutineExceptionHandler
-), StateContainer<State, Effect, Action> {
+), StateContainer<State, Effect> {
     private val _state: MutableStateFlow<State> = MutableStateFlow(initialState)
     override val state = _state.asStateFlow()
 
@@ -32,5 +31,5 @@ open class StateEmitterContainer<State, Effect, Action> internal constructor(
     }
 }
 
-fun <State, Effect, Action> Container<State, Effect, Action>.asStateContainer() =
+fun <State, Effect> Container<State, Effect>.asStateContainer() =
     this as StateContainer

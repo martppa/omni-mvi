@@ -3,11 +3,10 @@ package net.asere.omni.mvi
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 
-open class ContainerDecorator<State, Effect, Action>(
-    internal val container: Container<State, Effect, Action>
-) : StateContainer<State, Effect, Action> {
+open class ContainerDecorator<State, Effect>(
+    internal val container: Container<State, Effect>
+) : StateContainer<State, Effect> {
 
-    override val onAction: (Action) -> Unit = container.onAction
     override val coroutineScope: CoroutineScope = container.coroutineScope
     override val coroutineExceptionHandler: CoroutineExceptionHandler =
         container.coroutineExceptionHandler
@@ -19,14 +18,14 @@ open class ContainerDecorator<State, Effect, Action>(
     override fun post(effect: Effect) = container.asStateContainer().post(effect)
 }
 
-fun<State, Effect, Action> Container<State, Effect, Action>.decorate(
-    block: (Container<State, Effect, Action>) -> Container<State, Effect, Action>
-): Container<State, Effect, Action> {
+fun<State, Effect> Container<State, Effect>.decorate(
+    block: (Container<State, Effect>) -> Container<State, Effect>
+): Container<State, Effect> {
     return block(this)
 }
 
 @Suppress("UNCHECKED_CAST")
-fun <T> Container<*, *, *>.seek(predicate: (Any) -> Boolean): T {
+fun <T> Container<*, *>.seek(predicate: (Any) -> Boolean): T {
     if (this is ContainerDecorator) {
         if (predicate(this)) return this as T
         return this.container.seek(predicate)

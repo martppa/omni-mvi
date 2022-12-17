@@ -1,11 +1,11 @@
 package net.asere.omni.mvi
 
-open class TestStateContainer<State, Effect, Action> internal constructor(
-    override val container: Container<State, Effect, Action>,
-) : ContainerDecorator<State, Effect, Action>(
+open class TestStateContainer<State, Effect> internal constructor(
+    override val container: Container<State, Effect>,
+) : ContainerDecorator<State, Effect>(
     container
-), Container<State, Effect, Action>,
-    StateContainerHost<State, Effect, Action> {
+), Container<State, Effect>,
+    StateContainerHost<State, Effect> {
 
     internal val emittedStates: MutableList<State> = mutableListOf()
     internal val emittedEffects: MutableList<Effect> = mutableListOf()

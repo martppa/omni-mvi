@@ -1,14 +1,14 @@
 package net.asere.omni.mvi
 
-class DelegatorContainer<State, Effect, Action>(
-    container: Container<State, Effect, Action>,
-) : ContainerDecorator<State, Effect, Action>(
+class DelegatorContainer<State, Effect>(
+    container: Container<State, Effect>,
+) : ContainerDecorator<State, Effect>(
     container
-), Container<State, Effect, Action> {
+), Container<State, Effect> {
 
-    private var delegatedContainer: StateContainer<State, Effect, Action>? = null
+    private var delegatedContainer: StateContainer<State, Effect>? = null
 
-    fun delegate(container: StateContainer<State, Effect, Action>) {
+    fun delegate(container: StateContainer<State, Effect>) {
         delegatedContainer = container
     }
 

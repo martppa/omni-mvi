@@ -1,5 +1,5 @@
 package net.asere.omni.mvi
 
-fun <State, Effect, Action>
-        QueueContainerHost<State, Effect, Action>.clearQueue() =
+fun <State, Effect>
+        QueueContainerHost<State, Effect>.clearQueue() =
     container.asQueueContainer().clearQueue()

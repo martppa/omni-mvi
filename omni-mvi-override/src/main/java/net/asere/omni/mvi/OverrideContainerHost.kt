@@ -1,6 +1,6 @@
 package net.asere.omni.mvi
 
-interface OverrideContainerHost<State, Effect, Action>
-    : StateContainerHost<State, Effect, Action> {
-    override val container: Container<State, Effect, Action>
+interface OverrideContainerHost<State, Effect>
+    : StateContainerHost<State, Effect> {
+    override val container: Container<State, Effect>
 }

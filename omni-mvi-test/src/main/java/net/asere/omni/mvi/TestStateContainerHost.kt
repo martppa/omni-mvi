@@ -10,12 +10,12 @@ class TestResult<State, Effect>(
     val emittedEffects: List<Effect>
 )
 
-suspend fun <State, Effect, Action> StateContainerHost<State, Effect, Action>.testOn(
+suspend fun <State, Effect, Action> ActionContainerHost<State, Effect, Action>.testOn(
     action: Action
 ) = testIntent { on(action) }
 
-suspend fun <State, Effect, Action, T : StateContainerHost<State, Effect, Action>> T.testIntent(
-    testBlock: T.() -> Unit
+suspend fun <State, Effect, Host : StateContainerHost<State, Effect>> Host.testIntent(
+    testBlock: Host.() -> Unit
 ) = withContext(ExecutableContainer.blockedContext()) {
     val testContainer = TestStateContainer(container)
     delegate(testContainer)
@@ -26,8 +26,8 @@ suspend fun <State, Effect, Action, T : StateContainerHost<State, Effect, Action
     with(testContainer) { TestResult(emittedStates, emittedEffects) }
 }
 
-suspend fun <State, Effect, Action> testConstructor(
-    builder: () -> StateContainerHost<State, Effect, Action>
+suspend fun <State, Effect> testConstructor(
+    builder: () -> StateContainerHost<State, Effect>
 ) = withContext(ExecutableContainer.blockedContext()) {
     val host = builder()
     val testContainer = TestStateContainer(host.container)
