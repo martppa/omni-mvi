@@ -111,7 +111,7 @@ class ListViewModel(
 
 `ActionContainerHost` expects a third generic parameter called Action. This parameter defines the handled action data-type.
 
-In order to build an `ActionContainer` just call `.onAction()` funtion on any container and provide it's callback. Once an action is called the callback will be invoked.
+In order to build an `ActionContainer` just call `.onAction()` funtion on any container and provide it's callback. Once an action is called the callback will be invoked. `onAction()` will turn any container into an action container.
 
 ```kotlin
 override val container = stateContainer(
