@@ -92,7 +92,8 @@ class ListViewModel(
         fetchContent()
     }
 
-    private fun nextPage() = intent {
+    // Intentionally set public for demonstration purposes
+    fun nextPage() = intent {
         postState { copy(currentPage = currentPage + 1) }
         fetchContent()
     }

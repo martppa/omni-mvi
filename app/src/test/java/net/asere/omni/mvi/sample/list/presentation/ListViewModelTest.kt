@@ -1,6 +1,7 @@
 package net.asere.omni.mvi.sample.list.presentation
 
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.resetMain
@@ -12,6 +13,7 @@ import net.asere.omni.mvi.sample.list.domain.usecase.GetRepositories
 import net.asere.omni.mvi.sample.list.domain.usecase.SearchRepositories
 import net.asere.omni.mvi.sample.list.presentation.exception.ExceptionHandler
 import net.asere.omni.mvi.testConstructor
+import net.asere.omni.mvi.testIntent
 import net.asere.omni.mvi.testOn
 import org.junit.After
 import org.junit.Assert
@@ -43,16 +45,32 @@ class ListViewModelTest {
     }
 
     @Test
-    fun `On creation request first page to repository`() = runTest {
+    fun `On creation request first page to repository and`() = runTest {
+        val firstPage = 1
         testConstructor { createViewModel() }.evaluate {
+            coVerify { getRepositories(firstPage) }
             Assert.assertEquals(2, emittedStates.size)
+            Assert.assertEquals(emittedStates.first().currentPage, firstPage)
         }
     }
 
     @Test
-    fun `On NextPage action called should request it to repository`() = runTest {
+    fun `On NextPage action called should request next page to repository`() = runTest {
+        val nextPage = 2
         createViewModel().testOn(ListAction.NextPage).evaluate {
+            coVerify { getRepositories(nextPage) }
             Assert.assertEquals(3, emittedStates.size)
+            Assert.assertEquals(emittedStates.first().currentPage, nextPage)
+        }
+    }
+
+    @Test
+    fun `On NextPage intent called should request next page to repository`() = runTest {
+        val nextPage = 2
+        createViewModel().testIntent { nextPage() }.evaluate {
+            coVerify { getRepositories(nextPage) }
+            Assert.assertEquals(3, emittedStates.size)
+            Assert.assertEquals(emittedStates.first().currentPage, nextPage)
         }
     }
 
