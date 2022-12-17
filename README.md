@@ -1,4 +1,4 @@
-# omni-mvi ![](https://img.shields.io/badge/mvi_version-1.1.2-004475) ![](https://img.shields.io/badge/coverage-90%25-004475)
+# omni-mvi ![](https://img.shields.io/badge/mvi_version-1.2.0-004475) ![](https://img.shields.io/badge/coverage-90%25-004475)
 Omni MVI is a light weight set of tools inspired by [Orbit](https://orbit-mvi.org) that allows Kotlin/Java developer turn any object into a MVI like object.
 
 ## Installation
@@ -111,7 +111,7 @@ class ListViewModel(
 
 `ActionContainerHost` expects a third generic parameter called Action. This parameter defines the handled action data-type.
 
-In order to build an `ActionContainer` just call `.onAction()` funtion on any container and provide it's callback. Once an action is called the callback will be invoked.
+In order to build an `ActionContainer` just call `.onAction()` funtion on any container and provide it's callback. Once an action is called the callback will be invoked. `onAction()` will turn any container into an action container.
 
 ```kotlin
 override val container = stateContainer(
@@ -152,13 +152,13 @@ To add Omni-MVI-Test module to your project add the following to your gradle:
 ```groovy
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("net.asere.omni.mvi:mvi:1.0")
-    implementation("net.asere.omni.mvi:mvi-test:1.0.0")
+    implementation("net.asere.omni.mvi:mvi:$version")
+    implementation("net.asere.omni.mvi:mvi-test:$version")
 }
 ```
 
 ### Constructor testing
-If you `Host` executes intents during it's construction you can capture its states and effects by running `testConstructor()`:
+If your `Host` executes intents during it's construction you can capture its states and effects by running `testConstructor()`:
 
 ```kotlin
 @Test
@@ -203,7 +203,7 @@ fun `On NextPage action called should request next page to repository`() = runTe
 }
 ```
 
-# omni-android ![](https://img.shields.io/badge/mvi_android_version-1.1.2-03DAC5)
+# omni-android ![](https://img.shields.io/badge/mvi_android_version-1.2.0-03DAC5)
 Omni Android offers you an interface to interact with composable observers and collectors of state and effect.
 
 ## Installation
@@ -232,20 +232,7 @@ You can observe container host state using the composable extension `state()` wh
 val state by viewModel.state()
 ```
 
-# omni-mvi-decorator ![](https://img.shields.io/badge/mvi_decorator_version-1.1.2-EB6508) ![](https://img.shields.io/badge/coverage-100%25-EB6508)
-Omni MVI Decorator allows you decorate containers and add new feature behaviours to your containers like the ones described below.
-
-## Installation
-In order to include omni-mvi-decorator, add the following dependencies to your project build.gradle file:
-```groovy
-dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("net.asere.omni.mvi:mvi:1.0")
-    implementation("net.asere.omni.mvi:mvi-decorator:1.0")
-}
-```
-
-# omni-mvi-lock ![](https://img.shields.io/badge/mvi_lock_version-1.1.2-11AA00) ![](https://img.shields.io/badge/coverage-23%25-11AA00)
+# omni-mvi-lock ![](https://img.shields.io/badge/mvi_lock_version-1.2.0-11AA00) ![](https://img.shields.io/badge/coverage-23%25-11AA00)
 Omni MVI Lock is a container host decorator that allows you execute locking intents using `lockIntent()` DSL.
 
 ## Installation
@@ -253,9 +240,8 @@ In order to include omni-mvi-lock, add the following dependencies to your projec
 ```groovy
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("net.asere.omni.mvi:mvi:1.0")
-    implementation("net.asere.omni.mvi:mvi-decorator:1.0")
-    implementation("net.asere.omni.mvi:mvi-lock:1.0")
+    implementation("net.asere.omni.mvi:mvi:$version")
+    implementation("net.asere.omni.mvi:mvi-lock:$version")
 }
 ```
 
@@ -266,17 +252,16 @@ class ListViewModel(
     private val getRepositories: GetRepositories,
     exceptionHandler: ExceptionHandler
 ) : ViewModel(),
-    StateContainerHost<ListState, ListEffect, ListAction>,
-    LockContainerHost<ListState, ListEffect, ListAction>
+    ActionContainerHost<ListState, ListEffect, ListAction>,
+    LockContainerHost<ListState, ListEffect>
 ```
 Just like the state container, it will ask you to override its container. For that you will use the `decorate()` extension to create a lock container using its builder function:
 ```kotlin
 override val container = stateContainer(
     initialState = ListState(),
-    onAction = ::onAction,
     coroutineScope = viewModelScope,
     coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
-).decorate { lockContainer(it) }
+).decorate { lockContainer(it) }.onAction(::onAction)
 ```
 
 ## Lock intent usage
@@ -302,7 +287,7 @@ private fun fetchContent() = lockIntent {
 ## Locking/Unlocking an intent
 The lock container host allows you to lock/unlock any intent at any time by calling `lockIntent(id)` or `unlockIntent(id)`. Id parameter is optional, if none is provided then the default intent will be handled.
 
-# omni-mvi-override ![](https://img.shields.io/badge/mvi_override_version-1.1.2-B41B00) ![](https://img.shields.io/badge/coverage-0%25-B41B00)
+# omni-mvi-override ![](https://img.shields.io/badge/mvi_override_version-1.2.0-B41B00) ![](https://img.shields.io/badge/coverage-0%25-B41B00)
 Omni MVI Override is a container host decorator that allows developers execute any intent replacing any previous ongoing execution of itself.
 
 ## Installation
@@ -310,9 +295,8 @@ In order to include omni-mvi-override, add the following dependencies to your pr
 ```groovy
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("net.asere.omni.mvi:mvi:1.0")
-    implementation("net.asere.omni.mvi:mvi-decorator:1.0")
-    implementation("net.asere.omni.mvi:mvi-override:1.0")
+    implementation("net.asere.omni.mvi:mvi:$version)
+    implementation("net.asere.omni.mvi:mvi-override:$version")
 }
 ```
 
@@ -325,17 +309,16 @@ class ListViewModel(
     private val searchRepositories: SearchRepositories,
     exceptionHandler: ExceptionHandler
 ) : ViewModel(),
-    StateContainerHost<ListState, ListEffect, ListAction>,
-    OverrideContainerHost<ListState, ListEffect, ListAction> {
+    ActionContainerHost<ListState, ListEffect, ListAction>,
+    OverrideContainerHost<ListState, ListEffect> {
 ```
 Once implemented you must override it's container. In order to do it, you can use the decorate extension function together with `overrideContainer()` builder function.
 ```kotlin
 override val container = stateContainer(
-        initialState = ListState(),
-        onAction = ::onAction,
-        coroutineScope = viewModelScope,
-        coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
-    ).decorate { overrideContainer(it) }
+    initialState = ListState(),
+    coroutineScope = viewModelScope,
+    coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
+).decorate { overrideContainer(it) }.onAction(::onAction)
 ```
 
 ## Override intent usage
@@ -351,7 +334,7 @@ private fun onQuery(value: String) = overrideIntent {
 }
 ```
 
-# omni-mvi-queue ![](https://img.shields.io/badge/mvi_queue_version-1.1.2-6300AA) ![](https://img.shields.io/badge/coverage-0%25-6300AA)
+# omni-mvi-queue ![](https://img.shields.io/badge/mvi_queue_version-1.2.0-6300AA) ![](https://img.shields.io/badge/coverage-0%25-6300AA)
 Omni MVI Queue is a container host decorator that allows developers push intents into a queue of execution. Queue intents will be then executed one by one.
 
 ## Installation
@@ -360,8 +343,7 @@ In order to include omni-mvi-queue, add the following dependencies to your proje
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("net.asere.omni.mvi:mvi:1.0")
-    implementation("net.asere.omni.mvi:mvi-decorator:1.0")
-    implementation("net.asere.omni.mvi:mvi-queue:1.0.1")
+    implementation("net.asere.omni.mvi:mvi-queue:$version")
 }
 ```
 
@@ -374,17 +356,16 @@ class ListViewModel(
     private val searchRepositories: SearchRepositories,
     exceptionHandler: ExceptionHandler
 ) : ViewModel(),
-    StateContainerHost<ListState, ListEffect, ListAction>,
-    QueueContainerHost<ListState, ListEffect, ListAction> {
+    ActionContainerHost<ListState, ListEffect, ListAction>,
+    QueueContainerHost<ListState, ListEffect> {
 ```
 Override container's host container decorating it using decorate extension together with `queueContainer()` function builder.
 ```kotlin
 override val container = stateContainer(
-        initialState = ListState(),
-        onAction = ::onAction,
-        coroutineScope = viewModelScope,
-        coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
-    ).decorate { queueContainer(it) }
+    initialState = ListState(),
+    coroutineScope = viewModelScope,
+    coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
+).decorate { queueContainer(it) }.onAction(::onAction)
 ```
 Queue container host will allow you enqueue intents and let them execute each. Whenever you want to enqueue an intent use `queueIntent()` DSL.
 
