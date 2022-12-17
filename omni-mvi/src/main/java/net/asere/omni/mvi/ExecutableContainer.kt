@@ -19,8 +19,8 @@ abstract class ExecutableContainer(
 
     @OptIn(DelicateCoroutinesApi::class)
     companion object {
-        private const val ExecutionProcessName = "ExecutionBlocked"
-        fun blockedContext() = newSingleThreadContext(ExecutionProcessName)
+        private const val BlockedExecutionThreadName = "BlockedExecutionThread"
+        fun blockedContext() = newSingleThreadContext(BlockedExecutionThreadName)
     }
 
     private var locked: Boolean = true
@@ -33,8 +33,8 @@ abstract class ExecutableContainer(
         locked = true
     }
 
-    fun isExecutionLocked(): Boolean {
-        return Thread.currentThread().name == ExecutionProcessName || locked
+    private fun isExecutionLocked(): Boolean {
+        return Thread.currentThread().name == BlockedExecutionThreadName || locked
     }
 
     suspend fun awaitJobs() = containerJob.joinChildren()
