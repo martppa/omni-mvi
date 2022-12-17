@@ -6,7 +6,7 @@ In order to include omni-mvi, add the following dependencies to your project bui
 ```groovy
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("net.asere.omni.mvi:mvi:1.0")
+    implementation("net.asere.omni.mvi:mvi:$version")
 }
 ```
 
