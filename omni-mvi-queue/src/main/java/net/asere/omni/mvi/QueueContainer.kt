@@ -43,3 +43,6 @@ open class QueueContainer<State, Effect> internal constructor(
         )
     }
 }
+
+fun <State, Effect> Container<State, Effect>
+        .queueContainer() = queueContainer(this)

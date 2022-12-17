@@ -41,3 +41,6 @@ open class LockContainer<State, Effect> internal constructor(
         mutex.withLock { intents[intentId]?.unlock() }
     }
 }
+
+fun <State, Effect> Container<State, Effect>
+        .lockContainer() = lockContainer(this)
