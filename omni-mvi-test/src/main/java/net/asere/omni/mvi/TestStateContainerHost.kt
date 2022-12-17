@@ -12,14 +12,18 @@ class TestResult<State, Effect>(
 
 suspend fun <State, Effect, Action> StateContainerHost<State, Effect, Action>.testOn(
     action: Action
+) = testIntent { on(action) }
+
+suspend fun <State, Effect, Action, T : StateContainerHost<State, Effect, Action>> T.testIntent(
+    testBlock: T.() -> Unit
 ) = withContext(ExecutableContainer.blockedContext()) {
     val testContainer = TestStateContainer(container)
     delegate(testContainer)
-    launchAndAwaitJobs()
-    testContainer.reset()
-    on(action)
     awaitJobs()
-    return@withContext with(testContainer) { TestResult(emittedStates, emittedEffects) }
+    testContainer.reset()
+    testBlock()
+    awaitJobs()
+    with(testContainer) { TestResult(emittedStates, emittedEffects) }
 }
 
 suspend fun <State, Effect, Action> testConstructor(
@@ -28,7 +32,6 @@ suspend fun <State, Effect, Action> testConstructor(
     val host = builder()
     val testContainer = TestStateContainer(host.container)
     host.delegate(testContainer)
-    host.launchAndAwaitJobs()
-    host.clearDelegate()
-    return@withContext with(testContainer) { TestResult(emittedStates, emittedEffects) }
+    host.awaitJobs()
+    with(testContainer) { TestResult(emittedStates, emittedEffects) }
 }

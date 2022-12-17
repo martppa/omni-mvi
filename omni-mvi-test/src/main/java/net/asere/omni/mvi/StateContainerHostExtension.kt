@@ -8,12 +8,6 @@ suspend fun <State, Effect, Action>
         StateContainerHost<State, Effect, Action>.awaitJobs() =
     container.asExecutableContainer().awaitJobs()
 
-suspend fun <State, Effect, Action>
-        StateContainerHost<State, Effect, Action>.launchAndAwaitJobs() {
-    container.asExecutableContainer().launchJobs()
-    container.asExecutableContainer().awaitJobs()
-}
-
 fun <State, Effect, Action>
         StateContainerHost<State, Effect, Action>.launchJobs() =
     container.asExecutableContainer().launchJobs()
