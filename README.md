@@ -17,14 +17,13 @@ Containers are the core unit of Omni MVI. You can turn any class into a containe
 class ListViewModel(
     private val getRepositories: GetRepositories,
     exceptionHandler: ExceptionHandler
-) : ViewModel(), StateContainerHost<ListState, ListEffect, ListAction>
+) : ViewModel(), StateContainerHost<ListState, ListEffect>
 ```
 
-Every container host needs 3 generic parameter which define the interaction with the view:
+Most of container hosts need 2 generic parameters which define the interaction with the view:
 
-- UiState: defines the state of the view
-- SideEffect: defines executions side effects
-- UiAction: defines received actions from the view
+- State: defines the state of the view
+- Effect: defines executions side effects
 
 Once implemented, it will force you override the container. Use the container builder function
 `stateContainer()` to create it.
@@ -35,28 +34,26 @@ override val container = stateContainer(
 )
 ```
 
-The `stateContainer()` builder function requires you to pass a mandatory `initialState` and 3 optional arguments:
+The `stateContainer()` builder function requires you to pass a mandatory `initialState` and 2 optional arguments:
 
-- onAction: Triggers when ever an action occurs in the view
 - coroutineScope: Coroutine scope of intents execution. Defaulted to empty context coroutine scope
 - coroutineExceptionHandler: The exception handler used to capture exception on intents execution.
 
 ```kotlin
 override val container = stateContainer(
     initialState = ListState(),
-    onAction = ::onAction,
     coroutineScope = viewModelScope,
     coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
 )
 ```
 
-Once your container is created, your are ready to go. Now you can start listening to incoming actions and react to them.
+Once your container is created, your are ready to go. Now you can start calling your intents and react to them.
 
 ## Intents
 Intents are suspending jobs running under a specific scope which grants access to the state, effects and possible thrown errors. To define an Omni intent you just have to follow the syntax bellow:
 
 ```kotlin
-private fun fetchContent() = intent {
+fun fetchContent() = intent {
     onError {
         postEffect(ListEffect.ShowMessage(it.requireMessage()))
     }
@@ -73,7 +70,7 @@ The `intent` DSL allows you execute controlled block of code and grants you spec
 - postEffect: Post an effect to the view
 
 ### Nesting intents
-Intents are jobs. When you invoke an intent you are executing a coroutine job.
+Intents are jobs. When you invoke an intent you are executing a coroutine job. You are free to nest intents invocations.
 
 ### Intent invocation
 When intents are invoked they do it under `CoroutineStart.DEFAULT` start configuration, which in normal circumstances, will immediately execute the coroutine. Intents could also be delayed just as you would do with jobs:
@@ -101,6 +98,38 @@ private fun fetchDataAfter(time: Int) = intent {
 ```
 
 ## Actions
+Omni-MVI offers you an alternative way of intents execution. By using the `Action` API you can centralise the invocation flow. A `StateContainer` does not provide any way of `Action` execution. To allow this make your `Host` implement `ActionContainerHost`
+
+```kotlin
+class ListViewModel(
+    private val getRepositories: GetRepositories,
+    private val searchRepositories: SearchRepositories,
+    exceptionHandler: ExceptionHandler
+) : ViewModel(),
+    ActionContainerHost<ListState, ListEffect, ListAction>
+```
+
+`ActionContainerHost` expects a third generic parameter called Action. This parameter defines the handled action data-type.
+
+In order to build an `ActionContainer` just call `.onAction()` funtion on any container and provide it's callback. Once an action is called the callback will be invoked.
+
+```kotlin
+override val container = stateContainer(
+    initialState = ListState(),
+    coroutineScope = viewModelScope,
+    coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
+).onAction(::onAction)
+
+// Here we handle incomming actions
+private fun onAction(action: ListAction) {
+    when (action) {
+        ListAction.NextPage -> nextPage()
+        ListAction.Retry -> retry()
+        is ListAction.Query -> onQuery(action.value)
+    }
+}
+```
+
 You can deliver actions to your container host through the extension `on()`
 ```kotlin
 LazyColumn(
@@ -116,7 +145,63 @@ LazyColumn(
 ```
 
 ## Testing
-As Omni MVI only adds an extra layer of behaviour to underlying coroutines infrastructure you don't need (until now) any special feature for testing. You can implement tests just like you would do it without Omni MVI.
+As Omni MVI only adds an extra layer of behaviour to underlying coroutines infrastructure, you don't need any special feature for testing. You can implement tests just like you would do it without Omni MVI. You can access `state` and `effect` flows located in the `Container`. Make sure it's a `StateContainer` by calling `asStateContainer()` if it's not. However, there's a couple of tools that might be handy in order to test intents or actions.
+
+### Installation
+To add Omni-MVI-Test module to your project add the following to your gradle:
+```groovy
+dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("net.asere.omni.mvi:mvi:1.0")
+    implementation("net.asere.omni.mvi:mvi-test:1.0.0")
+}
+```
+
+### Constructor testing
+If you `Host` executes intents during it's construction you can capture its states and effects by running `testConstructor()`:
+
+```kotlin
+@Test
+fun `On creation must request first page to repository`() = runTest {
+    val firstPage = 1
+    testConstructor { createViewModel() }.evaluate {
+        coVerify { getRepositories(firstPage) }
+        Assert.assertEquals(2, emittedStates.size)
+        Assert.assertEquals(emittedStates.first().currentPage, firstPage)
+    }
+}
+```
+
+`testConstructor()` function will construct you host under a controlled context to allow state and effects recording. It returns a `TestResult` object that contains a list of emitted states and a list of emitted effects. Call evaluate to get inline access to it's properties.
+
+### Intents testing
+Call `testIntent()` to capture any emitted state or effect. Call `evaluate` to get inline access to resulting data:
+
+```kotlin
+@Test
+fun `On NextPage intent called should request next page to repository`() = runTest {
+    val nextPage = 2
+    createViewModel().testIntent { nextPage() }.evaluate {
+        coVerify { getRepositories(nextPage) }
+        Assert.assertEquals(3, emittedStates.size)
+        Assert.assertEquals(emittedStates.first().currentPage, nextPage)
+    }
+}
+```
+
+### Action testing
+Use the `testOn()` function to test host actions:
+```kotlin
+@Test
+fun `On NextPage action called should request next page to repository`() = runTest {
+    val nextPage = 2
+    createViewModel().testOn(ListAction.NextPage).evaluate {
+        coVerify { getRepositories(nextPage) }
+        Assert.assertEquals(3, emittedStates.size)
+        Assert.assertEquals(emittedStates.first().currentPage, nextPage)
+    }
+}
+```
 
 # omni-android ![](https://img.shields.io/badge/mvi_android_version-1.1.2-03DAC5)
 Omni Android offers you an interface to interact with composable observers and collectors of state and effect.
