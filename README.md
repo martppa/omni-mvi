@@ -152,13 +152,13 @@ To add Omni-MVI-Test module to your project add the following to your gradle:
 ```groovy
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("net.asere.omni.mvi:mvi:1.0")
-    implementation("net.asere.omni.mvi:mvi-test:1.0.0")
+    implementation("net.asere.omni.mvi:mvi:$version")
+    implementation("net.asere.omni.mvi:mvi-test:$version")
 }
 ```
 
 ### Constructor testing
-If you `Host` executes intents during it's construction you can capture its states and effects by running `testConstructor()`:
+If your `Host` executes intents during it's construction you can capture its states and effects by running `testConstructor()`:
 
 ```kotlin
 @Test
