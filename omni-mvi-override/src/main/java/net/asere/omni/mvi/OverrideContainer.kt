@@ -28,4 +28,4 @@ open class OverrideContainer<State, Effect> internal constructor(
 }
 
 fun <State, Effect> Container<State, Effect>
-        .overrideContainer() = overrideContainer(this)
+        .wrapAsOverrideContainer() = overrideContainer(this)

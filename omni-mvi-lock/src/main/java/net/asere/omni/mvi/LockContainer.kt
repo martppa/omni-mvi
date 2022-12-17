@@ -43,4 +43,4 @@ open class LockContainer<State, Effect> internal constructor(
 }
 
 fun <State, Effect> Container<State, Effect>
-        .lockContainer() = lockContainer(this)
+        .wrapAsLockContainer() = lockContainer(this)

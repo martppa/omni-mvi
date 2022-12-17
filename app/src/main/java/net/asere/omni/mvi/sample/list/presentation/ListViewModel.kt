@@ -6,7 +6,6 @@ import kotlinx.coroutines.delay
 import net.asere.omni.mvi.ActionContainerHost
 import net.asere.omni.mvi.LockContainerHost
 import net.asere.omni.mvi.OverrideContainerHost
-import net.asere.omni.mvi.queueContainer
 import net.asere.omni.mvi.currentState
 import net.asere.omni.mvi.intent
 import net.asere.omni.mvi.lockIntent
@@ -22,8 +21,8 @@ import net.asere.omni.mvi.sample.list.presentation.exception.coroutineExceptionH
 import net.asere.omni.mvi.sample.shared.core.extension.requireMessage
 import net.asere.omni.mvi.sample.shared.domain.extension.empty
 import net.asere.omni.mvi.stateContainer
-import net.asere.omni.mvi.lockContainer
-import net.asere.omni.mvi.overrideContainer
+import net.asere.omni.mvi.wrapAsLockContainer
+import net.asere.omni.mvi.wrapAsOverrideContainer
 import net.asere.omni.mvi.unlockIntent
 
 class ListViewModel(
@@ -43,8 +42,8 @@ class ListViewModel(
         initialState = ListState(),
         coroutineScope = viewModelScope,
         coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
-    ).lockContainer()
-        .overrideContainer()
+    ).wrapAsLockContainer()
+        .wrapAsOverrideContainer()
         .onAction(::onAction)
 
     init {

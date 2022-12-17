@@ -255,13 +255,13 @@ class ListViewModel(
     ActionContainerHost<ListState, ListEffect, ListAction>,
     LockContainerHost<ListState, ListEffect>
 ```
-Just like the state container, it will ask you to override its container. For that you will use the `lockContainer()` extension. `lockContainer()` will turn any `Container` into a `LockContainer`:
+Just like the state container, it will ask you to override its container. For that you will use the `wrapAsLockContainer()` extension. `wrapAsLockContainer()` will turn any `Container` into a `LockContainer`:
 ```kotlin
 override val container = stateContainer(
     initialState = ListState(),
     coroutineScope = viewModelScope,
     coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
-).lockContainer().onAction(::onAction)
+).wrapAsLockContainer().onAction(::onAction)
 ```
 
 ## Lock intent usage
@@ -312,13 +312,13 @@ class ListViewModel(
     ActionContainerHost<ListState, ListEffect, ListAction>,
     OverrideContainerHost<ListState, ListEffect>
 ```
-Once implemented you must override it's container. In order to do it, you can use `overrideContainer()` builder function. `overrideContainer()` will turn any `Container` into an `OverrideContainer`.
+Once implemented you must override it's container. In order to do it, you can use `wrapAsOverrideContainer()`wrapper function. `wrapAsOverrideContainer()` will turn any `Container` into an `OverrideContainer`.
 ```kotlin
 override val container = stateContainer(
     initialState = ListState(),
     coroutineScope = viewModelScope,
     coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
-).overrideContainer().onAction(::onAction)
+).wrapAsOverrideContainer().onAction(::onAction)
 ```
 
 ## Override intent usage
@@ -359,13 +359,13 @@ class ListViewModel(
     ActionContainerHost<ListState, ListEffect, ListAction>,
     QueueContainerHost<ListState, ListEffect>
 ```
-Override container calling `queueContainer()` function builder. `queueContainer()` will turn any `Container` into a `QueueContainer`.
+Override container calling `wrapAsQueueContainer()` wrapper function. `wrapAsQueueContainer()` will turn any `Container` into a `QueueContainer`.
 ```kotlin
 override val container = stateContainer(
     initialState = ListState(),
     coroutineScope = viewModelScope,
     coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
-).queueContainer().onAction(::onAction)
+).wrapAsQueueContainer().onAction(::onAction)
 ```
 Queue container host will allow you enqueue intents and let them execute each. Whenever you want to enqueue an intent use `queueIntent()` DSL.
 
