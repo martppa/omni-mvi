@@ -21,9 +21,10 @@ import net.asere.omni.mvi.sample.list.presentation.exception.coroutineExceptionH
 import net.asere.omni.mvi.sample.shared.core.extension.requireMessage
 import net.asere.omni.mvi.sample.shared.domain.extension.empty
 import net.asere.omni.mvi.stateContainer
-import net.asere.omni.mvi.wrapAsLockContainer
-import net.asere.omni.mvi.wrapAsOverrideContainer
+import net.asere.omni.mvi.buildLockContainer
+import net.asere.omni.mvi.buildOverrideContainer
 import net.asere.omni.mvi.unlockIntent
+import net.asere.omni.mvi.buildQueueContainer
 
 class ListViewModel(
     private val getRepositories: GetRepositories,
@@ -42,8 +43,8 @@ class ListViewModel(
         initialState = ListState(),
         coroutineScope = viewModelScope,
         coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
-    ).wrapAsLockContainer()
-        .wrapAsOverrideContainer()
+    ).buildLockContainer()
+        .buildOverrideContainer()
         .onAction(::onAction)
 
     init {

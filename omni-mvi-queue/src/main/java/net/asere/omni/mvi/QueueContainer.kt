@@ -45,4 +45,4 @@ open class QueueContainer<State, Effect> internal constructor(
 }
 
 fun <State, Effect> Container<State, Effect>
-        .wrapAsQueueContainer() = queueContainer(this)
+        .buildQueueContainer() = queueContainer(this)

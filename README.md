@@ -1,4 +1,4 @@
-# omni-mvi ![](https://img.shields.io/badge/mvi_version-1.2.1-004475) ![](https://img.shields.io/badge/coverage-90%25-004475)
+# omni-mvi ![](https://img.shields.io/badge/mvi_version-1.2.2-004475) ![](https://img.shields.io/badge/coverage-90%25-004475)
 Omni MVI is a light weight set of tools inspired by [Orbit](https://orbit-mvi.org) that allows Kotlin/Java developer turn any object into a MVI like object.
 
 ## Installation
@@ -203,7 +203,7 @@ fun `On NextPage action called should request next page to repository`() = runTe
 }
 ```
 
-# omni-android ![](https://img.shields.io/badge/mvi_android_version-1.2.1-03DAC5)
+# omni-android ![](https://img.shields.io/badge/mvi_android_version-1.2.2-03DAC5)
 Omni Android offers you an interface to interact with composable observers and collectors of state and effect.
 
 ## Installation
@@ -232,7 +232,7 @@ You can observe container host state using the composable extension `state()` wh
 val state by viewModel.state()
 ```
 
-# omni-mvi-lock ![](https://img.shields.io/badge/mvi_lock_version-1.2.1-11AA00) ![](https://img.shields.io/badge/coverage-23%25-11AA00)
+# omni-mvi-lock ![](https://img.shields.io/badge/mvi_lock_version-1.2.2-11AA00) ![](https://img.shields.io/badge/coverage-23%25-11AA00)
 Omni MVI Lock is a container host decorator that allows you execute locking intents using `lockIntent()` DSL.
 
 ## Installation
@@ -255,13 +255,13 @@ class ListViewModel(
     ActionContainerHost<ListState, ListEffect, ListAction>,
     LockContainerHost<ListState, ListEffect>
 ```
-Just like the state container, it will ask you to override its container. For that you will use the `wrapAsLockContainer()` extension. `wrapAsLockContainer()` will turn any `Container` into a `LockContainer`:
+Just like the state container, it will ask you to override its container. For that you will use the `buildLockContainer()` extension. `buildLockContainer()` will turn any `Container` into a `LockContainer`:
 ```kotlin
 override val container = stateContainer(
     initialState = ListState(),
     coroutineScope = viewModelScope,
     coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
-).wrapAsLockContainer().onAction(::onAction)
+).buildLockContainer().onAction(::onAction)
 ```
 
 ## Lock intent usage
@@ -287,7 +287,7 @@ private fun fetchContent() = lockIntent {
 ## Locking/Unlocking an intent
 The lock container host allows you to lock/unlock any intent at any time by calling `lockIntent(id)` or `unlockIntent(id)`. Id parameter is optional, if none is provided then the default intent will be handled.
 
-# omni-mvi-override ![](https://img.shields.io/badge/mvi_override_version-1.2.1-B41B00) ![](https://img.shields.io/badge/coverage-0%25-B41B00)
+# omni-mvi-override ![](https://img.shields.io/badge/mvi_override_version-1.2.2-B41B00) ![](https://img.shields.io/badge/coverage-0%25-B41B00)
 Omni MVI Override is a container host decorator that allows developers execute any intent replacing any previous ongoing execution of itself.
 
 ## Installation
@@ -312,13 +312,13 @@ class ListViewModel(
     ActionContainerHost<ListState, ListEffect, ListAction>,
     OverrideContainerHost<ListState, ListEffect>
 ```
-Once implemented you must override it's container. In order to do it, you can use `wrapAsOverrideContainer()`wrapper function. `wrapAsOverrideContainer()` will turn any `Container` into an `OverrideContainer`.
+Once implemented you must override it's container. In order to do it, you can use `buildOverrideContainer()` builder function. `buildOverrideContainer()` will turn any `Container` into an `OverrideContainer`.
 ```kotlin
 override val container = stateContainer(
     initialState = ListState(),
     coroutineScope = viewModelScope,
     coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
-).wrapAsOverrideContainer().onAction(::onAction)
+).buildOverrideContainer().onAction(::onAction)
 ```
 
 ## Override intent usage
@@ -334,7 +334,7 @@ private fun onQuery(value: String) = overrideIntent {
 }
 ```
 
-# omni-mvi-queue ![](https://img.shields.io/badge/mvi_queue_version-1.2.1-6300AA) ![](https://img.shields.io/badge/coverage-0%25-6300AA)
+# omni-mvi-queue ![](https://img.shields.io/badge/mvi_queue_version-1.2.2-6300AA) ![](https://img.shields.io/badge/coverage-0%25-6300AA)
 Omni MVI Queue is a container host decorator that allows developers push intents into a queue of execution. Queue intents will be then executed one by one.
 
 ## Installation
@@ -359,13 +359,13 @@ class ListViewModel(
     ActionContainerHost<ListState, ListEffect, ListAction>,
     QueueContainerHost<ListState, ListEffect>
 ```
-Override container calling `wrapAsQueueContainer()` wrapper function. `wrapAsQueueContainer()` will turn any `Container` into a `QueueContainer`.
+Override container calling `buildQueueContainer()` builder function. `buildQueueContainer()` will turn any `Container` into a `QueueContainer`.
 ```kotlin
 override val container = stateContainer(
     initialState = ListState(),
     coroutineScope = viewModelScope,
     coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
-).wrapAsQueueContainer().onAction(::onAction)
+).buildQueueContainer().onAction(::onAction)
 ```
 Queue container host will allow you enqueue intents and let them execute each. Whenever you want to enqueue an intent use `queueIntent()` DSL.
 
