@@ -14,7 +14,7 @@ version = '1.2.2'
 
 ext {
     VERSION = version
-    ARTIFACT_ID = 'mvi'
+    ARTIFACT_ID = 'mvi-test'
     POM_NAME = 'Omni-MVI-Test'
     POM_DESCRIPTION = 'Omni MVI Test is a Omni MVI decorator that allows developers ' +
             'test their intents states and effects'
