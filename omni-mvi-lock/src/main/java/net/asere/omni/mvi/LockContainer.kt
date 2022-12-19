@@ -42,5 +42,13 @@ open class LockContainer<State, Effect> internal constructor(
     }
 }
 
+fun <State, Effect> lockContainer(
+    container: Container<State, Effect>
+) = LockContainer(container)
+
 fun <State, Effect> Container<State, Effect>
         .buildLockContainer() = lockContainer(this)
+
+internal fun <State, Effect>
+        Container<State, Effect>.asLockContainer() =
+    seek<LockContainer<State, Effect>> { it is LockContainer<*, *> }

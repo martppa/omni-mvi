@@ -44,5 +44,13 @@ open class QueueContainer<State, Effect> internal constructor(
     }
 }
 
+fun <State, Effect> queueContainer(
+    container: Container<State, Effect>
+) = QueueContainer(container)
+
 fun <State, Effect> Container<State, Effect>
         .buildQueueContainer() = queueContainer(this)
+
+internal fun <State, Effect>
+        Container<State, Effect>.asQueueContainer() =
+    seek<QueueContainer<State, Effect>> { it is QueueContainer<*, *> }

@@ -27,5 +27,15 @@ open class OverrideContainer<State, Effect> internal constructor(
     }
 }
 
+fun <State, Effect> overrideContainer(
+    container: Container<State, Effect>
+) = OverrideContainer(container)
+
 fun <State, Effect> Container<State, Effect>
         .buildOverrideContainer() = overrideContainer(this)
+
+internal fun <State, Effect>
+        Container<State, Effect>.asOverrideContainer() =
+    seek<OverrideContainer<State, Effect>> {
+        it is OverrideContainer<*, *>
+    }

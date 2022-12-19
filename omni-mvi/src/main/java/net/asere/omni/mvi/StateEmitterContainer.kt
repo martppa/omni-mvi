@@ -1,5 +1,6 @@
 package net.asere.omni.mvi
 
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,6 +31,17 @@ open class StateEmitterContainer<State, Effect> internal constructor(
         _effect.tryEmit(effect)
     }
 }
+
+fun <State, Effect>
+        StateContainerHost<State, Effect>.stateContainer(
+    initialState: State,
+    coroutineScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext),
+    coroutineExceptionHandler: CoroutineExceptionHandler = EmptyCoroutineExceptionHandler
+) = StateEmitterContainer<State, Effect>(
+    initialState,
+    coroutineScope,
+    coroutineExceptionHandler
+).decorate { DelegatorContainer(it) }
 
 fun <State, Effect> Container<State, Effect>.asStateContainer() =
     this as StateContainer

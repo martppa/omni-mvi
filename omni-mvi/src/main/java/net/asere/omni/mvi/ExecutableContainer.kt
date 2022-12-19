@@ -11,6 +11,8 @@ import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
 
+val EmptyCoroutineExceptionHandler = CoroutineExceptionHandler { _, _ -> }
+
 abstract class ExecutableContainer(
     private val coroutineScope: CoroutineScope,
     private val coroutineExceptionHandler: CoroutineExceptionHandler
