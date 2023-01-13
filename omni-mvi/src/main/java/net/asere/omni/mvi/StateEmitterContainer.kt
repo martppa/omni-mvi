@@ -3,10 +3,10 @@ package net.asere.omni.mvi
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 
 open class StateEmitterContainer<State, Effect> internal constructor(
@@ -20,15 +20,15 @@ open class StateEmitterContainer<State, Effect> internal constructor(
     private val _state: MutableStateFlow<State> = MutableStateFlow(initialState)
     override val state = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<Effect>()
-    override val effect = _effect.asSharedFlow()
+    private val _effect = Channel<Effect>(capacity = Channel.UNLIMITED)
+    override val effect = _effect.receiveAsFlow()
 
     override fun update(function: State.() -> State) {
         _state.update { it.function() }
     }
 
     override fun post(effect: Effect) {
-        _effect.tryEmit(effect)
+        _effect.trySend(effect)
     }
 }
 
