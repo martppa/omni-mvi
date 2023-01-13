@@ -1,4 +1,4 @@
-# omni-mvi ![](https://img.shields.io/badge/mvi_version-1.2.2-004475) ![](https://img.shields.io/badge/coverage-90%25-004475)
+# omni-mvi ![](https://img.shields.io/badge/mvi_version-1.2.3-004475) ![](https://img.shields.io/badge/coverage-90%25-004475)
 Omni MVI is a light weight set of tools inspired by [Orbit](https://orbit-mvi.org) that allows Kotlin/Java developer turn any object into a MVI like object.
 
 ## Installation
@@ -96,6 +96,8 @@ private fun fetchDataAfter(time: Int) = intent {
     pendingIntent.start()
 }
 ```
+### Observing
+If you are using standard JVM you can observe states and effects using `observeState()` and `observeEffect()` intent functions. Both extension functions require a lambda, this lambda will be called whenever a value is emitted.
 
 ## Actions
 Omni-MVI offers you an alternative way of intents execution. By using the `Action` API you can centralise the invocation flow. A `StateContainer` does not provide any way of `Action` execution. To allow this make your `Host` implement `ActionContainerHost`
@@ -203,7 +205,7 @@ fun `On NextPage action called should request next page to repository`() = runTe
 }
 ```
 
-# omni-android ![](https://img.shields.io/badge/mvi_android_version-1.2.2-03DAC5)
+# omni-android ![](https://img.shields.io/badge/mvi_android_version-1.2.3-03DAC5)
 Omni Android offers you an interface to interact with composable observers and collectors of state and effect.
 
 ## Installation
@@ -211,12 +213,39 @@ In order to include omni-mvi-android, add the following dependencies to your pro
 ```groovy
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("net.asere.omni.mvi:mvi:1.0")
-    implementation("net.asere.omni.mvi:mvi-android:1.0")
+    implementation("net.asere.omni.mvi:mvi:$version")
+    implementation("net.asere.omni.mvi:mvi-android:$version")
+}
+```
+## Observing on lifecycle
+When observing from an Android fragment or Activity you should then provide the lifecycle owner, which is `this` in this case:
+```kotlin
+class MainActivity : AppCompatActivity() {
+    
+    // Views definitions and ViewModel injection
+    ...
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        viewModel.observeState(this, onState = ::onState)
+        viewModel.observeEffect(this, onEffect = ::onEffect)
+    }
+
+    private fun onState(state: LoginState) {
+        loginInput.text = state.username
+    }
+    
+    private fun onEffect(effect: LoginEffect) = when (effect) {
+        LoginEffect.NavigateHome -> navigateHome()
+    }
+    
+    // Rest of implementations
+    ...
 }
 ```
 
-## Observing effects
+## Observing on composable
 You can observe container host effects using composable extension `OnEffect()` where effects collection will always flow under app lifecycle:
 ```kotlin
 viewModel.OnEffect {
@@ -225,14 +254,12 @@ viewModel.OnEffect {
     }
 }
 ```
-
-## Observing state
 You can observe container host state using the composable extension `state()` which will observe it under app's lifecycle.
 ```kotlin
 val state by viewModel.state()
 ```
 
-# omni-mvi-lock ![](https://img.shields.io/badge/mvi_lock_version-1.2.2-11AA00) ![](https://img.shields.io/badge/coverage-23%25-11AA00)
+# omni-mvi-lock ![](https://img.shields.io/badge/mvi_lock_version-1.2.3-11AA00) ![](https://img.shields.io/badge/coverage-23%25-11AA00)
 Omni MVI Lock is a container host decorator that allows you execute locking intents using `lockIntent()` DSL.
 
 ## Installation
@@ -287,7 +314,7 @@ private fun fetchContent() = lockIntent {
 ## Locking/Unlocking an intent
 The lock container host allows you to lock/unlock any intent at any time by calling `lockIntent(id)` or `unlockIntent(id)`. Id parameter is optional, if none is provided then the default intent will be handled.
 
-# omni-mvi-override ![](https://img.shields.io/badge/mvi_override_version-1.2.2-B41B00) ![](https://img.shields.io/badge/coverage-0%25-B41B00)
+# omni-mvi-override ![](https://img.shields.io/badge/mvi_override_version-1.2.3-B41B00) ![](https://img.shields.io/badge/coverage-0%25-B41B00)
 Omni MVI Override is a container host decorator that allows developers execute any intent replacing any previous ongoing execution of itself.
 
 ## Installation
@@ -334,7 +361,7 @@ private fun onQuery(value: String) = overrideIntent {
 }
 ```
 
-# omni-mvi-queue ![](https://img.shields.io/badge/mvi_queue_version-1.2.2-6300AA) ![](https://img.shields.io/badge/coverage-0%25-6300AA)
+# omni-mvi-queue ![](https://img.shields.io/badge/mvi_queue_version-1.2.3-6300AA) ![](https://img.shields.io/badge/coverage-0%25-6300AA)
 Omni MVI Queue is a container host decorator that allows developers push intents into a queue of execution. Queue intents will be then executed one by one.
 
 ## Installation
