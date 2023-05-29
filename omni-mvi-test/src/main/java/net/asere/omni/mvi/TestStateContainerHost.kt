@@ -13,22 +13,17 @@ class TestResult<State, Effect>(
 
 suspend fun <State, Effect, Action> ActionContainerHost<State, Effect, Action>.testOn(
     action: Action,
-    takeStates: Int? = null,
-    takeEffects: Int? = null,
+    take: Take? = null,
 ) = testIntent(
-    takeStates = takeStates,
-    takeEffects = takeEffects
+    take = take
 ) { on(action) }
 
 suspend fun <State, Effect, Host : StateContainerHost<State, Effect>> Host.testIntent(
-    takeStates: Int? = null,
-    takeEffects: Int? = null,
+    take: Take? = null,
     testBlock: Host.() -> Unit
 ) = withContext(ExecutableContainer.blockedContext()) {
-    if (takeStates != null && takeStates <= 0)
-        throw IllegalArgumentException("takeStates argument should be grater than 0 if set")
-    if (takeEffects != null && takeEffects <= 0)
-        throw IllegalArgumentException("takeEffects argument should be grater than 0 if set")
+    if (take != null && take.count <= 0)
+        throw IllegalArgumentException("take argument count should be grater than 0 if set")
     val testContainer = TestStateContainer(container)
     delegate(testContainer)
     awaitJobs()
@@ -36,8 +31,8 @@ suspend fun <State, Effect, Host : StateContainerHost<State, Effect>> Host.testI
     testBlock()
     with(testContainer) {
         awaitJobs {
-            takeStates != null && takeStates == emittedStates.size ||
-                    takeEffects != null && takeEffects == emittedEffects.size
+            take is TakeStates && take.count == emittedStates.size ||
+                    take is TakeEffects && take.count == emittedEffects.size
         }
         TestResult(emittedStates, emittedEffects)
     }
