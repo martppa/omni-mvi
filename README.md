@@ -206,7 +206,7 @@ fun `On NextPage action called should request next page to repository`() = runTe
 ```
 
 ### Testing endless intents
-In case you want to test long running intents you can always truncate you evaluation to a certain amount of `states`:
+In case you want to test long running intents you can always truncate your evaluation to a certain amount of `states`:
 ```kotlin
 @Test
 fun `On continues emit intent called should take first 9 states`() = runTest {
@@ -216,7 +216,7 @@ fun `On continues emit intent called should take first 9 states`() = runTest {
 }
 ```
 
-For `effects`:
+Or `effects`:
 ```kotlin
 @Test
 fun `On continues post intent called should take first 15 effects `() = runTest {
