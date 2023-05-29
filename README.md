@@ -155,7 +155,7 @@ To add Omni-MVI-Test module to your project add the following to your gradle:
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
     implementation("net.asere.omni.mvi:mvi:$version")
-    implementation("net.asere.omni.mvi:mvi-test:$version")
+    testImplementation("net.asere.omni.mvi:mvi-test:$version")
 }
 ```
 
