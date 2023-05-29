@@ -82,7 +82,7 @@ class ListViewModelTest {
     }
 
     @Test
-    fun `On continues emit intent called should take first 9 states `() = runTest {
+    fun `On continues emit intent called should take first 9 states`() = runTest {
         createViewModel().testIntent(only take 9 state units) { continuesEmit() }.evaluate {
             Assert.assertEquals(9, emittedStates.size)
         }
