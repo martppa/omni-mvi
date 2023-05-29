@@ -97,4 +97,19 @@ class ListViewModel(
         postState { copy(currentPage = currentPage + 1) }
         fetchContent()
     }
+
+    // Intentionally created for test purposes
+    fun continuesEmit() = intent {
+        while (true) {
+            postState { copy(loading = false) }
+            delay(200)
+        }
+    }
+
+    fun continuesPost() = intent {
+        while (true) {
+            postEffect(ListEffect.ShowMessage("List is full"))
+            delay(200)
+        }
+    }
 }

@@ -1,6 +1,6 @@
 package net.asere.omni.mvi
 
-class DelegatorContainer<State, Effect>(
+open class DelegatorContainer<State, Effect>(
     container: Container<State, Effect>,
 ) : ContainerDecorator<State, Effect>(
     container

@@ -74,6 +74,20 @@ class ListViewModelTest {
         }
     }
 
+    @Test
+    fun `On continues emit intent called should take first 9 states `() = runTest {
+        createViewModel().testIntent(takeStates = 9) { continuesEmit() }.evaluate {
+            Assert.assertEquals(9, emittedStates.size)
+        }
+    }
+
+    @Test
+    fun `On continues post intent called should take first 15 effects `() = runTest {
+        createViewModel().testIntent(takeEffects = 15) { continuesPost() }.evaluate {
+            Assert.assertEquals(15, emittedEffects.size)
+        }
+    }
+
     @After
     fun tearDown() {
         Dispatchers.resetMain()
