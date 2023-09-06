@@ -1,5 +1,8 @@
 package net.asere.omni.mvi
 
+/**
+ * Delegates any state or effect emitted to the inner container
+ */
 open class DelegatorContainer<State, Effect>(
     container: Container<State, Effect>,
 ) : ContainerDecorator<State, Effect>(
@@ -8,10 +11,16 @@ open class DelegatorContainer<State, Effect>(
 
     private var delegatedContainer: StateContainer<State, Effect>? = null
 
+    /**
+     * Sets the container to delegate to
+     */
     fun delegate(container: StateContainer<State, Effect>) {
         delegatedContainer = container
     }
 
+    /**
+     * Clears delegating container
+     */
     fun clearDelegate() {
         delegatedContainer = null
     }

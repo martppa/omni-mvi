@@ -3,6 +3,7 @@ package net.asere.omni.mvi.sample.list.presentation
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Scaffold
@@ -46,6 +47,7 @@ fun ListScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(it)
         ) {
             TextField(
                 modifier = Modifier

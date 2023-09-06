@@ -3,6 +3,10 @@ package net.asere.omni.mvi
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 
+/**
+ * Basic container decorator implementation. Its function is to decorate any
+ * container with its own feature.
+ */
 open class ContainerDecorator<State, Effect>(
     internal val container: Container<State, Effect>
 ) : StateContainer<State, Effect> {
@@ -18,12 +22,25 @@ open class ContainerDecorator<State, Effect>(
     override fun post(effect: Effect) = container.asStateContainer().post(effect)
 }
 
+/**
+ * Helper function that eases container decoration
+ *
+ * @param block Block of code where decoration takes place
+ * @return Decorated container
+ */
 fun<State, Effect> Container<State, Effect>.decorate(
     block: (Container<State, Effect>) -> Container<State, Effect>
 ): Container<State, Effect> {
     return block(this)
 }
 
+/**
+ * Recursively seeks decorators that match the predicate
+ *
+ * @param predicate Predicate lambda that performs comparison
+ * @return Matching container
+ * @throws RuntimeException when no container matches the predicate
+ */
 @Suppress("UNCHECKED_CAST")
 fun <T> Container<*, *>.seek(predicate: (Any) -> Boolean): T {
     if (this is ContainerDecorator) {
