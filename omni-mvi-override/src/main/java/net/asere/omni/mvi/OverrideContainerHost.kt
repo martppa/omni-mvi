@@ -9,5 +9,5 @@ interface OverrideContainerHost<State, Effect>
 fun <State, Effect>
         OverrideContainerHost<State, Effect>.overrideIntent(
     intentId: Any = Unit,
-    block: suspend StateIntentScope<State, Effect>.() -> Unit
+    block: suspend IntentScope<State, Effect>.() -> Unit
 ) = container.asOverrideContainer().overrideIntent(intentId, block)

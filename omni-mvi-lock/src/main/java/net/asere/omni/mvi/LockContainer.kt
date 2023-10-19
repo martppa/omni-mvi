@@ -26,7 +26,7 @@ open class LockContainer<State, Effect> internal constructor(
 
     internal fun lockIntent(
         intentId: Any,
-        block: suspend StateIntentScope<State, Effect>.() -> Unit
+        block: suspend IntentScope<State, Effect>.() -> Unit
     ) = intent {
         if (!intents[intentId].isLocked()) {
             intents[intentId] = LockableIntent(intent { block() })

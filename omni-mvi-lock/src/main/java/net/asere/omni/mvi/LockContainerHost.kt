@@ -19,7 +19,7 @@ fun <State, Effect>
 fun <State, Effect>
         LockContainerHost<State, Effect>.lockIntent(
     intentId: Any = Unit,
-    block: suspend StateIntentScope<State, Effect>.() -> Unit
+    block: suspend IntentScope<State, Effect>.() -> Unit
 ) = container.asLockContainer().lockIntent(intentId, block)
 
 fun <State, Effect>

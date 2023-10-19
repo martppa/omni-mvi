@@ -35,7 +35,7 @@ open class QueueContainer<State, Effect> internal constructor(
     }
 
     internal fun enqueue(
-        block: suspend StateIntentScope<State, Effect>.() -> Unit
+        block: suspend IntentScope<State, Effect>.() -> Unit
     ) = intent {
         if (intentQueue.isClosed()) startIntentQueue()
         intentQueue.send(

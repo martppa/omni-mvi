@@ -19,9 +19,9 @@ internal class IntentScopeKtTest : StateContainerHost<Any, Any> {
 
     @Test
     fun `On failing intent invocation must call onError`() = runBlocking {
-        val scope = StateIntentScope(container, errorBlock)
+        val scope = IntentScope(container, errorBlock)
         val errorLambda: (Throwable) -> Unit = mockk()
-        val intent: StateIntentScope<Any, Any>.() -> Unit = { onError(errorLambda) }
+        val intent: IntentScope<Any, Any>.() -> Unit = { onError(errorLambda) }
         intent(scope)
         Assert.assertEquals(scope.errorBlock, errorLambda)
     }
@@ -29,16 +29,16 @@ internal class IntentScopeKtTest : StateContainerHost<Any, Any> {
     @Test
     fun `On postState invocation must call container update`() = runBlocking {
         val updateFunc: (Any) -> Unit = mockk()
-        val intent: StateIntentScope<Any, Any>.() -> Unit = { postState(updateFunc) }
-        intent(StateIntentScope(container, errorBlock))
+        val intent: IntentScope<Any, Any>.() -> Unit = { postState(updateFunc) }
+        intent(IntentScope(container, errorBlock))
         verify { container.update(updateFunc) }
     }
 
     @Test
     fun `On postEffect invocation must call container post`() = runBlocking {
         val effect: Any = mockk()
-        val intent: StateIntentScope<Any, Any>.() -> Unit = { postEffect(effect) }
-        intent(StateIntentScope(container, errorBlock))
+        val intent: IntentScope<Any, Any>.() -> Unit = { postEffect(effect) }
+        intent(IntentScope(container, errorBlock))
         verify { container.post(effect) }
     }
 }

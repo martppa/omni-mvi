@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 
-open class StateEmitterContainer<State, Effect> internal constructor(
+open class StateContainerConcretion<State, Effect> internal constructor(
     initialState: State,
     override val coroutineScope: CoroutineScope,
     override val coroutineExceptionHandler: CoroutineExceptionHandler,
@@ -37,7 +37,7 @@ fun <State, Effect>
     initialState: State,
     coroutineScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext),
     coroutineExceptionHandler: CoroutineExceptionHandler = EmptyCoroutineExceptionHandler
-) = StateEmitterContainer<State, Effect>(
+) = StateContainerConcretion<State, Effect>(
     initialState,
     coroutineScope,
     coroutineExceptionHandler

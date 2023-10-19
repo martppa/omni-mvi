@@ -8,7 +8,7 @@ interface QueueContainerHost<State, Effect>
 @StateHostDsl
 fun <State, Effect>
         QueueContainerHost<State, Effect>.queueIntent(
-    block: suspend StateIntentScope<State, Effect>.() -> Unit
+    block: suspend IntentScope<State, Effect>.() -> Unit
 ) = container.asQueueContainer().enqueue(block)
 
 fun <State, Effect>

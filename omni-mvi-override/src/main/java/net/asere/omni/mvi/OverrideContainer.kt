@@ -16,7 +16,7 @@ open class OverrideContainer<State, Effect> internal constructor(
 
     internal fun overrideIntent(
         intentId: Any = Unit,
-        block: suspend StateIntentScope<State, Effect>.() -> Unit
+        block: suspend IntentScope<State, Effect>.() -> Unit
     ) = intent {
         mutex.withLock {
             val job = intents[intentId]

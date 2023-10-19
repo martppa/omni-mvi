@@ -1,11 +1,16 @@
 package net.asere.omni.mvi
 
-open class IntentScope(
-    open val container: Container,
-    internal var errorBlock: (Throwable) -> Unit = {}
-)
+class IntentScope<State, Effect>(
+    override val container: StateContainer<State, Effect>,
+    errorBlock: (Throwable) -> Unit = {}
+) : ExecutionScope(container, errorBlock)
 
 @StateHostDsl
-fun IntentScope.onError(
-    block:  (Throwable) -> Unit
-) { errorBlock = block }
+fun <State> IntentScope<State, *>.postState(
+    function: State.() -> State
+) = container.update(function)
+
+@StateHostDsl
+fun <Effect> IntentScope<*, Effect>.postEffect(
+    effect:  Effect
+) = container.post(effect)

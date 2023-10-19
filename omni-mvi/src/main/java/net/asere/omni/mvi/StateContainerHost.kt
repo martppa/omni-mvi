@@ -16,21 +16,15 @@ val <State> StateContainerHost<State, *>.currentState: State
 fun <State, Effect> StateContainerHost<State, Effect>.intent(
     context: CoroutineContext = EmptyCoroutineContext,
     start: CoroutineStart = CoroutineStart.DEFAULT,
-    block: suspend StateIntentScope<State, Effect>.() -> Unit
+    block: suspend IntentScope<State, Effect>.() -> Unit
 ): Job {
-    val scope = StateIntentScope(container.asStateContainer())
-    fun onError(throwable: Throwable) {
-        scope.errorBlock(throwable)
-    }
-    val executableContainer = container.asStateContainer()
-        .seek<ExecutableContainer> { it is ExecutableContainer }
-    return executableContainer.execute(
+    val scope = IntentScope(container.asStateContainer())
+    return execute(
         context = context,
         start = start,
-        onError = ::onError,
-    ) {
-        scope.block()
-    }
+        scope = scope,
+        block = { scope.block() }
+    )
 }
 
 fun <State> StateContainerHost<State, *>.observeState(onState: (State) -> Unit) = intent {
