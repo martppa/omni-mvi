@@ -6,10 +6,10 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 
 open class QueueContainer<State, Effect> internal constructor(
-    override val container: Container<State, Effect>,
-) : ContainerDecorator<State, Effect>(
+    override val container: ExposedStateContainer<State, Effect>,
+) : StateContainerDecorator<State, Effect>(
     container
-), Container<State, Effect>,
+), ExposedStateContainer<State, Effect>,
     QueueContainerHost<State, Effect> {
 
     private lateinit var intentQueue: Channel<Job>
@@ -35,7 +35,7 @@ open class QueueContainer<State, Effect> internal constructor(
     }
 
     internal fun enqueue(
-        block: suspend IntentScope<State, Effect>.() -> Unit
+        block: suspend StateIntentScope<State, Effect>.() -> Unit
     ) = intent {
         if (intentQueue.isClosed()) startIntentQueue()
         intentQueue.send(
@@ -45,12 +45,12 @@ open class QueueContainer<State, Effect> internal constructor(
 }
 
 fun <State, Effect> queueContainer(
-    container: Container<State, Effect>
+    container: ExposedStateContainer<State, Effect>
 ) = QueueContainer(container)
 
-fun <State, Effect> Container<State, Effect>
+fun <State, Effect> ExposedStateContainer<State, Effect>
         .buildQueueContainer() = queueContainer(this)
 
 internal fun <State, Effect>
-        Container<State, Effect>.asQueueContainer() =
-    seek<QueueContainer<State, Effect>> { it is QueueContainer<*, *> }
+        ExposedStateContainer<State, Effect>.asQueueContainer() =
+    asStateContainer().seek<QueueContainer<State, Effect>> { it is QueueContainer<*, *> }

@@ -5,10 +5,10 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 open class OverrideContainer<State, Effect> internal constructor(
-    override val container: Container<State, Effect>,
-) : ContainerDecorator<State, Effect>(
+    override val container: ExposedStateContainer<State, Effect>,
+) : StateContainerDecorator<State, Effect>(
     container
-), Container<State, Effect>,
+), ExposedStateContainer<State, Effect>,
     OverrideContainerHost<State, Effect> {
 
     private val mutex = Mutex()
@@ -16,7 +16,7 @@ open class OverrideContainer<State, Effect> internal constructor(
 
     internal fun overrideIntent(
         intentId: Any = Unit,
-        block: suspend IntentScope<State, Effect>.() -> Unit
+        block: suspend StateIntentScope<State, Effect>.() -> Unit
     ) = intent {
         mutex.withLock {
             val job = intents[intentId]
@@ -28,14 +28,14 @@ open class OverrideContainer<State, Effect> internal constructor(
 }
 
 fun <State, Effect> overrideContainer(
-    container: Container<State, Effect>
+    container: ExposedStateContainer<State, Effect>
 ) = OverrideContainer(container)
 
-fun <State, Effect> Container<State, Effect>
+fun <State, Effect> ExposedStateContainer<State, Effect>
         .buildOverrideContainer() = overrideContainer(this)
 
 internal fun <State, Effect>
-        Container<State, Effect>.asOverrideContainer() =
-    seek<OverrideContainer<State, Effect>> {
+        ExposedStateContainer<State, Effect>.asOverrideContainer() =
+    asStateContainer().seek<OverrideContainer<State, Effect>> {
         it is OverrideContainer<*, *>
     }

@@ -5,8 +5,8 @@ import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 
-interface StateContainerHost<State, Effect> {
-    val container: Container<State, Effect>
+interface StateContainerHost<State, Effect> : ContainerHost {
+    override val container: ExposedStateContainer<State, Effect>
 }
 
 val <State> StateContainerHost<State, *>.currentState: State
@@ -16,13 +16,14 @@ val <State> StateContainerHost<State, *>.currentState: State
 fun <State, Effect> StateContainerHost<State, Effect>.intent(
     context: CoroutineContext = EmptyCoroutineContext,
     start: CoroutineStart = CoroutineStart.DEFAULT,
-    block: suspend IntentScope<State, Effect>.() -> Unit
+    block: suspend StateIntentScope<State, Effect>.() -> Unit
 ): Job {
-    val scope = IntentScope(container as StateContainer)
+    val scope = StateIntentScope(container.asStateContainer())
     fun onError(throwable: Throwable) {
         scope.errorBlock(throwable)
     }
-    val executableContainer = container.seek<ExecutableContainer> { it is ExecutableContainer }
+    val executableContainer = container.asStateContainer()
+        .seek<ExecutableContainer> { it is ExecutableContainer }
     return executableContainer.execute(
         context = context,
         start = start,

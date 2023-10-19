@@ -13,7 +13,7 @@ import org.junit.Test
 class CancelIntentKtTest : LockContainerHost<Any, Any> {
 
     companion object {
-        private const val STATIC_SEEK = "net.asere.omni.mvi.ContainerDecoratorKt"
+        private const val STATIC_SEEK = "net.asere.omni.mvi.StateContainerDecoratorKt"
     }
 
     override val container: LockContainer<Any, Any> = mockk(relaxed = true)
@@ -22,6 +22,7 @@ class CancelIntentKtTest : LockContainerHost<Any, Any> {
     fun setup() {
         mockkStatic(STATIC_SEEK)
         every { container.seek<LockContainer<Any, Any>>(any()) } returns container
+        unmockkStatic(STATIC_SEEK)
     }
 
     @Test

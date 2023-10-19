@@ -15,7 +15,7 @@ internal class StateContainerHostKtTest : StateContainerHost<Any, Any> {
 
     private val coroutineScope = CoroutineScope(EmptyCoroutineContext)
     private val block: () -> Unit = mockk()
-    override val container: Container<Any, Any> = stateContainer(
+    override val container: ExposedStateContainer<Any, Any> = stateContainer(
         initialState = Unit,
         coroutineScope = coroutineScope
     )

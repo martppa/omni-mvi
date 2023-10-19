@@ -2,7 +2,7 @@ package net.asere.omni.mvi
 
 interface LockContainerHost<State, Effect>
     : StateContainerHost<State, Effect> {
-    override val container: Container<State, Effect>
+    override val container: ExposedStateContainer<State, Effect>
 }
 
 fun <State, Effect>
@@ -19,7 +19,7 @@ fun <State, Effect>
 fun <State, Effect>
         LockContainerHost<State, Effect>.lockIntent(
     intentId: Any = Unit,
-    block: suspend IntentScope<State, Effect>.() -> Unit
+    block: suspend StateIntentScope<State, Effect>.() -> Unit
 ) = container.asLockContainer().lockIntent(intentId, block)
 
 fun <State, Effect>

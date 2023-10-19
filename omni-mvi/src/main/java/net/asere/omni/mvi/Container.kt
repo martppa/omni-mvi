@@ -6,7 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 /**
  * Omni MVI basic Container
  */
-interface Container<State, Effect> {
+interface Container {
     val coroutineScope: CoroutineScope
     val coroutineExceptionHandler: CoroutineExceptionHandler
 }

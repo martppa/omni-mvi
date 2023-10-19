@@ -43,5 +43,6 @@ fun <State, Effect>
     coroutineExceptionHandler
 ).decorate { DelegatorContainer(it) }
 
-fun <State, Effect> Container<State, Effect>.asStateContainer() =
-    this as StateContainer
+
+fun <State, Effect> ExposedStateContainer<State, Effect>.asStateContainer() =
+    this as StateContainer<State, Effect>

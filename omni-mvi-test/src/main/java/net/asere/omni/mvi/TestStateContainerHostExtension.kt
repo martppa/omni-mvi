@@ -7,15 +7,15 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.suspendCoroutine
 
-fun <State, Effect> Container<State, Effect>.asExecutableContainer(): ExecutableContainer =
-    seek { it is ExecutableContainer }
+fun <State, Effect> ExposedStateContainer<State, Effect>.asExecutableContainer(): ExecutableContainer =
+    asStateContainer().seek { it is ExecutableContainer }
 
 suspend fun <State, Effect>
         StateContainerHost<State, Effect>.awaitJobs() =
     container.asExecutableContainer().awaitJobs()
 
 suspend fun <State, Effect>
-        StateContainer<State, Effect>.awaitJobs(until: () -> Boolean) {
+        ExposedStateContainer<State, Effect>.awaitJobs(until: () -> Boolean) {
     val emptyScope = CoroutineScope(EmptyCoroutineContext)
     val awaitingJob = emptyScope.launch(start = CoroutineStart.LAZY) {
         asExecutableContainer().awaitJobs()
@@ -29,7 +29,7 @@ suspend fun <State, Effect>
         }
         asDelegatorContainer().delegate(
             doOnAnyEmission(
-                container = this@awaitJobs,
+                container = this@awaitJobs.asStateContainer(),
                 block = ::verify
             )
         )
@@ -69,14 +69,14 @@ fun <State, Effect>
         StateContainerHost<State, Effect>.lockExecution() =
     container.asExecutableContainer().lockExecution()
 
-fun <State, Effect> Container<State, Effect>.asDelegatorContainer(): DelegatorContainer<State, Effect> =
-    seek { it is DelegatorContainer<*, *> }
+fun <State, Effect> ExposedStateContainer<State, Effect>.asDelegatorContainer(): DelegatorContainer<State, Effect> =
+    asStateContainer().seek { it is DelegatorContainer<*, *> }
 
-fun <State, Effect> Container<State, Effect>.delegate(
+fun <State, Effect> ExposedStateContainer<State, Effect>.delegate(
     container: StateContainer<State, Effect>
 ) = asDelegatorContainer().delegate(container)
 
-fun <State, Effect> Container<State, Effect>.clearDelegate() =
+fun <State, Effect> ExposedStateContainer<State, Effect>.clearDelegate() =
     asDelegatorContainer().clearDelegate()
 
 fun <State, Effect> StateContainerHost<State, Effect>.delegate(

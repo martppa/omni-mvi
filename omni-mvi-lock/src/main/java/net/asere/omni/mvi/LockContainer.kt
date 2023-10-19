@@ -5,10 +5,10 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 open class LockContainer<State, Effect> internal constructor(
-    override val container: Container<State, Effect>,
-) : ContainerDecorator<State, Effect>(
+    override val container: ExposedStateContainer<State, Effect>,
+) : StateContainerDecorator<State, Effect>(
     container
-), Container<State, Effect>,
+), Container,
     LockContainerHost<State, Effect> {
 
     private val mutex = Mutex()
@@ -26,7 +26,7 @@ open class LockContainer<State, Effect> internal constructor(
 
     internal fun lockIntent(
         intentId: Any,
-        block: suspend IntentScope<State, Effect>.() -> Unit
+        block: suspend StateIntentScope<State, Effect>.() -> Unit
     ) = intent {
         if (!intents[intentId].isLocked()) {
             intents[intentId] = LockableIntent(intent { block() })
@@ -43,12 +43,12 @@ open class LockContainer<State, Effect> internal constructor(
 }
 
 fun <State, Effect> lockContainer(
-    container: Container<State, Effect>
+    container: ExposedStateContainer<State, Effect>
 ) = LockContainer(container)
 
-fun <State, Effect> Container<State, Effect>
+fun <State, Effect> ExposedStateContainer<State, Effect>
         .buildLockContainer() = lockContainer(this)
 
 internal fun <State, Effect>
-        Container<State, Effect>.asLockContainer() =
-    seek<LockContainer<State, Effect>> { it is LockContainer<*, *> }
+        ExposedStateContainer<State, Effect>.asLockContainer() =
+    asStateContainer().seek<LockContainer<State, Effect>> { it is LockContainer<*, *> }
