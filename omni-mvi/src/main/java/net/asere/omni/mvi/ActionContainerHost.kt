@@ -4,7 +4,7 @@ package net.asere.omni.mvi
  * Action container's Host
  */
 interface ActionContainerHost<State, Effect, Action> : StateContainerHost<State, Effect> {
-    override val container: ActionContainer<State, Effect, Action>
+    override val container: ExposedActionContainer<State, Effect, Action>
 }
 
 /**
@@ -17,5 +17,8 @@ interface ActionContainerHost<State, Effect, Action> : StateContainerHost<State,
  */
 fun <State, Effect, Action>
         ActionContainerHost<State, Effect, Action>.on(action: Action) {
-    container.onAction(action)
+    container.asActionContainer().onAction(action)
 }
+
+internal fun <State, Effect, Action> ExposedActionContainer<State, Effect, Action>
+        .asActionContainer() = this as ActionContainer<State, Effect, Action>
