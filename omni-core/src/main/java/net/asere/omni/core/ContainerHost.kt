@@ -1,4 +1,4 @@
-package net.asere.omni.mvi
+package net.asere.omni.core
 
 interface ContainerHost {
     val container: Container

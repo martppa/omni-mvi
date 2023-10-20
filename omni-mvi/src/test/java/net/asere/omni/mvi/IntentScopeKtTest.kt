@@ -6,6 +6,8 @@ import io.mockk.verify
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking
+import net.asere.omni.core.EmptyCoroutineExceptionHandler
+import net.asere.omni.core.onError
 import org.junit.Assert
 import org.junit.Test
 

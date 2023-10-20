@@ -1,11 +1,11 @@
-package net.asere.omni.mvi
+package net.asere.omni.core
 
 open class ExecutionScope(
     open val container: Container,
     internal var errorBlock: (Throwable) -> Unit = {}
 )
 
-@StateHostDsl
+@OmniHostDsl
 fun ExecutionScope.onError(
     block:  (Throwable) -> Unit
 ) { errorBlock = block }

@@ -12,7 +12,7 @@ import net.asere.omni.mvi.currentState
 import net.asere.omni.mvi.intent
 import net.asere.omni.mvi.lockIntent
 import net.asere.omni.mvi.onAction
-import net.asere.omni.mvi.onError
+import net.asere.omni.core.onError
 import net.asere.omni.mvi.overrideIntent
 import net.asere.omni.mvi.postEffect
 import net.asere.omni.mvi.postState

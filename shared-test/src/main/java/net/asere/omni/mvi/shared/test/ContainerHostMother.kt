@@ -3,7 +3,7 @@ package net.asere.omni.mvi.shared.test
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
-import net.asere.omni.mvi.EmptyCoroutineExceptionHandler
+import net.asere.omni.core.EmptyCoroutineExceptionHandler
 import net.asere.omni.mvi.StateContainer
 import net.asere.omni.mvi.StateContainerHost
 import net.asere.omni.mvi.stateContainer

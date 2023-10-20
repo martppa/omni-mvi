@@ -4,6 +4,9 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
+import net.asere.omni.core.ContainerHost
+import net.asere.omni.core.OmniHostDsl
+import net.asere.omni.core.execute
 
 interface StateContainerHost<State, Effect> : ContainerHost {
     override val container: ExposedStateContainer<State, Effect>
@@ -12,7 +15,7 @@ interface StateContainerHost<State, Effect> : ContainerHost {
 val <State> StateContainerHost<State, *>.currentState: State
     get() = container.asStateContainer().state.value
 
-@StateHostDsl
+@OmniHostDsl
 fun <State, Effect> StateContainerHost<State, Effect>.intent(
     context: CoroutineContext = EmptyCoroutineContext,
     start: CoroutineStart = CoroutineStart.DEFAULT,

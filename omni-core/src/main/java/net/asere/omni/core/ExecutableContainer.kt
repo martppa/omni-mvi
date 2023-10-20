@@ -1,4 +1,4 @@
-package net.asere.omni.mvi
+package net.asere.omni.core
 
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -77,13 +77,7 @@ private fun <T> Result<T>.onCoroutineFailure(block: (Throwable) -> Unit): Result
     return this
 }
 
-fun Container.asExecutableContainer(): ExecutableContainer {
-    if (this is StateContainerDecorator<*, *>) return seek { it is ExecutableContainer }
-    if (this is ExecutableContainer) return this as ExecutableContainer
-    throw IllegalStateException("The container is not an Executable container!")
-}
-
-@StateHostDsl
+@OmniHostDsl
 fun ContainerHost.execute(
     context: CoroutineContext = EmptyCoroutineContext,
     start: CoroutineStart = CoroutineStart.DEFAULT,
@@ -95,7 +89,7 @@ fun ContainerHost.execute(
     block = block
 )
 
-@StateHostDsl
+@OmniHostDsl
 fun ContainerHost.execute(
     context: CoroutineContext = EmptyCoroutineContext,
     start: CoroutineStart = CoroutineStart.DEFAULT,
@@ -105,8 +99,9 @@ fun ContainerHost.execute(
     fun onError(throwable: Throwable) {
         scope.errorBlock(throwable)
     }
-    val executableContainer = container.asExecutableContainer()
-    return executableContainer.execute(
+    if (container !is ExecutableContainer)
+        throw IllegalStateException("The container is not an Executable container!")
+    return (container as ExecutableContainer).execute(
         context = context,
         start = start,
         onError = ::onError,

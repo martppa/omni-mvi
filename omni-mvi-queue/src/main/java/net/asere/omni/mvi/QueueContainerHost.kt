@@ -1,11 +1,13 @@
 package net.asere.omni.mvi
 
+import net.asere.omni.core.OmniHostDsl
+
 interface QueueContainerHost<State, Effect>
     : StateContainerHost<State, Effect> {
     override val container: ExposedStateContainer<State, Effect>
 }
 
-@StateHostDsl
+@OmniHostDsl
 fun <State, Effect>
         QueueContainerHost<State, Effect>.queueIntent(
     block: suspend IntentScope<State, Effect>.() -> Unit

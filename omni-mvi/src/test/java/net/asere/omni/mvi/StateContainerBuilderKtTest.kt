@@ -1,8 +1,8 @@
 package net.asere.omni.mvi
 
 import io.mockk.mockk
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import net.asere.omni.core.EmptyCoroutineExceptionHandler
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-# omni-mvi ![](https://img.shields.io/badge/mvi_version-1.2.5-004475) ![](https://img.shields.io/badge/coverage-90%25-004475)
+# omni-mvi ![](https://img.shields.io/badge/mvi_version-1.3.0-004475) ![](https://img.shields.io/badge/coverage-90%25-004475)
 Omni MVI is a light weight set of tools inspired by [Orbit](https://orbit-mvi.org) that allows Kotlin/Java developer turn any object into a MVI like object.
 
 ## Installation
@@ -6,6 +6,7 @@ In order to include omni-mvi, add the following dependencies to your project bui
 ```groovy
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("net.asere.omni.mvi:core:$version")
     implementation("net.asere.omni.mvi:mvi:$version")
 }
 ```
@@ -122,7 +123,7 @@ override val container = stateContainer(
     coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
 ).onAction(::onAction)
 
-// Here we handle incomming actions
+// Here we handle incoming actions
 private fun onAction(action: ListAction) {
     when (action) {
         ListAction.NextPage -> nextPage()
@@ -154,6 +155,7 @@ To add Omni-MVI-Test module to your project add the following to your gradle:
 ```groovy
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("net.asere.omni.mvi:core:$version")
     implementation("net.asere.omni.mvi:mvi:$version")
     testImplementation("net.asere.omni.mvi:mvi-test:$version")
 }
@@ -226,7 +228,7 @@ fun `On continues post intent called should take first 15 effects `() = runTest 
 }
 ```
 
-# omni-android ![](https://img.shields.io/badge/mvi_android_version-1.2.5-03DAC5)
+# omni-android ![](https://img.shields.io/badge/mvi_android_version-1.3.0-03DAC5)
 Omni Android offers you an interface to interact with composable observers and collectors of state and effect.
 
 ## Installation
@@ -234,6 +236,7 @@ In order to include omni-mvi-android, add the following dependencies to your pro
 ```groovy
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("net.asere.omni.mvi:core:$version")
     implementation("net.asere.omni.mvi:mvi:$version")
     implementation("net.asere.omni.mvi:mvi-android:$version")
 }
@@ -280,7 +283,7 @@ You can observe container host state using the composable extension `state()` wh
 val state by viewModel.state()
 ```
 
-# omni-mvi-lock ![](https://img.shields.io/badge/mvi_lock_version-1.2.5-11AA00) ![](https://img.shields.io/badge/coverage-23%25-11AA00)
+# omni-mvi-lock ![](https://img.shields.io/badge/mvi_lock_version-1.3.0-11AA00) ![](https://img.shields.io/badge/coverage-23%25-11AA00)
 Omni MVI Lock is a container host decorator that allows you execute locking intents using `lockIntent()` DSL.
 
 ## Installation
@@ -288,6 +291,7 @@ In order to include omni-mvi-lock, add the following dependencies to your projec
 ```groovy
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("net.asere.omni.mvi:core:$version")
     implementation("net.asere.omni.mvi:mvi:$version")
     implementation("net.asere.omni.mvi:mvi-lock:$version")
 }
@@ -335,7 +339,7 @@ private fun fetchContent() = lockIntent {
 ## Locking/Unlocking an intent
 The lock container host allows you to lock/unlock any intent at any time by calling `lockIntent(id)` or `unlockIntent(id)`. Id parameter is optional, if none is provided then the default intent will be handled.
 
-# omni-mvi-override ![](https://img.shields.io/badge/mvi_override_version-1.2.5-B41B00) ![](https://img.shields.io/badge/coverage-0%25-B41B00)
+# omni-mvi-override ![](https://img.shields.io/badge/mvi_override_version-1.3.0-B41B00) ![](https://img.shields.io/badge/coverage-0%25-B41B00)
 Omni MVI Override is a container host decorator that allows developers execute any intent replacing any previous ongoing execution of itself.
 
 ## Installation
@@ -343,6 +347,7 @@ In order to include omni-mvi-override, add the following dependencies to your pr
 ```groovy
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("net.asere.omni.mvi:core:$version")
     implementation("net.asere.omni.mvi:mvi:$version")
     implementation("net.asere.omni.mvi:mvi-override:$version")
 }
@@ -382,7 +387,7 @@ private fun onQuery(value: String) = overrideIntent {
 }
 ```
 
-# omni-mvi-queue ![](https://img.shields.io/badge/mvi_queue_version-1.2.5-6300AA) ![](https://img.shields.io/badge/coverage-0%25-6300AA)
+# omni-mvi-queue ![](https://img.shields.io/badge/mvi_queue_version-1.3.0-6300AA) ![](https://img.shields.io/badge/coverage-0%25-6300AA)
 Omni MVI Queue is a container host decorator that allows developers push intents into a queue of execution. Queue intents will be then executed one by one.
 
 ## Installation
@@ -390,6 +395,7 @@ In order to include omni-mvi-queue, add the following dependencies to your proje
 ```groovy
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("net.asere.omni.mvi:core:$version")
     implementation("net.asere.omni.mvi:mvi:1.0")
     implementation("net.asere.omni.mvi:mvi-queue:$version")
 }

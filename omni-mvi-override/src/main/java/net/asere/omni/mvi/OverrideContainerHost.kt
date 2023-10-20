@@ -1,11 +1,13 @@
 package net.asere.omni.mvi
 
+import net.asere.omni.core.OmniHostDsl
+
 interface OverrideContainerHost<State, Effect>
     : StateContainerHost<State, Effect> {
     override val container: ExposedStateContainer<State, Effect>
 }
 
-@StateHostDsl
+@OmniHostDsl
 fun <State, Effect>
         OverrideContainerHost<State, Effect>.overrideIntent(
     intentId: Any = Unit,

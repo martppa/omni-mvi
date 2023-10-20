@@ -1,6 +1,7 @@
 package net.asere.omni.mvi
 
 import kotlinx.coroutines.withContext
+import net.asere.omni.core.ExecutableContainer
 import java.lang.IllegalArgumentException
 
 fun <State, Effect> TestResult<State, Effect>.evaluate(block: TestResult<State, Effect>.() -> Unit) =

@@ -1,5 +1,7 @@
 package net.asere.omni.mvi
 
+import net.asere.omni.core.OmniHostDsl
+
 interface LockContainerHost<State, Effect>
     : StateContainerHost<State, Effect> {
     override val container: ExposedStateContainer<State, Effect>
@@ -15,7 +17,7 @@ fun <State, Effect>
     intentId: Any = Unit
 ) = container.asLockContainer().unlockIntent(intentId)
 
-@StateHostDsl
+@OmniHostDsl
 fun <State, Effect>
         LockContainerHost<State, Effect>.lockIntent(
     intentId: Any = Unit,

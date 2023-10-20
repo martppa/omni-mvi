@@ -70,6 +70,7 @@ dependencies {
     def coroutines_version = '1.6.1'
 
     implementation project(path: ':omni-mvi-android')
+    implementation project(path: ':omni-core')
     implementation project(path: ':omni-mvi')
     implementation project(path: ':omni-mvi-lock')
     implementation project(path: ':omni-mvi-queue')

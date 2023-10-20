@@ -10,21 +10,26 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+compileKotlin {
+    kotlinOptions {
+        freeCompilerArgs += [
+                "-Xopt-in=kotlin.RequiresOptIn"
+        ]
+    }
+}
+
 version = '1.3.0'
 
 ext {
     VERSION = version
-    ARTIFACT_ID = 'mvi-test'
-    POM_NAME = 'Omni-MVI-Test'
-    POM_DESCRIPTION = 'Omni MVI Test is a Omni MVI decorator that allows developers ' +
-            'test their intents states and effects'
+    ARTIFACT_ID = 'core'
+    POM_NAME = 'Omni-Core'
+    POM_DESCRIPTION = 'Omni core is toolset meant to deal with kotlin code executions.'
 }
 
 apply from: "${rootProject.projectDir}/scripts/base_publish.gradle"
 
 dependencies {
-    implementation project(path: ':omni-core')
-    implementation project(path: ':omni-mvi')
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
     testImplementation "io.mockk:mockk:1.13.2"
     testImplementation 'junit:junit:4.13.2'

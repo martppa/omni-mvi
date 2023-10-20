@@ -3,6 +3,7 @@ package net.asere.omni.mvi
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import net.asere.omni.core.Container
 
 open class LockContainer<State, Effect> internal constructor(
     override val container: ExposedStateContainer<State, Effect>,

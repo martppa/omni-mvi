@@ -2,6 +2,7 @@ package net.asere.omni.mvi
 
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import net.asere.omni.core.ExecutableContainer
 
 /**
  * Basic container decorator implementation. Its function is to decorate any
@@ -9,11 +10,11 @@ import kotlinx.coroutines.CoroutineScope
  */
 open class StateContainerDecorator<State, Effect>(
     internal val container: ExposedStateContainer<State, Effect>
-) : StateContainer<State, Effect> {
+) : ExecutableContainer(
+    coroutineScope = container.coroutineScope,
+    coroutineExceptionHandler = container.coroutineExceptionHandler,
+), StateContainer<State, Effect> {
 
-    override val coroutineScope: CoroutineScope = container.coroutineScope
-    override val coroutineExceptionHandler: CoroutineExceptionHandler =
-        container.coroutineExceptionHandler
     override val state = container.asStateContainer().state
     override val effect = container.asStateContainer().effect
     override fun update(function: State.() -> State) =
