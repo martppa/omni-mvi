@@ -4,9 +4,8 @@ import net.asere.omni.core.ExecutionScope
 import net.asere.omni.core.OmniHostDsl
 
 class IntentScope<State, Effect>(
-    override val container: StateContainer<State, Effect>,
-    errorBlock: (Throwable) -> Unit = {}
-) : ExecutionScope(container, errorBlock)
+    val container: StateContainer<State, Effect>,
+) : ExecutionScope()
 
 @OmniHostDsl
 fun <State> IntentScope<State, *>.postState(

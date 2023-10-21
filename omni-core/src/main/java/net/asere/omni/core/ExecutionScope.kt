@@ -1,7 +1,6 @@
 package net.asere.omni.core
 
 open class ExecutionScope(
-    open val container: Container,
     internal var errorBlock: (Throwable) -> Unit = {}
 )
 

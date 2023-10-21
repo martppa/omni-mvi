@@ -85,7 +85,7 @@ fun ContainerHost.execute(
 ) = execute(
     context = context,
     start = start,
-    scope = ExecutionScope(container),
+    scope = ExecutionScope(),
     block = block
 )
 
