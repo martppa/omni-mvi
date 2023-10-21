@@ -101,7 +101,7 @@ private fun fetchDataAfter(time: Int) = intent {
 If you are using standard JVM you can observe states and effects using `observeState()` and `observeEffect()` intent functions. Both extension functions require a lambda, this lambda will be called whenever a value is emitted.
 
 ## Actions
-Omni-MVI offers you an alternative way of intents execution. By using the `Action` API you can centralise the invocation flow. A `StateContainer` does not provide any way of `Action` execution. To allow this make your `Host` implement `ActionContainerHost`
+Omni-MVI offers you an alternative way of intents execution. By using the `Action` API you can centralise the invocation flow, avoiding any unwanted access to the host. A `StateContainer` does not provide any way of `Action` execution. To allow this make your `Host` implement `ActionContainerHost`.
 
 ```kotlin
 class ListViewModel(
