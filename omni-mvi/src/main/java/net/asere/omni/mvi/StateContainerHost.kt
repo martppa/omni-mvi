@@ -26,7 +26,7 @@ fun <State, Effect> StateContainerHost<State, Effect>.intent(
         context = context,
         start = start,
         scope = scope,
-        block = { scope.block() }
+        block = block
     )
 }
 
