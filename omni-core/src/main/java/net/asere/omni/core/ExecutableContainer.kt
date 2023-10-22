@@ -78,11 +78,11 @@ private fun <T> Result<T>.onCoroutineFailure(block: (Throwable) -> Unit): Result
 }
 
 @OmniHostDsl
-fun <Scope : ExecutionScope, Result> ContainerHost.execute(
+fun <Scope : ExecutionScope> ContainerHost.execute(
     context: CoroutineContext = EmptyCoroutineContext,
     start: CoroutineStart = CoroutineStart.DEFAULT,
     scope: Scope,
-    block: suspend Scope.() -> Result
+    block: suspend Scope.() -> Unit
 ): Job {
     fun onError(throwable: Throwable) {
         scope.errorBlock(throwable)
