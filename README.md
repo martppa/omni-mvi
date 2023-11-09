@@ -114,7 +114,7 @@ class ListViewModel(
 
 `ActionContainerHost` expects a third generic parameter called Action. This parameter defines the handled action data-type.
 
-In order to build an `ActionContainer` just call `.onAction()` funtion on any container and provide it's callback. Once an action is called the callback will be invoked. `onAction()` will turn any container into an action container.
+In order to build an `ActionContainer` just call `.onAction()` funtion on any container and provide its callback. Once an action is called the callback will be invoked. `onAction()` will turn any container into an action container.
 
 ```kotlin
 override val container = stateContainer(
@@ -162,7 +162,7 @@ dependencies {
 ```
 
 ### Constructor testing
-If your `Host` executes intents during it's construction you can capture its states and effects by running `testConstructor()`:
+If your `Host` executes intents during its construction you can capture its states and effects by running `testConstructor()`:
 
 ```kotlin
 @Test
@@ -365,7 +365,7 @@ class ListViewModel(
     ActionContainerHost<ListState, ListEffect, ListAction>,
     OverrideContainerHost<ListState, ListEffect>
 ```
-Once implemented you must override it's container. In order to do it, you can use `buildOverrideContainer()` builder function. `buildOverrideContainer()` will turn any `Container` into an `OverrideContainer`.
+Once implemented you must override its container. In order to do it, you can use `buildOverrideContainer()` builder function. `buildOverrideContainer()` will turn any `Container` into an `OverrideContainer`.
 ```kotlin
 override val container = stateContainer(
     initialState = ListState(),
