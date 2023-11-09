@@ -176,7 +176,7 @@ fun `On creation must request first page to repository`() = runTest {
 }
 ```
 
-`testConstructor()` function will construct you host under a controlled context to allow state and effects recording. It returns a `TestResult` object that contains a list of emitted states and a list of emitted effects. Call evaluate to get inline access to it's properties.
+`testConstructor()` function will construct you host under a controlled context to allow state and effects recording. It returns a `TestResult` object that contains a list of emitted states and a list of emitted effects. Call evaluate to get inline access to its properties.
 
 ### Intents testing
 Call `testIntent()` to capture any emitted state or effect. Call `evaluate` to get inline access to resulting data:
