@@ -294,6 +294,17 @@ override val container = saveableStateContainer(
     coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
 )
 ```
+Make sure your states and member types are parcelable.
+```kotlin
+@Parcelize
+data class ListState(
+    val query: String? = null,
+    val currentPage: Int = 1,
+    val loading: Boolean = false,
+    val items: List<RepoModel> = listOf(),
+    val error: String = String.empty()
+) : Parcelable
+```
 
 # omni-mvi-lock ![](https://img.shields.io/badge/mvi_lock_version-1.7.0-11AA00) ![](https://img.shields.io/badge/coverage-23%25-11AA00)
 Omni MVI Lock is a container host decorator that allows you execute locking intents using `lockIntent()` DSL.
