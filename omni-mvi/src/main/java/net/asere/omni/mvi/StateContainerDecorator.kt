@@ -1,7 +1,5 @@
 package net.asere.omni.mvi
 
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
 import net.asere.omni.core.ExecutableContainer
 
 /**

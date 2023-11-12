@@ -1,32 +1,34 @@
 package net.asere.omni.mvi
 
-import kotlin.coroutines.EmptyCoroutineContext
+import androidx.lifecycle.SavedStateHandle
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.update
 import net.asere.omni.core.EmptyCoroutineExceptionHandler
 import net.asere.omni.core.ExecutableContainer
+import kotlin.coroutines.EmptyCoroutineContext
 
- class StateContainerConcretion<State, Effect> internal constructor(
-    initialState: State,
+private const val HANDLE_KEY = "omni_state"
+
+class SaveableStateContainer<State, Effect> internal constructor(
+    private val initialState: State,
+    private val savedStateHandle: SavedStateHandle,
     override val coroutineScope: CoroutineScope,
     override val coroutineExceptionHandler: CoroutineExceptionHandler,
 ) : ExecutableContainer(
     coroutineScope = coroutineScope,
     coroutineExceptionHandler = coroutineExceptionHandler
 ), StateContainer<State, Effect> {
-    private val _state: MutableStateFlow<State> = MutableStateFlow(initialState)
-    override val state = _state.asStateFlow()
+
+    override val state = savedStateHandle.getStateFlow(HANDLE_KEY, initialState)
 
     private val _effect = Channel<Effect>(capacity = Channel.UNLIMITED)
     override val effect = _effect.receiveAsFlow()
 
     override fun update(function: State.() -> State) {
-        _state.update { it.function() }
+        val currentState: State = savedStateHandle[HANDLE_KEY] ?: initialState
+        savedStateHandle[HANDLE_KEY] = currentState.function()
     }
 
     override fun post(effect: Effect) {
@@ -35,16 +37,14 @@ import net.asere.omni.core.ExecutableContainer
 }
 
 fun <State, Effect>
-        StateContainerHost<State, Effect>.stateContainer(
+        StateContainerHost<State, Effect>.saveableStateContainer(
     initialState: State,
+    savedStateHandle: SavedStateHandle,
     coroutineScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext),
     coroutineExceptionHandler: CoroutineExceptionHandler = EmptyCoroutineExceptionHandler
-) = StateContainerConcretion<State, Effect>(
+) = SaveableStateContainer<State, Effect>(
     initialState = initialState,
+    savedStateHandle = savedStateHandle,
     coroutineScope = coroutineScope,
     coroutineExceptionHandler = coroutineExceptionHandler
 ).decorate { DelegatorContainer(it) }
-
-
-fun <State, Effect> ExposedStateContainer<State, Effect>.asStateContainer() =
-    this as StateContainer<State, Effect>

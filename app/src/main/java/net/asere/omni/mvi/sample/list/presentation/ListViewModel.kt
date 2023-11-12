@@ -1,5 +1,6 @@
 package net.asere.omni.mvi.sample.list.presentation
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.delay
@@ -22,13 +23,16 @@ import net.asere.omni.mvi.sample.list.presentation.exception.ExceptionHandler
 import net.asere.omni.mvi.sample.list.presentation.exception.coroutineExceptionHandler
 import net.asere.omni.mvi.sample.shared.core.extension.requireMessage
 import net.asere.omni.mvi.sample.shared.domain.extension.empty
+import net.asere.omni.mvi.sample.shared.presentation.model.asPresentation
+import net.asere.omni.mvi.saveableStateContainer
 import net.asere.omni.mvi.stateContainer
 import net.asere.omni.mvi.unlockIntent
 
 class ListViewModel(
+    savedStateHandle: SavedStateHandle,
+    exceptionHandler: ExceptionHandler,
     private val getRepositories: GetRepositories,
     private val searchRepositories: SearchRepositories,
-    exceptionHandler: ExceptionHandler
 ) : ViewModel(),
     ActionContainerHost<ListState, ListEffect, ListAction>,
     LockContainerHost<ListState, ListEffect>,
@@ -38,8 +42,9 @@ class ListViewModel(
         private const val QUERY_DELAY = 300L
     }
 
-    override val container = stateContainer(
+    override val container = saveableStateContainer(
         initialState = ListState(),
+        savedStateHandle = savedStateHandle,
         coroutineScope = viewModelScope,
         coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
     ).buildLockContainer()
@@ -65,7 +70,7 @@ class ListViewModel(
         onError { showError(it) } // Executed when an error occurs
         postState { copy(loading = true) }
         val repos = searchRepositories(query = value, currentState.currentPage)
-        postState { copy(loading = false, items = repos.items) }
+        postState { copy(loading = false, items = repos.items.map { it.asPresentation() }) }
     }
 
     // We are using lockIntent since we want this intent to execute only once at a time
@@ -74,7 +79,11 @@ class ListViewModel(
         postState { copy(loading = items.isEmpty(), error = String.empty()) }
         val repos = getRepositories(currentState.currentPage)
         postState {
-            copy(loading = false, currentPage = repos.currentPage, items = items + repos.items)
+            copy(
+                loading = false,
+                currentPage = repos.currentPage,
+                items = items + repos.items.map { it.asPresentation() }
+            )
         }
         if (repos.items.isEmpty()) {
             lockIntent() // Lock this intent as the end of the list has been reached

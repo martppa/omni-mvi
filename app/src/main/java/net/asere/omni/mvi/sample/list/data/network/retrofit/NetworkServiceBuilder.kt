@@ -10,7 +10,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 class NetworkServiceBuilder {
     private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(Routes.Host)
-        .addConverterFactory(buildJsonParser())
+        .addConverterFactory(MoshiConverterFactory.create())
         .client(createHttpClient())
         .build()
 
@@ -20,10 +20,6 @@ class NetworkServiceBuilder {
             okHttpClientBuilder.addInterceptor(buildLoggingInterceptor())
         }
         return okHttpClientBuilder.build()
-    }
-
-    private fun buildJsonParser(): MoshiConverterFactory {
-        return MoshiConverterFactory.create()
     }
 
     private fun buildLoggingInterceptor(): HttpLoggingInterceptor {

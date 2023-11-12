@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="1.7">
+    <bytecodeTargetLevel target="1.8">
+      <module name="omni-mvi.main" target="17" />
       <module name="omni-mvi.omni-mvi-action" target="1.8" />
       <module name="omni-mvi.omni-mvi-action.main" target="1.8" />
       <module name="omni-mvi.omni-mvi-action.test" target="1.8" />
       <module name="omni-mvi.omni-mvi-decorator" target="1.8" />
       <module name="omni-mvi.omni-mvi-decorator.main" target="1.8" />
       <module name="omni-mvi.omni-mvi-decorator.test" target="1.8" />
+      <module name="omni-mvi.test" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>

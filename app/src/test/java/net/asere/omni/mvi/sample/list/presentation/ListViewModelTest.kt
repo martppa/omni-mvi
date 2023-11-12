@@ -1,5 +1,6 @@
 package net.asere.omni.mvi.sample.list.presentation
 
+import androidx.lifecycle.SavedStateHandle
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -40,6 +41,7 @@ class ListViewModelTest {
     private val searchRepositories: SearchRepositories = mockk(relaxed = true)
 
     private fun createViewModel() = ListViewModel(
+        savedStateHandle = SavedStateHandle(),
         getRepositories = getRepositories,
         searchRepositories = searchRepositories,
         exceptionHandler = exceptionHandler

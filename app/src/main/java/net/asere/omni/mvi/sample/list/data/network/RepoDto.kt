@@ -7,11 +7,11 @@ import net.asere.omni.mvi.sample.shared.domain.model.Repo
 
 @JsonClass(generateAdapter = true)
 data class SearchResultRepoJson(
-    val items: List<RepoJson>
+    val items: List<RepoDto>
 )
 
 @JsonClass(generateAdapter = true)
-data class RepoJson(
+data class RepoDto(
     val id: Long,
     val name: String,
     val description: String?,
@@ -26,4 +26,4 @@ data class OwnerJson(
     val avatarUrl: String
 )
 
-fun RepoJson.toDomain() = Repo(id, name, description ?: String.empty(), owner.login, owner.avatarUrl, fork)
+fun RepoDto.toDomain() = Repo(id, name, description ?: String.empty(), owner.login, owner.avatarUrl, fork)

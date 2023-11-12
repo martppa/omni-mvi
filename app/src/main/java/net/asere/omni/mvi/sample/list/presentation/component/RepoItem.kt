@@ -11,9 +11,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import net.asere.omni.mvi.sample.shared.domain.model.Repo
+import net.asere.omni.mvi.sample.shared.presentation.model.RepoModel
 
 @Composable
-fun RepoItem(repo: Repo) {
+fun RepoItem(repo: RepoModel) {
     Box(
         modifier = Modifier
             .background(
