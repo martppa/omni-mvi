@@ -283,8 +283,8 @@ You can observe container host state using the composable extension `state()` wh
 val state by viewModel.state()
 ```
 
-## Saving screen states
-Omni-MVI allows you to save your states to avoid them to be destroyed if the device releases the memory. There is where the `SaveableStateContainer` becomes handy. Use the top level host extension function `saveableStateContainer` and pass a `SavedStateHandle` object.
+## Saving states
+Omni-MVI allows you to save your states to avoid them to be destroyed if the device releases the memory. There is where the `SaveableStateContainer` becomes handy. Use the top level host extension function `saveableStateContainer` and pass an aditional `SavedStateHandle` object in order to build the container.
 
 ```kotlin
 override val container = saveableStateContainer(
