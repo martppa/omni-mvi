@@ -283,6 +283,18 @@ You can observe container host state using the composable extension `state()` wh
 val state by viewModel.state()
 ```
 
+## Saving screen states
+Omni-MVI allows you to save your states to avoid them to be destroyed if the device releases the memory. There is where the `SaveableStateContainer` becomes handy. Use the top level host extension function `saveableStateContainer` and pass a `SavedStateHandle` object.
+
+```kotlin
+override val container = saveableStateContainer(
+    initialState = ListState(),
+    savedStateHandle = savedStateHandle,
+    coroutineScope = viewModelScope,
+    coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
+)
+```
+
 # omni-mvi-lock ![](https://img.shields.io/badge/mvi_lock_version-1.7.0-11AA00) ![](https://img.shields.io/badge/coverage-23%25-11AA00)
 Omni MVI Lock is a container host decorator that allows you execute locking intents using `lockIntent()` DSL.
 
