@@ -25,11 +25,17 @@ open class DelegatorContainer<State, Effect>(
         delegatedContainer = null
     }
 
+    /**
+     * Updates the state and delegates the update
+     */
     override fun update(function: State.() -> State) {
         delegatedContainer?.update(function)
         container.asStateContainer().update(function)
     }
 
+    /**
+     * Post the effect and delegates it
+     */
     override fun post(effect: Effect) {
         delegatedContainer?.post(effect)
         container.asStateContainer().post(effect)

@@ -11,6 +11,14 @@ import kotlinx.coroutines.flow.update
 import net.asere.omni.core.EmptyCoroutineExceptionHandler
 import net.asere.omni.core.ExecutableContainer
 
+/**
+ * Actual StateContainer implementation
+ *
+ * @param initialState Starting state of the container
+ * @param coroutineScope Execution coroutine scope
+ * @param coroutineExceptionHandler Execution handler intended to catch thrown exceptions
+ * during execution
+ */
  class StateContainerConcretion<State, Effect> internal constructor(
     initialState: State,
     override val coroutineScope: CoroutineScope,
@@ -34,6 +42,14 @@ import net.asere.omni.core.ExecutableContainer
     }
 }
 
+/**
+ * StateContainer builder. Use this function to create it.
+ *
+ * @param initialState Starting state of the container
+ * @param coroutineScope Execution coroutine scope
+ * @param coroutineExceptionHandler Execution handler intended to catch thrown exceptions
+ * during execution
+ */
 fun <State, Effect>
         StateContainerHost<State, Effect>.stateContainer(
     initialState: State,

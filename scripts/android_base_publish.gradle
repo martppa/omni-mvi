@@ -1,5 +1,4 @@
 task androidSourcesJar(type: Jar) {
-    archiveClassifier.set('sources')
     if (project.plugins.findPlugin("com.android.library")) {
         from android.sourceSets.main.java.srcDirs
     } else {

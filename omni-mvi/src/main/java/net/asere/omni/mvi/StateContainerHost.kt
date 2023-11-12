@@ -8,13 +8,27 @@ import net.asere.omni.core.ContainerHost
 import net.asere.omni.core.OmniHostDsl
 import net.asere.omni.core.execute
 
+/**
+ * Implement this interface to turn your class
+ * into a state host.
+ */
 interface StateContainerHost<State, Effect> : ContainerHost {
     override val container: ExposedStateContainer<State, Effect>
 }
 
+/**
+ * Current and last state emitted from within the state host
+ */
 val <State> StateContainerHost<State, *>.currentState: State
     get() = container.asStateContainer().state.value
 
+/**
+ * Executes an intent
+ *
+ * @param context Defines the context to run instructions
+ * @param start CoroutineStart policy
+ * @param block Executable intent content
+ */
 @OmniHostDsl
 fun <State, Effect> StateContainerHost<State, Effect>.intent(
     context: CoroutineContext = EmptyCoroutineContext,
@@ -30,10 +44,20 @@ fun <State, Effect> StateContainerHost<State, Effect>.intent(
     )
 }
 
+/**
+ * Emits each state to the provided callback
+ *
+ * @param onState Block set here will receive emitted states
+ */
 fun <State> StateContainerHost<State, *>.observeState(onState: (State) -> Unit) = intent {
     container.state.collect { onState(it) }
 }
 
+/**
+ * Emits each effect to the provided callback
+ *
+ * @param onEffect Block set here will receive emitted effects
+ */
 fun <Effect> StateContainerHost<*, Effect>.observeEffect(onEffect: (Effect) -> Unit) = intent {
     container.effect.collect { onEffect(it) }
 }

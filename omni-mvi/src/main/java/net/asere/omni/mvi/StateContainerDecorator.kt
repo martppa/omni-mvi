@@ -4,7 +4,7 @@ import net.asere.omni.core.ExecutableContainer
 
 /**
  * Basic container decorator implementation. Its function is to decorate any
- * container with its own feature.
+ * container with its own features.
  */
 open class StateContainerDecorator<State, Effect>(
     internal val container: ExposedStateContainer<State, Effect>
