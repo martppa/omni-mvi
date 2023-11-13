@@ -20,7 +20,7 @@ fun <State, Effect>
 ) = container.asQueueContainer().enqueue(block)
 
 /**
- * Clear intent's queue
+ * Clear container's intent queue
  */
 fun <State, Effect>
         QueueContainerHost<State, Effect>.clearQueue() =
