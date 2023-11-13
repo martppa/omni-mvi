@@ -58,7 +58,7 @@ abstract class ExecutableContainer(
     }
 
     /**
-     * Returns whether is the executions are blocked or not
+     * Returns whether are the executions blocked or not
      */
     private fun isExecutionLocked(): Boolean {
         return Thread.currentThread().name == BlockedExecutionThreadName || locked
