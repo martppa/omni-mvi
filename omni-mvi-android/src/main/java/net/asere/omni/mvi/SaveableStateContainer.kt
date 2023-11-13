@@ -11,6 +11,15 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 private const val HANDLE_KEY = "omni_state"
 
+/**
+ * This container behaves just like a normal StateContainer but it will
+ * store states to the SavedStateHandle
+ *
+ * @param initialState Initial state to start the container
+ * @param savedStateHandle SavedStateHandle used to store the state
+ * @param coroutineScope Coroutine scope in which intents will be executed
+ * @param coroutineExceptionHandler Handler to deal with exceptions
+ */
 class SaveableStateContainer<State, Effect> internal constructor(
     private val initialState: State,
     private val savedStateHandle: SavedStateHandle,
@@ -36,6 +45,14 @@ class SaveableStateContainer<State, Effect> internal constructor(
     }
 }
 
+/**
+ * Use this top level extension to build a SaveableStateContainer
+ *
+ * @param initialState Initial state to start the container
+ * @param savedStateHandle SavedStateHandle used to store the state
+ * @param coroutineScope Coroutine scope in which intents will be executed, defaulted to CoroutineScope(EmptyCoroutineContext)
+ * @param coroutineExceptionHandler Handler to deal with exceptions, defaulted to EmptyCoroutineExceptionHandler
+ */
 fun <State, Effect>
         StateContainerHost<State, Effect>.saveableStateContainer(
     initialState: State,

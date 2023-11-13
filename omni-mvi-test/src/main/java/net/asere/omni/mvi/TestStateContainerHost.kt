@@ -4,14 +4,27 @@ import kotlinx.coroutines.withContext
 import net.asere.omni.core.ExecutableContainer
 import java.lang.IllegalArgumentException
 
+/**
+ * Puts the container host in evaluation status and offers a scope of with testing data such as
+ * emitted states and emitted effects.
+ */
 fun <State, Effect> TestResult<State, Effect>.evaluate(block: TestResult<State, Effect>.() -> Unit) =
     this.block()
 
-class TestResult<State, Effect>(
+/**
+ * Test result data
+ */
+data class TestResult<State, Effect>(
     val emittedStates: List<State>,
     val emittedEffects: List<Effect>
 )
 
+/**
+ * Call this extension function to start testing an action
+ *
+ * @param action Action to test
+ * @param take argument to define how many data items must be collected
+ */
 suspend fun <State, Effect, Action> ActionContainerHost<State, Effect, Action>.testOn(
     action: Action,
     take: Take? = null,
@@ -19,6 +32,12 @@ suspend fun <State, Effect, Action> ActionContainerHost<State, Effect, Action>.t
     take = take
 ) { on(action) }
 
+/**
+ * Call this method to start testing an intent
+ *
+ * @param testBlock intent reference or testing content
+ * @param take argument to define how many data items must be collected
+ */
 suspend fun <State, Effect, Host : StateContainerHost<State, Effect>> Host.testIntent(
     take: Take? = null,
     testBlock: Host.() -> Unit
@@ -39,6 +58,11 @@ suspend fun <State, Effect, Host : StateContainerHost<State, Effect>> Host.testI
     }
 }
 
+/**
+ * Test a host constructor
+ *
+ * @param builder Host construction builder function
+ */
 suspend fun <State, Effect> testConstructor(
     builder: () -> StateContainerHost<State, Effect>
 ) = withContext(ExecutableContainer.blockedContext()) {

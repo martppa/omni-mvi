@@ -5,6 +5,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 
+/**
+ * This is a state container capable of enqueuing intents. Each invoked intent
+ * is placed into a queue of execution.
+ */
 open class QueueContainer<State, Effect> internal constructor(
     override val container: ExposedStateContainer<State, Effect>,
 ) : StateContainerDecorator<State, Effect>(
@@ -18,6 +22,7 @@ open class QueueContainer<State, Effect> internal constructor(
     init {
         startIntentQueue()
     }
+
 
     private fun startIntentQueue() {
         intentQueue = Channel(capacity = Channel.UNLIMITED)
@@ -34,6 +39,11 @@ open class QueueContainer<State, Effect> internal constructor(
         intentQueue.cancel()
     }
 
+    /**
+     * Enqueue an intent
+     *
+     * @param block intent's content
+     */
     internal fun enqueue(
         block: suspend IntentScope<State, Effect>.() -> Unit
     ) = intent {

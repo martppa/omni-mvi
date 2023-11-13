@@ -14,6 +14,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
 
+/**
+ * Composable callback to deal with emitted effects from within the Host.
+ */
 @Composable
 fun <UiState, Effect> StateContainerHost<UiState, Effect>.OnEffect(
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
@@ -30,6 +33,9 @@ fun <UiState, Effect> StateContainerHost<UiState, Effect>.OnEffect(
     }
 }
 
+/**
+ * Emitted states delegate.
+ */
 @Composable
 fun <UiState> StateContainerHost<UiState, *>.state(
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
@@ -44,6 +50,9 @@ fun <UiState> StateContainerHost<UiState, *>.state(
     return lifecycleStateFlow.collectAsState(currentState)
 }
 
+/**
+ * Set callback function to receive emitted states from within the Host
+ */
 fun <UiState> StateContainerHost<UiState, *>.observeState(
     lifecycleOwner: LifecycleOwner,
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
@@ -56,6 +65,9 @@ fun <UiState> StateContainerHost<UiState, *>.observeState(
     }
 }
 
+/**
+ * Set callback function to receive emitted effect from within the Host
+ */
 fun <Effect> StateContainerHost<*, Effect>.observeEffect(
     lifecycleOwner: LifecycleOwner,
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
