@@ -16,11 +16,11 @@ class SeekKtTest {
 
     @Test
     fun `Assert seek method performs a search of desired container`() {
-        FakeContainer1(stateContainerHost<Any, Any>(Unit).container)
+        val result = FakeContainer1(stateContainerHost<Any, Any>(Unit).container)
             .decorate { FakeContainer2(it) }
             .decorate { FakeContainer3(it) }
             .decorate { FakeContainer4(it) }
             .seek<FakeContainer3> { it is FakeContainer3 }
-        assertTrue(true)
+        assertTrue(result is FakeContainer3)
     }
 }

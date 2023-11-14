@@ -14,7 +14,7 @@ suspend fun Job.recursiveJoin() {
  * Join all children jobs (not recursive)
  */
 suspend fun Job.joinChildren() {
-    for (job in children) job.recursiveJoin()
+    for (job in children) job.join()
 }
 
 /**

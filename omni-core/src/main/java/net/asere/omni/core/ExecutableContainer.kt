@@ -76,7 +76,7 @@ abstract class ExecutableContainer(
     fun launchJobs() = containerJob.startChildrenJobs()
 
     /**
-     * Executes a block of code
+     * Executes a block of code under specified context using container's scope.
      *
      * @param context Defines the context to run instructions
      * @param start CoroutineStart policy
@@ -117,7 +117,7 @@ private fun <T> Result<T>.onCoroutineFailure(block: (Throwable) -> Unit): Result
 }
 
 /**
- * Executes a block of code
+ * Executes a block of code under specified context using container's scope.
  *
  * @param context Defines the context to run instructions
  * @param start CoroutineStart policy
