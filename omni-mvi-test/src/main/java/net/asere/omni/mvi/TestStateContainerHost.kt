@@ -40,13 +40,15 @@ suspend fun <State, Effect, Action> ActionContainerHost<State, Effect, Action>.t
  */
 suspend fun <State, Effect, Host : StateContainerHost<State, Effect>> Host.testIntent(
     take: Take? = null,
+    withState: State? = null,
     testBlock: Host.() -> Unit
 ) = withContext(ExecutableContainer.blockedContext()) {
     if (take != null && take.count <= 0)
         throw IllegalArgumentException("take argument count should be grater than 0 if set")
-    val testContainer = TestStateContainer(container)
+    val testContainer = container.buildTestContainer()
     delegate(testContainer)
     awaitJobs()
+    withState?.let { testContainer.update { it } }
     testContainer.reset()
     testBlock()
     with(testContainer) {

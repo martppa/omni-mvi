@@ -30,3 +30,14 @@ open class TestStateContainer<State, Effect> internal constructor(
         emittedEffects.add(effect)
     }
 }
+
+internal fun <State, Effect> testStateContainer(
+    container: ExposedStateContainer<State, Effect>
+) = TestStateContainer(container)
+
+/**
+ * Turns this container into a test container
+ */
+fun <State, Effect> ExposedStateContainer<State, Effect>
+        .buildTestContainer() = testStateContainer(this)
+
