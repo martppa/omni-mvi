@@ -28,7 +28,9 @@ data class TestResult<State, Effect>(
 suspend fun <State, Effect, Action> ActionContainerHost<State, Effect, Action>.testOn(
     action: Action,
     take: Take? = null,
+    withState: State? = null,
 ) = testIntent(
+    withState = withState,
     take = take
 ) { on(action) }
 
