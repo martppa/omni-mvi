@@ -18,13 +18,15 @@ fun <State> IntentScope<State, *>.reduce(
     function: State.() -> State
 ) = container.update(function)
 
-@Deprecated("Use emit extension function", ReplaceWith("emit(Effect)"))
+@Deprecated("Use emit extension function", ReplaceWith("post(Effect)"))
 @OmniHostDsl
 fun <Effect> IntentScope<*, Effect>.postEffect(
     effect:  Effect
 ) = container.post(effect)
 
 @OmniHostDsl
-fun <Effect> IntentScope<*, Effect>.emit(
-    effect:  Effect
-) = container.post(effect)
+fun <Effect> IntentScope<*, Effect>.post(
+    vararg effects:  Effect
+) {
+    effects.forEach { container.post(it) }
+}
