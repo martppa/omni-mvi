@@ -212,20 +212,36 @@ In case you want to test long running intents you can always truncate your evalu
 ```kotlin
 @Test
 fun `On continues emit intent called should take first 9 states`() = runTest {
-    createViewModel().testIntent(only take 9 state units) { continuesEmit() }.evaluate {
+    createViewModel().testIntent(
+        withState = ListState(currentPage = 10),
+        take = 9 times state
+    ) { continuesEmit() }.evaluate {
         Assert.assertEquals(9, emittedStates.size)
     }
 }
 ```
-
 Or `effects`:
 ```kotlin
 @Test
 fun `On continues post intent called should take first 15 effects `() = runTest {
-    createViewModel().testIntent(only take 15 effect units) { continuesPost() }.evaluate {
+    createViewModel().testIntent(take exactly 15 times effect) { continuesPost() }.evaluate {
         Assert.assertEquals(15, emittedEffects.size)
     }
 }
+```
+
+Please note you can set the starting state for your intent at testing by setting `withState`. 
+
+### Infix
+Use the `infix` functions group to declare how many states or effect. You can use it in both ways:
+
+Just passing the value:
+```kotlin
+testIntent(take exactly 15 times effect) { intentToTest() }
+```
+Naming the parameter:
+```kotlin
+testIntent(take = 1 time effect) { intentToTest() }
 ```
 
 # omni-android ![](https://img.shields.io/badge/mvi_android_version-1.7.1-03DAC5)
