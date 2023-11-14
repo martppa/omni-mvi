@@ -11,7 +11,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import net.asere.omni.mvi.effect
 import net.asere.omni.mvi.evaluate
-import net.asere.omni.mvi.only
+import net.asere.omni.mvi.exactly
 import net.asere.omni.mvi.sample.list.domain.model.PagedRepos
 import net.asere.omni.mvi.sample.list.domain.usecase.GetRepositories
 import net.asere.omni.mvi.sample.list.domain.usecase.SearchRepositories
@@ -21,7 +21,7 @@ import net.asere.omni.mvi.take
 import net.asere.omni.mvi.testConstructor
 import net.asere.omni.mvi.testIntent
 import net.asere.omni.mvi.testOn
-import net.asere.omni.mvi.units
+import net.asere.omni.mvi.times
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before
@@ -85,14 +85,17 @@ class ListViewModelTest {
 
     @Test
     fun `On continues emit intent called should take first 9 states`() = runTest {
-        createViewModel().testIntent(only take 9 state units) { continuesEmit() }.evaluate {
+        createViewModel().testIntent(
+            withState = ListState(currentPage = 10),
+            take = 9 times state
+        ) { continuesEmit() }.evaluate {
             Assert.assertEquals(9, emittedStates.size)
         }
     }
 
     @Test
     fun `On continues post intent called should take first 15 effects `() = runTest {
-        createViewModel().testIntent(only take 15 effect units) { continuesPost() }.evaluate {
+        createViewModel().testIntent(take exactly 15 times effect) { continuesPost() }.evaluate {
             Assert.assertEquals(15, emittedEffects.size)
         }
     }
