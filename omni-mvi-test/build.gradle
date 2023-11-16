@@ -10,7 +10,7 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-version = '1.7.1'
+version = '1.7.2'
 
 ext {
     VERSION = version
