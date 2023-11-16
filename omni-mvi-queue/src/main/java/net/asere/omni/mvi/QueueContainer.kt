@@ -26,12 +26,12 @@ open class QueueContainer<State, Effect> internal constructor(
 
     private fun startIntentQueue() {
         intentQueue = Channel(capacity = Channel.UNLIMITED)
-        consumeJob = intent {
+        consumeJob = intentJob {
             intentQueue.consumeEach { consumeIntent(it).join() }
         }
     }
 
-    private fun consumeIntent(job: Job) = intent { job.join() }
+    private fun consumeIntent(job: Job) = intentJob { job.join() }
 
     internal fun clearQueue() = intent {
         consumeJob.cancel()
@@ -49,7 +49,7 @@ open class QueueContainer<State, Effect> internal constructor(
     ) = intent {
         if (intentQueue.isClosed()) startIntentQueue()
         intentQueue.send(
-            intent(start = CoroutineStart.LAZY) { block() }
+            intentJob(start = CoroutineStart.LAZY) { block() }
         )
     }
 }

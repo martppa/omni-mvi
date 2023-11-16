@@ -31,7 +31,7 @@ open class OverrideContainer<State, Effect> internal constructor(
             val job = intents[intentId]
             job?.cancel()
             job?.join()
-            intents[intentId] = intent { block() }
+            intents[intentId] = intentJob { block() }
         }
     }
 }

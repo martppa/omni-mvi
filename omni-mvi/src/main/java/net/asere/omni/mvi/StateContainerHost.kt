@@ -34,6 +34,28 @@ fun <State, Effect> StateContainerHost<State, Effect>.intent(
     context: CoroutineContext = EmptyCoroutineContext,
     start: CoroutineStart = CoroutineStart.DEFAULT,
     block: suspend IntentScope<State, Effect>.() -> Unit
+) {
+    intentJob(
+        context = context,
+        start = start,
+        block = block
+    )
+}
+
+/**
+ * Executes an intent and returns its job
+ *
+ * @param context Defines the context to run instructions
+ * @param start CoroutineStart policy
+ * @param block Executable intent content
+ *
+ * @return the job running the intent
+ */
+@OmniHostDsl
+fun <State, Effect> StateContainerHost<State, Effect>.intentJob(
+    context: CoroutineContext = EmptyCoroutineContext,
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend IntentScope<State, Effect>.() -> Unit
 ): Job {
     val scope = IntentScope(container.asStateContainer())
     return execute(

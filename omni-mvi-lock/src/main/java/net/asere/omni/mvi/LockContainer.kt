@@ -40,7 +40,7 @@ open class LockContainer<State, Effect> internal constructor(
         block: suspend IntentScope<State, Effect>.() -> Unit
     ) = intent {
         if (!intents[intentId].isLocked()) {
-            intents[intentId] = LockableIntent(intent { block() })
+            intents[intentId] = LockableIntent(intentJob { block() })
         }
     }
 
