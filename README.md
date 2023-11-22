@@ -97,6 +97,9 @@ private fun fetchDataAfter(time: Int) = intent {
     pendingIntent.start()
 }
 ```
+### Intent's job
+Intent function does not return the job running the intent. Use `intentJob` extension function, it performs the exact same as normal `intent` but returns its job.
+
 ### Observing
 If you are using standard JVM you can observe states and effects using `observeState()` and `observeEffect()` intent functions. Both extension functions require a lambda, this lambda will be called whenever a value is emitted.
 
