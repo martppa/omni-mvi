@@ -7,17 +7,22 @@ import java.lang.IllegalArgumentException
 /**
  * Puts the container host in evaluation status and offers a scope of with testing data such as
  * emitted states and emitted effects.
+ *
+ * @param relax Set true if you want to avoid iterating over all emitted states and effects
+ * @param block Evaluation code block
  */
-fun <State, Effect> TestResult<State, Effect>.evaluate(block: TestResult<State, Effect>.() -> Unit) =
+fun <State, Effect> TestResult<State, Effect>.evaluate(
+    relax: Boolean = false,
+    block: TestResult<State, Effect>.() -> Unit
+) {
     this.block()
-
-/**
- * Test result data
- */
-data class TestResult<State, Effect>(
-    val emittedStates: List<State>,
-    val emittedEffects: List<Effect>
-)
+    if (!relax) {
+        if (effectIterator.hasNext())
+            throw IllegalStateException("${effectIterator.nextIndex()} effects were tested but ${emittedEffects.size} were emitted.")
+        if (stateIterator.hasNext())
+            throw IllegalStateException("${stateIterator.nextIndex()} states were tested but ${emittedStates.size} were emitted.")
+    }
+}
 
 /**
  * Call this extension function to start testing an action
@@ -30,7 +35,7 @@ suspend fun <State, Effect, Action> ActionContainerHost<State, Effect, Action>.t
     take: Take? = null,
     withState: State? = null,
 ) = testIntent(
-    withState = withState,
+    from = withState,
     take = take
 ) { on(action) }
 
@@ -42,15 +47,16 @@ suspend fun <State, Effect, Action> ActionContainerHost<State, Effect, Action>.t
  */
 suspend fun <State, Effect, Host : StateContainerHost<State, Effect>> Host.testIntent(
     take: Take? = null,
-    withState: State? = null,
+    from: State? = null,
     testBlock: Host.() -> Unit
 ) = withContext(ExecutableContainer.blockedContext()) {
+    val initialState = currentState
     if (take != null && take.count <= 0)
         throw IllegalArgumentException("take argument count should be grater than 0 if set")
     val testContainer = container.buildTestContainer()
     delegate(testContainer)
     awaitJobs()
-    withState?.let { testContainer.update { it } }
+    from?.let { container.asStateContainer().update { it } }
     testContainer.reset()
     testBlock()
     with(testContainer) {
@@ -58,7 +64,11 @@ suspend fun <State, Effect, Host : StateContainerHost<State, Effect>> Host.testI
             take is TakeStates && take.count == emittedStates.size ||
                     take is TakeEffects && take.count == emittedEffects.size
         }
-        TestResult(emittedStates, emittedEffects)
+        TestResult(
+            initialState = from ?: initialState,
+            emittedStates = emittedStates,
+            emittedEffects = emittedEffects,
+        )
     }
 }
 
@@ -71,8 +81,15 @@ suspend fun <State, Effect> testConstructor(
     builder: () -> StateContainerHost<State, Effect>
 ) = withContext(ExecutableContainer.blockedContext()) {
     val host = builder()
+    val initialState = host.currentState
     val testContainer = TestStateContainer(host.container)
     host.delegate(testContainer)
     host.awaitJobs()
-    with(testContainer) { TestResult(emittedStates, emittedEffects) }
+    with(testContainer) {
+        TestResult(
+            initialState = initialState,
+            emittedStates = emittedStates,
+            emittedEffects = emittedEffects,
+        )
+    }
 }

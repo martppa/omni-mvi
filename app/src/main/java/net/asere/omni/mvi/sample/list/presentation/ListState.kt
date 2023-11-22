@@ -21,5 +21,5 @@ sealed class ListAction {
 }
 
 sealed class ListEffect {
-    class ShowMessage(val text: String) : ListEffect()
+    data class ShowMessage(val text: String) : ListEffect()
 }
