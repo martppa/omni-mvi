@@ -67,8 +67,8 @@ fun fetchContent() = intent {
 The `intent` DSL allows you execute controlled block of code and grants you special access to state and effects publication, also lets you react to errors caught during execution.
 
 - onError: This block is called when an exception is caught
-- postState: Post a state to the view
-- postEffect: Post an effect to the view
+- reduce: Post a state to the view
+- post: Post an effect to the view
 
 ### Nesting intents
 Intents are jobs. When you invoke an intent you are executing a coroutine job. You are free to nest intents invocations.
@@ -78,7 +78,7 @@ When intents are invoked they do it under `CoroutineStart.DEFAULT` start configu
 
 ```kotlin
 private fun fetchDataAfter(time: Int) = intent {
-    val pendingIntent = intent(start = CoroutineStart.LAZY) {
+    val pendingIntent = intentJob(start = CoroutineStart.LAZY) {
         Log.d("Lazy", "Job executed after $time")
     }
     delay(time)
@@ -87,7 +87,7 @@ private fun fetchDataAfter(time: Int) = intent {
 ```
 Intents could be directly nested or called.
 ```kotlin
-private fun performFetch() = intent(start = CoroutineStart.LAZY) {
+private fun performFetch() = intentJob(start = CoroutineStart.LAZY) {
     Log.d("Lazy", "Fetch job executed")
 }
 
@@ -171,7 +171,7 @@ If your `Host` executes intents during its construction you can capture its stat
 @Test
 fun `On creation must request first page to repository`() = runTest {
     val firstPage = 1
-    testConstructor { createViewModel() }.evaluate {
+    testConstructor { createViewModel() }.evaluate(relax = true) {
         coVerify { getRepositories(firstPage) }
         Assert.assertEquals(2, emittedStates.size)
         Assert.assertEquals(emittedStates.first().currentPage, firstPage)
@@ -179,7 +179,56 @@ fun `On creation must request first page to repository`() = runTest {
 }
 ```
 
-`testConstructor()` function will construct you host under a controlled context to allow state and effects recording. It returns a `TestResult` object that contains a list of emitted states and a list of emitted effects. Call evaluate to get inline access to its properties.
+`testConstructor()` function will construct you host under a controlled context to allow state and effects recording. Call `evaluate` to get inline access to test results.
+
+### Strict evaluation
+By default, the evaluation runs not relaxed (`relax = false`), this means evaluation will force the validation of each emitted state or effect. Test will not pass if the exact amount or order is not evaluated. Use `expectState` and `expectEffect` to validate them.
+
+```kotlin
+@Test
+fun `On creation request first page to repository and`() = runTest {
+    testConstructor { createViewModel() }.evaluate {
+        expectState { copy(currentPage = 1, loading = true) }
+        expectState {
+            copy(
+                loading = false,
+                currentPage = fakePagedRepos.currentPage,
+                items = fakePagedRepos.items.map { it.asPresentation() }
+            )
+        }
+        expectEffect(ListEffect.ShowMessage("Fetched"))
+    }
+}
+```
+
+### Relaxed evaluation
+Evaluation can run relaxed (`relaxed = true`), this mode will not force you to match the exact amount of emitted states and effects. You can access `nextState` and `nextEffect`. `nextState` provides previous and current state to let you perform a proper evaluation by your own. `nextEffect` provides next emitted effect.
+```kotlin
+@Test
+fun `On creation request first page to repository and`() = runTest {
+    testConstructor { createViewModel() }.evaluate(relax = true) {
+        coVerify { getRepositories(1) }
+        nextState { previous, current ->
+            Assert.assertEquals(
+                current, previous.copy(
+                    currentPage = 1,
+                    loading = true
+                )
+            )
+        }
+        nextState { previous, current ->
+            Assert.assertEquals(current, previous.copy(
+                loading = false,
+                currentPage = fakePagedRepos.currentPage,
+                items = fakePagedRepos.items.map { it.asPresentation() }
+            ))
+        }
+        nextEffect {
+            Assert.assertEquals(it, ListEffect.ShowMessage("Fetched"))
+        }
+    }
+}
+```
 
 ### Intents testing
 Call `testIntent()` to capture any emitted state or effect. Call `evaluate` to get inline access to resulting data:
@@ -189,9 +238,7 @@ Call `testIntent()` to capture any emitted state or effect. Call `evaluate` to g
 fun `On NextPage intent called should request next page to repository`() = runTest {
     val nextPage = 2
     createViewModel().testIntent { nextPage() }.evaluate {
-        coVerify { getRepositories(nextPage) }
-        Assert.assertEquals(3, emittedStates.size)
-        Assert.assertEquals(emittedStates.first().currentPage, nextPage)
+        ...
     }
 }
 ```
@@ -203,9 +250,7 @@ Use the `testOn()` function to test host actions:
 fun `On NextPage action called should request next page to repository`() = runTest {
     val nextPage = 2
     createViewModel().testOn(ListAction.NextPage).evaluate {
-        coVerify { getRepositories(nextPage) }
-        Assert.assertEquals(3, emittedStates.size)
-        Assert.assertEquals(emittedStates.first().currentPage, nextPage)
+        ...
     }
 }
 ```
@@ -233,7 +278,7 @@ fun `On continues post intent called should take first 15 effects `() = runTest 
 }
 ```
 
-Please note you can set the starting state for your intent at testing by setting `withState`. 
+Please note you can set the starting state for your intent at testing by setting `from` parameter. 
 
 ### Infix
 Use the `infix` functions group to declare how many states or effect. You can use it in both ways:

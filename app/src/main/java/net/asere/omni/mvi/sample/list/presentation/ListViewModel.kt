@@ -90,7 +90,7 @@ class ListViewModel(
         if (repos.items.isEmpty()) {
             lockIntent() // Lock this intent as the end of the list has been reached
         }
-        post(ListEffect.ShowMessage("Hello"))
+        post(ListEffect.ShowMessage("Fetched"))
     }
 
     private fun showError(throwable: Throwable) = intent {

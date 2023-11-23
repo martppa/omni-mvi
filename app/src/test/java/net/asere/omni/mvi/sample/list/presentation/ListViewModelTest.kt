@@ -69,9 +69,8 @@ class ListViewModelTest {
 
     @Test
     fun `On creation request first page to repository and`() = runTest {
-        val firstPage = 1
         testConstructor { createViewModel() }.evaluate(relax = true) {
-            coVerify { getRepositories(firstPage) }
+            coVerify { getRepositories(1) }
             Assert.assertEquals(2, emittedStates.size)
             nextState { previous, current ->
                 Assert.assertEquals(current, previous.copy(
@@ -87,7 +86,7 @@ class ListViewModelTest {
                 ))
             }
             nextEffect {
-                Assert.assertEquals(it, ListEffect.ShowMessage("Hello"))
+                Assert.assertEquals(it, ListEffect.ShowMessage("Fetched"))
             }
         }
     }
@@ -105,15 +104,15 @@ class ListViewModelTest {
     @Test
     fun `On NextPage intent called should request next page to repository`() = runTest {
         createViewModel().testIntent(from = ListState()) { nextPage() }.evaluate {
-            expectedState { copy(currentPage = 2) }
-            expectedState { copy(loading = true, error = String.empty()) }
-            expectedState {
+            expectState { copy(currentPage = 2) }
+            expectState { copy(loading = true, error = String.empty()) }
+            expectState {
                 copy(
                     loading = false,
                     currentPage = fakePagedRepos.currentPage,
                     items = fakePagedRepos.items.map { it.asPresentation() })
             }
-            expectedEffect(ListEffect.ShowMessage("Hello"))
+            expectEffect(ListEffect.ShowMessage("Fetched"))
         }
     }
 

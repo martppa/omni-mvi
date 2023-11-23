@@ -23,7 +23,7 @@ class TestResult<State, Effect>(
         }
     }
 
-    fun expectedState(block: State.() -> State) {
+    fun expectState(block: State.() -> State) {
         if (!stateIterator.hasNext())
             throw IllegalStateException("A maximum of ${emittedStates.size} states were emitted.")
         val expected = if (!stateIterator.hasPrevious()) {
@@ -40,7 +40,7 @@ class TestResult<State, Effect>(
         block(effectIterator.next())
     }
 
-    fun expectedEffect(effect: Effect) {
+    fun expectEffect(effect: Effect) {
         if (!effectIterator.hasNext())
             throw IllegalStateException("A maximum of ${emittedEffects.size} effects were emitted.")
         Assert.assertEquals(effect, effectIterator.next())
