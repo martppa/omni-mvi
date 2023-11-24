@@ -3,6 +3,7 @@ package net.asere.omni.mvi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.asere.omni.core.ExecutableContainer
 import kotlin.coroutines.EmptyCoroutineContext
@@ -32,48 +33,28 @@ suspend fun <State, Effect>
     container.asExecutableContainer().deepAwait()
 
 /**
- * Recursively awaits all running jobs until the provided condition met.
+ * Recursively awaits all running jobs until the provided condition is met.
  *
- * @param until Condition to meet in order to continue waiting for jobs.
+ * @param until Condition to meet in order to stop waiting for jobs.
  */
-suspend fun <State, Effect>
-        ExposedStateContainer<State, Effect>.deepAwait(until: () -> Boolean) {
-    val emptyScope = CoroutineScope(EmptyCoroutineContext)
-    val awaitingJob = emptyScope.launch(start = CoroutineStart.LAZY) {
+suspend fun <State, Effect> ExposedStateContainer<State, Effect>.deepAwait(
+    scope: CoroutineScope = CoroutineScope(EmptyCoroutineContext),
+    until: () -> Boolean,
+) {
+    val awaitingJob = scope.launch(start = CoroutineStart.LAZY) {
         asExecutableContainer().deepAwait()
     }
     suspendCoroutine { continuation ->
-        fun verify() {
-            if (until()) {
-                clearDelegate()
-                awaitingJob.cancelChildren()
-                awaitingJob.cancel()
+        scope.launch {
+            while (!until()) {
+                delay(100)
             }
+            awaitingJob.cancelChildren()
+            awaitingJob.cancel()
         }
-        asDelegatorContainer().delegate(
-            doOnAnyEmission(
-                container = this@deepAwait.asStateContainer(),
-                block = ::verify
-            )
-        )
-        emptyScope.launch {
+        scope.launch {
             awaitingJob.join()
             continuation.resumeWith(Result.success(Unit))
-        }
-    }
-}
-
-private fun <State, Effect> doOnAnyEmission(
-    container: StateContainer<State, Effect>,
-    block: () -> Unit
-): StateContainer<State, Effect> {
-    return object : DelegatorContainer<State, Effect>(container) {
-        override fun update(function: State.() -> State) {
-            block()
-        }
-
-        override fun post(effect: Effect) {
-            block()
         }
     }
 }

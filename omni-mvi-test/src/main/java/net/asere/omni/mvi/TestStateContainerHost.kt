@@ -60,7 +60,7 @@ suspend fun <State, Effect, Host : StateContainerHost<State, Effect>> Host.testI
 
     val testContainer = container.buildTestContainer(testScope)
 
-    deepAwait()
+    await()
     testContainer.reset()
     container.asStateContainer().update { initialState }
 
@@ -69,10 +69,10 @@ suspend fun <State, Effect, Host : StateContainerHost<State, Effect>> Host.testI
     with(testContainer) {
         take?.let {
             container.deepAwait {
-                it is TakeStates && it.count == emittedStates.size + 1 ||
-                        it is TakeEffects && it.count == emittedEffects.size
+                (it is TakeStates && it.count == emittedStates.size + 1) ||
+                        (it is TakeEffects && it.count == emittedEffects.size)
             }
-        } ?: deepAwait()
+        } ?: await()
         TestResult(
             initialState = from ?: initialState,
             emittedStates = emittedStates.apply { emittedStates.removeFirst() },
