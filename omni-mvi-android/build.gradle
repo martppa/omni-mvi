@@ -6,7 +6,7 @@ plugins {
     id 'signing'
 }
 
-version = '1.7.2'
+version = '1.7.3'
 
 ext {
     VERSION = version
