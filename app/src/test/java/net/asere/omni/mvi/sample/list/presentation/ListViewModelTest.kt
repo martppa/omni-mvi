@@ -68,7 +68,7 @@ class ListViewModelTest {
     }
 
     @Test
-    fun `On creation request first page to repository and`() = runTest {
+    fun `On creation request first page to repository`() = runTest {
         testConstructor { createViewModel() }.evaluate(relax = true) {
             coVerify { getRepositories(1) }
             Assert.assertEquals(2, emittedStates.size)
@@ -104,6 +104,7 @@ class ListViewModelTest {
     @Test
     fun `On NextPage intent called should request next page to repository`() = runTest {
         createViewModel().testIntent(from = ListState()) { nextPage() }.evaluate {
+            print(emittedStates)
             expectState { copy(currentPage = 2) }
             expectState { copy(loading = true, error = String.empty()) }
             expectState {

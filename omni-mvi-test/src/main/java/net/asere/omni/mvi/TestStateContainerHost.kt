@@ -1,8 +1,10 @@
 package net.asere.omni.mvi
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.withContext
 import net.asere.omni.core.ExecutableContainer
 import java.lang.IllegalArgumentException
+import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * Puts the container host in evaluation status and offers a scope of with testing data such as
@@ -48,17 +50,22 @@ suspend fun <State, Effect, Action> ActionContainerHost<State, Effect, Action>.t
 suspend fun <State, Effect, Host : StateContainerHost<State, Effect>> Host.testIntent(
     take: Take? = null,
     from: State? = null,
+    testScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext),
     testBlock: Host.() -> Unit
 ) = withContext(ExecutableContainer.blockedContext()) {
     val initialState = currentState
+
     if (take != null && take.count <= 0)
         throw IllegalArgumentException("take argument count should be grater than 0 if set")
-    val testContainer = container.buildTestContainer()
-    delegate(testContainer)
-    awaitJobs()
+
+    val testContainer = container.buildTestContainer(testScope).also { delegate(it) }
+
     from?.let { container.asStateContainer().update { it } }
+    testContainer.awaitJobs()
     testContainer.reset()
+
     testBlock()
+
     with(testContainer) {
         awaitJobs {
             take is TakeStates && take.count == emittedStates.size ||
@@ -78,13 +85,15 @@ suspend fun <State, Effect, Host : StateContainerHost<State, Effect>> Host.testI
  * @param builder Host construction builder function
  */
 suspend fun <State, Effect> testConstructor(
+    testScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext),
     builder: () -> StateContainerHost<State, Effect>
 ) = withContext(ExecutableContainer.blockedContext()) {
     val host = builder()
     val initialState = host.currentState
-    val testContainer = TestStateContainer(host.container)
-    host.delegate(testContainer)
-    host.awaitJobs()
+
+    val testContainer = host.container.buildTestContainer(testScope)
+    testContainer.awaitJobs()
+
     with(testContainer) {
         TestResult(
             initialState = initialState,
