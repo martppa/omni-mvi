@@ -261,7 +261,7 @@ In case you want to test long running intents you can always truncate your evalu
 @Test
 fun `On continues emit intent called should take first 9 states`() = runTest {
     createViewModel().testIntent(
-        withState = ListState(currentPage = 10),
+        from = ListState(currentPage = 10),
         take = 9 times state
     ) { continuesEmit() }.evaluate {
         Assert.assertEquals(9, emittedStates.size)
