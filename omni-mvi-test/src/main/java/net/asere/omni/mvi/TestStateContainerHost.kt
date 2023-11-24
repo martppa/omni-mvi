@@ -82,17 +82,20 @@ suspend fun <State, Effect, Host : StateContainerHost<State, Effect>> Host.testI
  * @param builder Host construction builder function
  */
 suspend fun <State, Effect> testConstructor(
+    initialState: State? = null,
     builder: () -> StateContainerHost<State, Effect>
 ) = withContext(ExecutableContainer.blockedContext()) {
     val host = builder()
-    val initialState = host.currentState
+
+    val chosenInitialState = initialState ?: host.currentState
+    initialState?.let { host.container.asStateContainer().update { it } }
     val testContainer = host.container.buildTestContainer().also { host.delegate(it) }
 
     host.await()
 
     with(testContainer) {
         TestResult(
-            initialState = initialState,
+            initialState = chosenInitialState,
             emittedStates = emittedStates,
             emittedEffects = emittedEffects,
         )
