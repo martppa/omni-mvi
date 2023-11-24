@@ -15,22 +15,32 @@ fun <State, Effect> ExposedStateContainer<State, Effect>.asExecutableContainer()
     asStateContainer().seek { it is ExecutableContainer }
 
 /**
- * Recursively awaits all running jobs
+ * Seeks all children jobs and await them. Use this method to await all children executions.
+ * This method does not join the container job itself.
  */
 suspend fun <State, Effect>
-        StateContainerHost<State, Effect>.awaitJobs() =
-    container.asExecutableContainer().awaitJobs()
+        StateContainerHost<State, Effect>.await() =
+    container.asExecutableContainer().await()
 
 /**
- * Recursively awaits all running jobs until the provided condition met.
+ * Recursively seeks all nested children jobs and await them.
+ * Use this method to await all nested children executions. This method does not
+ * join the container job itself.
+ */
+suspend fun <State, Effect>
+        StateContainerHost<State, Effect>.deepAwait() =
+    container.asExecutableContainer().deepAwait()
+
+/**
+ * Awaits all running jobs until the provided condition met.
  *
  * @param until Condition to meet in order to continue waiting for jobs.
  */
 suspend fun <State, Effect>
-        ExposedStateContainer<State, Effect>.awaitJobs(until: () -> Boolean) {
+        ExposedStateContainer<State, Effect>.await(until: () -> Boolean) {
     val emptyScope = CoroutineScope(EmptyCoroutineContext)
     val awaitingJob = emptyScope.launch(start = CoroutineStart.LAZY) {
-        asExecutableContainer().awaitJobs()
+        asExecutableContainer().await()
     }
     suspendCoroutine { continuation ->
         fun verify() {
@@ -41,7 +51,7 @@ suspend fun <State, Effect>
         }
         asDelegatorContainer().delegate(
             doOnAnyEmission(
-                container = this@awaitJobs.asStateContainer(),
+                container = this@await.asStateContainer(),
                 block = ::verify
             )
         )
@@ -52,6 +62,14 @@ suspend fun <State, Effect>
     }
 }
 
+/**
+ * Performs an action everytime a state or an effect is emitted
+ *
+ * @param container Container to delegate
+ * @param block Code to execute
+ *
+ * @return Delegated container
+ */
 private fun <State, Effect> doOnAnyEmission(
     container: StateContainer<State, Effect>,
     block: () -> Unit

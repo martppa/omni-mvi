@@ -51,16 +51,20 @@ suspend fun <State, Effect, Host : StateContainerHost<State, Effect>> Host.testI
     testBlock: Host.() -> Unit
 ) = withContext(ExecutableContainer.blockedContext()) {
     val initialState = currentState
+
     if (take != null && take.count <= 0)
         throw IllegalArgumentException("take argument count should be grater than 0 if set")
-    val testContainer = container.buildTestContainer()
-    delegate(testContainer)
-    awaitJobs()
+
+    val testContainer = container.buildTestContainer().also { delegate(it) }
+
+    await()
     from?.let { container.asStateContainer().update { it } }
     testContainer.reset()
+
     testBlock()
+
     with(testContainer) {
-        awaitJobs {
+        await {
             take is TakeStates && take.count == emittedStates.size ||
                     take is TakeEffects && take.count == emittedEffects.size
         }
@@ -82,9 +86,10 @@ suspend fun <State, Effect> testConstructor(
 ) = withContext(ExecutableContainer.blockedContext()) {
     val host = builder()
     val initialState = host.currentState
-    val testContainer = TestStateContainer(host.container)
-    host.delegate(testContainer)
-    host.awaitJobs()
+    val testContainer = host.container.buildTestContainer().also { host.delegate(it) }
+
+    host.await()
+
     with(testContainer) {
         TestResult(
             initialState = initialState,
