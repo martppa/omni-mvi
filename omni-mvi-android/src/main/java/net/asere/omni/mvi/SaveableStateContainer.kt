@@ -21,7 +21,7 @@ private const val HANDLE_KEY = "omni_state"
  * @param coroutineExceptionHandler Handler to deal with exceptions
  */
 class SaveableStateContainer<State, Effect> internal constructor(
-    private val initialState: State,
+    override val initialState: State,
     private val savedStateHandle: SavedStateHandle,
     override val coroutineScope: CoroutineScope,
     override val coroutineExceptionHandler: CoroutineExceptionHandler,

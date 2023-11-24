@@ -13,6 +13,7 @@ open class StateContainerDecorator<State, Effect>(
     coroutineExceptionHandler = container.coroutineExceptionHandler,
 ), StateContainer<State, Effect> {
 
+    override val initialState = container.asStateContainer().initialState
     override val state = container.asStateContainer().state
     override val effect = container.asStateContainer().effect
     override fun update(function: State.() -> State) =
