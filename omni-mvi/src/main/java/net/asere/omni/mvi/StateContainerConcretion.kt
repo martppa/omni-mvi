@@ -20,7 +20,7 @@ import net.asere.omni.core.ExecutableContainer
  * during execution
  */
  class StateContainerConcretion<State, Effect> internal constructor(
-    initialState: State,
+    override val initialState: State,
     override val coroutineScope: CoroutineScope,
     override val coroutineExceptionHandler: CoroutineExceptionHandler,
 ) : ExecutableContainer(

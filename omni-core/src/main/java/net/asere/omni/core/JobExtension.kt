@@ -5,9 +5,12 @@ import kotlinx.coroutines.Job
 /**
  * Search recursively for all nested children jobs and join them
  */
-suspend fun Job.recursiveJoin() {
+suspend fun Job.recursiveJoinChildren() {
+    suspend fun Job.recursiveJoin() {
+        for (job in children) job.recursiveJoin()
+        join()
+    }
     for (job in children) job.recursiveJoin()
-    join()
 }
 
 /**

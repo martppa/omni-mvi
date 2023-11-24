@@ -53,27 +53,29 @@ suspend fun <State, Effect, Host : StateContainerHost<State, Effect>> Host.testI
     testScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext),
     testBlock: Host.() -> Unit
 ) = withContext(ExecutableContainer.blockedContext()) {
-    val initialState = currentState
+    val initialState = from ?: container.asStateContainer().initialState
 
     if (take != null && take.count <= 0)
-        throw IllegalArgumentException("take argument count should be grater than 0 if set")
+        throw IllegalArgumentException("Take argument count should be grater than 0 if set")
 
-    val testContainer = container.buildTestContainer(testScope).also { delegate(it) }
+    val testContainer = container.buildTestContainer(testScope)
 
-    from?.let { container.asStateContainer().update { it } }
-    testContainer.awaitJobs()
+    deepAwait()
     testContainer.reset()
+    container.asStateContainer().update { initialState }
 
     testBlock()
 
     with(testContainer) {
-        awaitJobs {
-            take is TakeStates && take.count == emittedStates.size ||
-                    take is TakeEffects && take.count == emittedEffects.size
-        }
+        take?.let {
+            container.deepAwait {
+                it is TakeStates && it.count == emittedStates.size + 1 ||
+                        it is TakeEffects && it.count == emittedEffects.size
+            }
+        } ?: deepAwait()
         TestResult(
             initialState = from ?: initialState,
-            emittedStates = emittedStates,
+            emittedStates = emittedStates.apply { emittedStates.removeFirst() },
             emittedEffects = emittedEffects,
         )
     }
@@ -92,13 +94,18 @@ suspend fun <State, Effect> testConstructor(
     val initialState = host.currentState
 
     val testContainer = host.container.buildTestContainer(testScope)
-    testContainer.awaitJobs()
+    testContainer.await()
 
     with(testContainer) {
         TestResult(
             initialState = initialState,
-            emittedStates = emittedStates,
+            emittedStates = emittedStates.apply { removeFirst() },
             emittedEffects = emittedEffects,
         )
     }
 }
+
+private val <State, Effect> StateContainer<State, Effect>.initialState
+    get() = seek<StateContainer<State, Effect>> {
+        it is StateContainer<*, *>
+    }.initialState

@@ -1,16 +1,10 @@
 package net.asere.omni.mvi
 
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.toCollection
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.util.Collections
 import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 /**
  * This is a container decorator to allow testing a container behavior
@@ -24,25 +18,15 @@ open class TestStateContainer<State, Effect> internal constructor(
     StateContainerHost<State, Effect> {
 
     internal val emittedStates: MutableList<State> = Collections.synchronizedList(mutableListOf())
-    internal val expectedStates: MutableList<State> = Collections.synchronizedList(mutableListOf())
     internal val emittedEffects: MutableList<Effect> = Collections.synchronizedList(mutableListOf())
 
-    private val stateCollectionJob: Job
-
     init {
-        stateCollectionJob = collectStates()
+        collectStates()
         collectEffects()
     }
 
     private fun collectStates() = collectionScope.launch {
-        suspendCoroutine { continuation ->
-            runBlocking {
-                state.collect {
-                    emittedStates.add(it)
-                    if (expectedStates == emittedStates) continuation.resume(Unit)
-                }
-            }
-        }
+        state.toCollection(emittedStates)
     }
 
     private fun collectEffects() = collectionScope.launch {
@@ -55,14 +39,6 @@ open class TestStateContainer<State, Effect> internal constructor(
     fun reset() {
         emittedStates.clear()
         emittedEffects.clear()
-    }
-
-    override fun update(function: State.() -> State) {
-        expectedStates.add(currentState.function())
-    }
-
-    override fun post(effect: Effect) {
-        // Do not react
     }
 }
 

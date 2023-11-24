@@ -15,6 +15,7 @@ open class StateContainerDecorator<State, Effect>(
 
     override val state = container.asStateContainer().state
     override val effect = container.asStateContainer().effect
+    override val initialState: State = container.asStateContainer().initialState
     override fun update(function: State.() -> State) =
         container.asStateContainer().update(function)
 

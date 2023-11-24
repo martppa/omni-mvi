@@ -15,11 +15,21 @@ fun <State, Effect> ExposedStateContainer<State, Effect>.asExecutableContainer()
     asStateContainer().seek { it is ExecutableContainer }
 
 /**
- * Recursively awaits all running jobs
+ * Seeks all children jobs and await them. Use this method to await all children executions.
+ * This method does not join the container job itself.
  */
 suspend fun <State, Effect>
-        StateContainerHost<State, Effect>.awaitJobs() =
-    container.asExecutableContainer().awaitJobs()
+        StateContainerHost<State, Effect>.await() =
+    container.asExecutableContainer().await()
+
+/**
+ * Recursively seeks all nested children jobs and await them.
+ * Use this method to await all nested children executions. This method does not
+ * join the container job itself.
+ */
+suspend fun <State, Effect>
+        StateContainerHost<State, Effect>.deepAwait() =
+    container.asExecutableContainer().deepAwait()
 
 /**
  * Recursively awaits all running jobs until the provided condition met.
@@ -27,21 +37,22 @@ suspend fun <State, Effect>
  * @param until Condition to meet in order to continue waiting for jobs.
  */
 suspend fun <State, Effect>
-        ExposedStateContainer<State, Effect>.awaitJobs(until: () -> Boolean) {
+        ExposedStateContainer<State, Effect>.deepAwait(until: () -> Boolean) {
     val emptyScope = CoroutineScope(EmptyCoroutineContext)
     val awaitingJob = emptyScope.launch(start = CoroutineStart.LAZY) {
-        asExecutableContainer().awaitJobs()
+        asExecutableContainer().deepAwait()
     }
     suspendCoroutine { continuation ->
         fun verify() {
             if (until()) {
+                clearDelegate()
                 awaitingJob.cancelChildren()
                 awaitingJob.cancel()
             }
         }
         asDelegatorContainer().delegate(
             doOnAnyEmission(
-                container = this@awaitJobs.asStateContainer(),
+                container = this@deepAwait.asStateContainer(),
                 block = ::verify
             )
         )
@@ -58,12 +69,10 @@ private fun <State, Effect> doOnAnyEmission(
 ): StateContainer<State, Effect> {
     return object : DelegatorContainer<State, Effect>(container) {
         override fun update(function: State.() -> State) {
-            super.update(function)
             block()
         }
 
         override fun post(effect: Effect) {
-            super.post(effect)
             block()
         }
     }

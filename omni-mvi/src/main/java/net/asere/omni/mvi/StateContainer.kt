@@ -8,6 +8,7 @@ import net.asere.omni.core.ExecutableContainer
  * State container
  */
 interface StateContainer<State, Effect> : ExposedStateContainer<State, Effect> {
+    val initialState: State
     val state: StateFlow<State>
     val effect: Flow<Effect>
     fun update(function: State.() -> State)

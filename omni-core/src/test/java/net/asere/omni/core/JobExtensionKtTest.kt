@@ -39,7 +39,7 @@ class JobExtensionKtTest {
             launch { delay(100); mutex.withLock { jobCounter++ } }
             launch { delay(400); mutex.withLock { jobCounter++ } }
         }
-        job.recursiveJoin()
+        job.recursiveJoinChildren()
         assertEquals(7, jobCounter)
     }
 
@@ -70,7 +70,7 @@ class JobExtensionKtTest {
             launch { mutex.withLock { jobCounter++ } }
         }
         job.startChildrenJobs()
-        job.recursiveJoin()
+        job.recursiveJoinChildren()
         assertEquals(5, jobCounter)
     }
 }

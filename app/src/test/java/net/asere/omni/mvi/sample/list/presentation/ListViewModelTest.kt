@@ -103,8 +103,7 @@ class ListViewModelTest {
 
     @Test
     fun `On NextPage intent called should request next page to repository`() = runTest {
-        createViewModel().testIntent(from = ListState()) { nextPage() }.evaluate {
-            print(emittedStates)
+        createViewModel().testIntent { nextPage() }.evaluate {
             expectState { copy(currentPage = 2) }
             expectState { copy(loading = true, error = String.empty()) }
             expectState {

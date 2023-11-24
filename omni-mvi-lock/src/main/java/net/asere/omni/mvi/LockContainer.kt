@@ -22,7 +22,7 @@ open class LockContainer<State, Effect> internal constructor(
     /**
      * Cancels any intent identified with the provided id value.
      */
-    internal fun cancelIntent(intentId: Any) = intent {
+    internal fun cancelIntent(intentId: Any) = intentJob {
         mutex.withLock {
             val job = intents[intentId]?.job
             job?.cancelChildren()
