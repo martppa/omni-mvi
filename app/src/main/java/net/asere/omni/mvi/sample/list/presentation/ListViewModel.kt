@@ -16,18 +16,15 @@ import net.asere.omni.mvi.onAction
 import net.asere.omni.core.onError
 import net.asere.omni.mvi.overrideIntent
 import net.asere.omni.mvi.post
-import net.asere.omni.mvi.postEffect
-import net.asere.omni.mvi.postState
 import net.asere.omni.mvi.reduce
-import net.asere.omni.mvi.sample.list.domain.usecase.GetRepositories
-import net.asere.omni.mvi.sample.list.domain.usecase.SearchRepositories
+import net.asere.omni.mvi.sample.list.domain.GetRepositories
+import net.asere.omni.mvi.sample.list.domain.SearchRepositories
 import net.asere.omni.mvi.sample.list.presentation.exception.ExceptionHandler
 import net.asere.omni.mvi.sample.list.presentation.exception.coroutineExceptionHandler
 import net.asere.omni.mvi.sample.shared.core.extension.requireMessage
 import net.asere.omni.mvi.sample.shared.domain.extension.empty
 import net.asere.omni.mvi.sample.shared.presentation.model.asPresentation
 import net.asere.omni.mvi.saveableStateContainer
-import net.asere.omni.mvi.stateContainer
 import net.asere.omni.mvi.unlockIntent
 
 class ListViewModel(

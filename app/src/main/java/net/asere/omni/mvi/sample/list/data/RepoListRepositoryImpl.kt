@@ -1,6 +1,6 @@
 package net.asere.omni.mvi.sample.list.data
 
-import net.asere.omni.mvi.sample.list.domain.data.RepoListRepository
+import net.asere.omni.mvi.sample.list.domain.RepoListRepository
 
 class RepoListRepositoryImpl(
     private val dataSource: RepoListDataSource,

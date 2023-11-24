@@ -1,4 +1,4 @@
-package net.asere.omni.mvi.sample.list.domain.data
+package net.asere.omni.mvi.sample.list.domain
 
 import net.asere.omni.mvi.sample.list.domain.model.PagedRepos
 

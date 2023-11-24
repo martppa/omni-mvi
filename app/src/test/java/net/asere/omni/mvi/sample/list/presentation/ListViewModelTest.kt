@@ -13,8 +13,8 @@ import net.asere.omni.mvi.effect
 import net.asere.omni.mvi.evaluate
 import net.asere.omni.mvi.exactly
 import net.asere.omni.mvi.sample.list.domain.model.PagedRepos
-import net.asere.omni.mvi.sample.list.domain.usecase.GetRepositories
-import net.asere.omni.mvi.sample.list.domain.usecase.SearchRepositories
+import net.asere.omni.mvi.sample.list.domain.GetRepositories
+import net.asere.omni.mvi.sample.list.domain.SearchRepositories
 import net.asere.omni.mvi.sample.list.presentation.exception.ExceptionHandler
 import net.asere.omni.mvi.sample.shared.domain.extension.empty
 import net.asere.omni.mvi.sample.shared.domain.model.Repo
