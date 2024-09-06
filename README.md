@@ -56,11 +56,11 @@ Intents are suspending jobs running under a specific scope which grants access t
 ```kotlin
 fun fetchContent() = intent {
     onError {
-        postEffect(ListEffect.ShowMessage(it.requireMessage()))
+        post(ListEffect.ShowMessage(it.requireMessage()))
     }
-    postState { copy(loading = true) }
+    reduce { copy(loading = true) }
     val repos = getRepositories(currentState.currentPage)
-    postState { copy(loading = false, items = items + repos.items) }
+    reduce { copy(loading = false, items = items + repos.items) }
 }
 ```
 
@@ -261,7 +261,7 @@ In case you want to test long running intents you can always truncate your evalu
 @Test
 fun `On continues emit intent called should take first 9 states`() = runTest {
     createViewModel().testIntent(
-        withState = ListState(currentPage = 10),
+        from = ListState(currentPage = 10),
         take = 9 times state
     ) { continuesEmit() }.evaluate {
         Assert.assertEquals(9, emittedStates.size)
@@ -410,11 +410,11 @@ IMPORTANT: Locked intents can be identified by passing an id at invocation. If n
 // We are using lockIntent since we want this intent to execute only once at a time
 private fun fetchContent() = lockIntent {
     onError { // This block is called when the intent execution fails
-        postEffect(ListEffect.ShowMessage(it.requireMessage()))
+        post(ListEffect.ShowMessage(it.requireMessage()))
     }
-    postState { copy(loading = true) }
+    reduce { copy(loading = true) }
     val repos = getRepositories(currentState.currentPage)
-    postState {
+    reduce {
         copy(loading = false, currentPage = repos.currentPage, items = items + repos.items)
     }
     if (repos.items.isEmpty()) {
@@ -465,12 +465,12 @@ override val container = stateContainer(
 You can execute an `overrideIntent()` when you wish a block of code to be overridden when executed. You can pass an identifier as parameter to identify the intent's execution you would like to override
 ```kotlin
 private fun onQuery(value: String) = overrideIntent {
-    postState { copy(query = value, currentPage = 1) }
+    reduce { copy(query = value, currentPage = 1) }
     delay(QUERY_DELAY) // Apply a delay to the intent to reduce query rate
     onError { showError(it) } // Executed when an error occurs
-    postState { copy(loading = true) }
+    reduce { copy(loading = true) }
     val repos = searchRepositories(query = value, currentState.currentPage)
-    postState { copy(loading = false, items = repos.items) }
+    reduce { copy(loading = false, items = repos.items) }
 }
 ```
 
