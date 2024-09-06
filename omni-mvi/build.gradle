@@ -6,8 +6,8 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
 }
 
 compileKotlin {
@@ -15,10 +15,17 @@ compileKotlin {
         freeCompilerArgs += [
                 "-Xopt-in=kotlin.RequiresOptIn"
         ]
+        jvmTarget = "1.8"
     }
 }
 
-version = '1.7.3'
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+version = '1.7.4'
 
 ext {
     VERSION = version

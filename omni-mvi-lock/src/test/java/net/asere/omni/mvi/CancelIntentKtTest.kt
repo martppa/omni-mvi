@@ -27,7 +27,7 @@ class CancelIntentKtTest : LockContainerHost<Any, Any> {
 
     @Test
     fun `On intent cancellation container cancel method should be called`(): Unit = runBlocking {
-        cancelIntent().join()
+        cancelIntent()
         verify { container.cancelIntent(Unit) }
     }
 

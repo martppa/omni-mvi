@@ -30,12 +30,12 @@ abstract class ExecutableContainer(
 
     @OptIn(DelicateCoroutinesApi::class)
     companion object {
-        private const val BlockedExecutionThreadName = "BlockedExecutionThread"
+        private const val BLOCKED_EXECUTION_THREAD_NAME = "BlockedExecutionThread"
 
         /**
          * Creates a new blocked context
          */
-        fun blockedContext() = newSingleThreadContext(BlockedExecutionThreadName)
+        fun blockedContext() = newSingleThreadContext(BLOCKED_EXECUTION_THREAD_NAME)
     }
 
     private var locked: Boolean = false
@@ -61,7 +61,7 @@ abstract class ExecutableContainer(
      * Returns whether are the executions blocked or not
      */
     private fun isExecutionLocked(): Boolean {
-        return Thread.currentThread().name == BlockedExecutionThreadName || locked
+        return Thread.currentThread().name == BLOCKED_EXECUTION_THREAD_NAME || locked
     }
 
     /**

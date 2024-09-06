@@ -6,8 +6,8 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
 }
 
 compileKotlin {
@@ -15,10 +15,17 @@ compileKotlin {
         freeCompilerArgs += [
                 "-Xopt-in=kotlin.RequiresOptIn"
         ]
+        jvmTarget = "1.8"
     }
 }
 
-version = '1.7.3'
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+version = '1.7.4'
 
 ext {
     VERSION = version
@@ -30,9 +37,9 @@ ext {
 apply from: "${rootProject.projectDir}/scripts/base_publish.gradle"
 
 dependencies {
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1'
     testImplementation "io.mockk:mockk:1.13.2"
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1'
     testImplementation project(path: ':shared-test')
 }

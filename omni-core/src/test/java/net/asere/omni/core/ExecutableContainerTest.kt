@@ -33,7 +33,7 @@ class ExecutableContainerTest {
             throw expectedThrownError
         }
 
-        container.awaitJobs()
+        container.await()
         assertEquals(expectedThrownError, actualThrownError)
     }
 
@@ -71,7 +71,7 @@ class ExecutableContainerTest {
         ) {
             blockExecuted = true
         }
-        container.awaitJobs()
+        container.await()
         assert(blockExecuted)
     }
 
@@ -91,7 +91,7 @@ class ExecutableContainerTest {
         ) {
             blockExecutedInScope = this == scope
         }
-        container.awaitJobs()
+        container.await()
         assert(blockExecutedInScope)
     }
 }

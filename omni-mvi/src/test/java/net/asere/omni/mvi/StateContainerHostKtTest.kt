@@ -9,6 +9,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import net.asere.omni.core.ExecutableContainer
 import org.junit.Test
 
 internal class StateContainerHostKtTest : StateContainerHost<Any, Any> {
@@ -22,7 +23,7 @@ internal class StateContainerHostKtTest : StateContainerHost<Any, Any> {
 
     @Test
     fun `On intent invocation must call block`() = runBlocking {
-        intent { block() }.join()
+        intent { block() }
         verify { block() }
     }
 
@@ -36,7 +37,6 @@ internal class StateContainerHostKtTest : StateContainerHost<Any, Any> {
                 start = any()
             )
         } answers { launch { /* Empty body */ } }
-        intent { block() }.join()
         verify(exactly = 0) { block() }
         unmockkStatic(coroutineScope::launch)
     }

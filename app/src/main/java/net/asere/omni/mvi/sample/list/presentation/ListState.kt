@@ -1,7 +1,7 @@
 package net.asere.omni.mvi.sample.list.presentation
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import net.asere.omni.mvi.sample.shared.domain.extension.empty
 import net.asere.omni.mvi.sample.shared.presentation.model.RepoModel
 
@@ -15,8 +15,8 @@ data class ListState(
 ) : Parcelable
 
 sealed class ListAction {
-    object Retry : ListAction()
-    object NextPage : ListAction()
+    data object Retry : ListAction()
+    data object NextPage : ListAction()
     class Query(val value: String) : ListAction()
 }
 
