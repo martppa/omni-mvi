@@ -4,7 +4,7 @@ import net.asere.omni.core.ExecutionScope
 import net.asere.omni.core.OmniHostDsl
 
 class IntentScope<State, Effect>(
-    val container: StateContainer<State, Effect>,
+    val container: InnerStateContainer<State, Effect>,
 ) : ExecutionScope()
 
 @Deprecated("Use reduce extension function", ReplaceWith("reduce(function)"))

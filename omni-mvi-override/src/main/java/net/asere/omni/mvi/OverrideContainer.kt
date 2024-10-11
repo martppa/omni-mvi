@@ -8,10 +8,10 @@ import kotlinx.coroutines.sync.withLock
  * Use this container to execute intents stopping their previous execution.
  */
 open class OverrideContainer<State, Effect> internal constructor(
-    override val container: ExposedStateContainer<State, Effect>,
+    override val container: StateContainer<State, Effect>,
 ) : StateContainerDecorator<State, Effect>(
     container
-), ExposedStateContainer<State, Effect>,
+), StateContainer<State, Effect>,
     OverrideContainerHost<State, Effect> {
 
     private val mutex = Mutex()
@@ -37,20 +37,20 @@ open class OverrideContainer<State, Effect> internal constructor(
 }
 
 private fun <State, Effect> overrideContainer(
-    container: ExposedStateContainer<State, Effect>
+    container: StateContainer<State, Effect>
 ) = OverrideContainer(container)
 
 /**
  * Turns this container into an override container
  */
-fun <State, Effect> ExposedStateContainer<State, Effect>
+fun <State, Effect> StateContainer<State, Effect>
         .buildOverrideContainer() = overrideContainer(this)
 
 /**
  * Seeks for an OverrideContainer from inside a decorated container
  */
 internal fun <State, Effect>
-        ExposedStateContainer<State, Effect>.asOverrideContainer() =
+        StateContainer<State, Effect>.asOverrideContainer() =
     asStateContainer().seek<OverrideContainer<State, Effect>> {
         it is OverrideContainer<*, *>
     }

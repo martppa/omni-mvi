@@ -11,7 +11,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 internal class IntentScopeKtTest : StateContainerHost<Any, Any> {
 
-    override val container = mockk<StateContainer<Any, Any>>(relaxed = true) {
+    override val container = mockk<InnerStateContainer<Any, Any>>(relaxed = true) {
         every { coroutineExceptionHandler } returns EmptyCoroutineExceptionHandler
         every { coroutineScope } returns CoroutineScope(EmptyCoroutineContext)
     }

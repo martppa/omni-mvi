@@ -26,7 +26,7 @@ import net.asere.omni.core.ExecutableContainer
 ) : ExecutableContainer(
     coroutineScope = coroutineScope,
     coroutineExceptionHandler = coroutineExceptionHandler
-), StateContainer<State, Effect> {
+), InnerStateContainer<State, Effect> {
     private val _state: MutableStateFlow<State> = MutableStateFlow(initialState)
     override val state = _state.asStateFlow()
 
@@ -62,5 +62,5 @@ fun <State, Effect>
 ).decorate { DelegatorContainer(it) }
 
 
-fun <State, Effect> ExposedStateContainer<State, Effect>.asStateContainer() =
-    this as StateContainer<State, Effect>
+fun <State, Effect> StateContainer<State, Effect>.asStateContainer() =
+    this as InnerStateContainer<State, Effect>

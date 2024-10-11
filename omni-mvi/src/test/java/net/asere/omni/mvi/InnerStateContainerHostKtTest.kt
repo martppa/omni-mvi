@@ -9,14 +9,13 @@ import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import net.asere.omni.core.ExecutableContainer
 import org.junit.Test
 
-internal class StateContainerHostKtTest : StateContainerHost<Any, Any> {
+internal class InnerStateContainerHostKtTest : StateContainerHost<Any, Any> {
 
     private val coroutineScope = CoroutineScope(EmptyCoroutineContext)
     private val block: () -> Unit = mockk()
-    override val container: ExposedStateContainer<Any, Any> = stateContainer(
+    override val container: StateContainer<Any, Any> = stateContainer(
         initialState = Unit,
         coroutineScope = coroutineScope
     )

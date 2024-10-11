@@ -6,7 +6,7 @@ import net.asere.omni.core.EmptyCoroutineExceptionHandler
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-internal class StateContainerBuilderKtTest : StateContainerHost<Any, Any> {
+internal class InnerStateContainerBuilderKtTest : StateContainerHost<Any, Any> {
 
     private val initialState: Any = mockk()
     private val exceptionHandler = EmptyCoroutineExceptionHandler

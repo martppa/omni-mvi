@@ -10,7 +10,7 @@ import net.asere.omni.core.Container
  * means that the same intent can't be execute again until previous execution ends.
  */
 open class LockContainer<State, Effect> internal constructor(
-    override val container: ExposedStateContainer<State, Effect>,
+    override val container: StateContainer<State, Effect>,
 ) : StateContainerDecorator<State, Effect>(
     container
 ), Container,
@@ -61,18 +61,18 @@ open class LockContainer<State, Effect> internal constructor(
 }
 
 internal fun <State, Effect> lockContainer(
-    container: ExposedStateContainer<State, Effect>
+    container: StateContainer<State, Effect>
 ) = LockContainer(container)
 
 /**
  * Turns this container into a lock container
  */
-fun <State, Effect> ExposedStateContainer<State, Effect>
+fun <State, Effect> StateContainer<State, Effect>
         .buildLockContainer() = lockContainer(this)
 
 /**
  * Seeks for a LockContainer from inside a decorated container
  */
 internal fun <State, Effect>
-        ExposedStateContainer<State, Effect>.asLockContainer() =
+        StateContainer<State, Effect>.asLockContainer() =
     asStateContainer().seek<LockContainer<State, Effect>> { it is LockContainer<*, *> }

@@ -4,7 +4,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import net.asere.omni.core.EmptyCoroutineExceptionHandler
-import net.asere.omni.mvi.StateContainer
+import net.asere.omni.mvi.InnerStateContainer
 import net.asere.omni.mvi.StateContainerHost
 import net.asere.omni.mvi.stateContainer
 
@@ -21,7 +21,7 @@ fun <State, Effect> stateContainerHost(
 }
 
 fun <State, Effect> stateContainerHost(
-    stateContainer: StateContainer<State, Effect>
+    stateContainer: InnerStateContainer<State, Effect>
 ) = object : StateContainerHost<State, Effect> {
     override val container = stateContainer
 }

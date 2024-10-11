@@ -1,16 +1,13 @@
 package net.asere.omni.mvi
 
-import io.mockk.mockk
-import io.mockk.verify
 import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import kotlin.random.Random
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ActionContainerKtTest {
+class InnerActionContainerKtTest {
 
     private val actionValue = Random.nextInt()
 
@@ -19,7 +16,7 @@ class ActionContainerKtTest {
     }
 
     private val host = object : ActionContainerHost<Any, Any, Int> {
-        override val container: ActionContainer<Any, Any, Int> = stateContainer(
+        override val container: InnerActionContainer<Any, Any, Int> = stateContainer(
             initialState = Unit
         ).onAction(::onActionFunc)
     }

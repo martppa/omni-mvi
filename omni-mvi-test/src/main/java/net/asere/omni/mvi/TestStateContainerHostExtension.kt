@@ -11,7 +11,7 @@ import kotlin.coroutines.suspendCoroutine
 /**
  * Returns itself as an executable container
  */
-fun <State, Effect> ExposedStateContainer<State, Effect>.asExecutableContainer(): ExecutableContainer =
+fun <State, Effect> StateContainer<State, Effect>.asExecutableContainer(): ExecutableContainer =
     asStateContainer().seek { it is ExecutableContainer }
 
 /**
@@ -37,7 +37,7 @@ suspend fun <State, Effect>
  * @param until Condition to meet in order to continue waiting for jobs.
  */
 suspend fun <State, Effect>
-        ExposedStateContainer<State, Effect>.await(until: () -> Boolean) {
+        StateContainer<State, Effect>.await(until: () -> Boolean) {
     val emptyScope = CoroutineScope(EmptyCoroutineContext)
     val awaitingJob = emptyScope.launch(start = CoroutineStart.LAZY) {
         asExecutableContainer().await()
@@ -71,9 +71,9 @@ suspend fun <State, Effect>
  * @return Delegated container
  */
 private fun <State, Effect> doOnAnyEmission(
-    container: StateContainer<State, Effect>,
+    container: InnerStateContainer<State, Effect>,
     block: () -> Unit
-): StateContainer<State, Effect> {
+): InnerStateContainer<State, Effect> {
     return object : DelegatorContainer<State, Effect>(container) {
         override fun update(function: State.() -> State) {
             super.update(function)
@@ -111,7 +111,7 @@ fun <State, Effect>
 /**
  * Recursively seeks a delegator container and return it
  */
-fun <State, Effect> ExposedStateContainer<State, Effect>.asDelegatorContainer(): DelegatorContainer<State, Effect> =
+fun <State, Effect> StateContainer<State, Effect>.asDelegatorContainer(): DelegatorContainer<State, Effect> =
     asStateContainer().seek { it is DelegatorContainer<*, *> }
 
 /**
@@ -119,14 +119,14 @@ fun <State, Effect> ExposedStateContainer<State, Effect>.asDelegatorContainer():
  *
  * @param container Delegating container
  */
-fun <State, Effect> ExposedStateContainer<State, Effect>.delegate(
-    container: StateContainer<State, Effect>
+fun <State, Effect> StateContainer<State, Effect>.delegate(
+    container: InnerStateContainer<State, Effect>
 ) = asDelegatorContainer().delegate(container)
 
 /**
  * Clears delegating container
  */
-fun <State, Effect> ExposedStateContainer<State, Effect>.clearDelegate() =
+fun <State, Effect> StateContainer<State, Effect>.clearDelegate() =
     asDelegatorContainer().clearDelegate()
 
 /**
@@ -135,7 +135,7 @@ fun <State, Effect> ExposedStateContainer<State, Effect>.clearDelegate() =
  * @param container Delegating container
  */
 fun <State, Effect> StateContainerHost<State, Effect>.delegate(
-    container: StateContainer<State, Effect>
+    container: InnerStateContainer<State, Effect>
 ) = this.container.delegate(container)
 
 /**

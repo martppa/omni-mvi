@@ -13,7 +13,7 @@ import net.asere.omni.core.execute
  * into a state host.
  */
 interface StateContainerHost<State, Effect> : ContainerHost {
-    override val container: ExposedStateContainer<State, Effect>
+    override val container: StateContainer<State, Effect>
 }
 
 /**

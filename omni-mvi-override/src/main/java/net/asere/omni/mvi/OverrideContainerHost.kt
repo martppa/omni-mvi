@@ -7,7 +7,7 @@ import net.asere.omni.core.OmniHostDsl
  */
 interface OverrideContainerHost<State, Effect>
     : StateContainerHost<State, Effect> {
-    override val container: ExposedStateContainer<State, Effect>
+    override val container: StateContainer<State, Effect>
 }
 
 /**

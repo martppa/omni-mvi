@@ -10,10 +10,10 @@ import kotlinx.coroutines.channels.consumeEach
  * is placed into a queue of execution.
  */
 open class QueueContainer<State, Effect> internal constructor(
-    override val container: ExposedStateContainer<State, Effect>,
+    override val container: StateContainer<State, Effect>,
 ) : StateContainerDecorator<State, Effect>(
     container
-), ExposedStateContainer<State, Effect>,
+), StateContainer<State, Effect>,
     QueueContainerHost<State, Effect> {
 
     private lateinit var intentQueue: Channel<Job>
@@ -55,12 +55,12 @@ open class QueueContainer<State, Effect> internal constructor(
 }
 
 fun <State, Effect> queueContainer(
-    container: ExposedStateContainer<State, Effect>
+    container: StateContainer<State, Effect>
 ) = QueueContainer(container)
 
-fun <State, Effect> ExposedStateContainer<State, Effect>
+fun <State, Effect> StateContainer<State, Effect>
         .buildQueueContainer() = queueContainer(this)
 
 internal fun <State, Effect>
-        ExposedStateContainer<State, Effect>.asQueueContainer() =
+        StateContainer<State, Effect>.asQueueContainer() =
     asStateContainer().seek<QueueContainer<State, Effect>> { it is QueueContainer<*, *> }

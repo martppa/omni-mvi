@@ -28,7 +28,7 @@ class SaveableStateContainer<State, Effect> internal constructor(
 ) : ExecutableContainer(
     coroutineScope = coroutineScope,
     coroutineExceptionHandler = coroutineExceptionHandler
-), StateContainer<State, Effect> {
+), InnerStateContainer<State, Effect> {
 
     override val state = savedStateHandle.getStateFlow(HANDLE_KEY, initialState)
 

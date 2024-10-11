@@ -7,11 +7,11 @@ import net.asere.omni.core.ExecutableContainer
  * container with its own features.
  */
 open class StateContainerDecorator<State, Effect>(
-    internal val container: ExposedStateContainer<State, Effect>
+    internal val container: StateContainer<State, Effect>
 ) : ExecutableContainer(
     coroutineScope = container.coroutineScope,
     coroutineExceptionHandler = container.coroutineExceptionHandler,
-), StateContainer<State, Effect> {
+), InnerStateContainer<State, Effect> {
 
     override val initialState = container.asStateContainer().initialState
     override val state = container.asStateContainer().state
@@ -28,9 +28,9 @@ open class StateContainerDecorator<State, Effect>(
  * @param block Block of code where decoration takes place
  * @return Decorated container
  */
-fun<State, Effect> StateContainer<State, Effect>.decorate(
-    block: (StateContainer<State, Effect>) -> StateContainer<State, Effect>
-): StateContainer<State, Effect> {
+fun<State, Effect> InnerStateContainer<State, Effect>.decorate(
+    block: (InnerStateContainer<State, Effect>) -> InnerStateContainer<State, Effect>
+): InnerStateContainer<State, Effect> {
     return block(this)
 }
 
@@ -42,7 +42,7 @@ fun<State, Effect> StateContainer<State, Effect>.decorate(
  * @throws RuntimeException when no container matches the predicate
  */
 @Suppress("UNCHECKED_CAST")
-fun <T> StateContainer<*, *>.seek(predicate: (Any) -> Boolean): T {
+fun <T> InnerStateContainer<*, *>.seek(predicate: (Any) -> Boolean): T {
     if (this is StateContainerDecorator) {
         if (predicate(this)) return this as T
         return this.container.asStateContainer().seek(predicate)

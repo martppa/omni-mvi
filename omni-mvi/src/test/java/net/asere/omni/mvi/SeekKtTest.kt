@@ -4,13 +4,13 @@ import net.asere.omni.mvi.shared.test.stateContainerHost
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
-private open class FakeBaseContainer(container: ExposedStateContainer<Any, Any>)
+private open class FakeBaseContainer(container: StateContainer<Any, Any>)
     : StateContainerDecorator<Any, Any>(container)
 
-private class FakeContainer1(container: ExposedStateContainer<Any, Any>) : FakeBaseContainer(container)
-private class FakeContainer2(container: ExposedStateContainer<Any, Any>) : FakeBaseContainer(container)
-private class FakeContainer3(container: ExposedStateContainer<Any, Any>) : FakeBaseContainer(container)
-private class FakeContainer4(container: ExposedStateContainer<Any, Any>) : FakeBaseContainer(container)
+private class FakeContainer1(container: StateContainer<Any, Any>) : FakeBaseContainer(container)
+private class FakeContainer2(container: StateContainer<Any, Any>) : FakeBaseContainer(container)
+private class FakeContainer3(container: StateContainer<Any, Any>) : FakeBaseContainer(container)
+private class FakeContainer4(container: StateContainer<Any, Any>) : FakeBaseContainer(container)
 
 class SeekKtTest {
 

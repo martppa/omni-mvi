@@ -6,7 +6,7 @@ package net.asere.omni.mvi
  */
 class ActionContainerDecorator<State, Effect, Action>(
     override val onAction: (Action) -> Unit,
-    container: ExposedStateContainer<State, Effect>,
+    container: StateContainer<State, Effect>,
 ) : StateContainerDecorator<State, Effect>(
     container = container
-), ActionContainer<State, Effect, Action>
+), InnerActionContainer<State, Effect, Action>

@@ -9,7 +9,7 @@ import org.junit.Assert.assertEquals
 internal class CurrentStateKtTest : StateContainerHost<Any, Any> {
 
     private val fakeState: Any = mockk()
-    override val container: StateContainer<Any, Any> = mockk {
+    override val container: InnerStateContainer<Any, Any> = mockk {
         every { state } returns MutableStateFlow(fakeState)
     }
 

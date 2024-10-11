@@ -4,10 +4,10 @@ package net.asere.omni.mvi
  * This is a container decorator to allow testing a container behavior
  */
 open class TestStateContainer<State, Effect> internal constructor(
-    override val container: ExposedStateContainer<State, Effect>,
+    override val container: StateContainer<State, Effect>,
 ) : StateContainerDecorator<State, Effect>(
     container
-), ExposedStateContainer<State, Effect>,
+), StateContainer<State, Effect>,
     StateContainerHost<State, Effect> {
 
     internal val emittedStates: MutableList<State> = mutableListOf()
@@ -32,12 +32,12 @@ open class TestStateContainer<State, Effect> internal constructor(
 }
 
 internal fun <State, Effect> testStateContainer(
-    container: ExposedStateContainer<State, Effect>
+    container: StateContainer<State, Effect>
 ) = TestStateContainer(container)
 
 /**
  * Turns this container into a test container
  */
-fun <State, Effect> ExposedStateContainer<State, Effect>
+fun <State, Effect> StateContainer<State, Effect>
         .buildTestContainer() = testStateContainer(this)
 
