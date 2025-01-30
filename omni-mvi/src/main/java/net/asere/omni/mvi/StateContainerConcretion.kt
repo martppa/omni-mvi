@@ -19,7 +19,7 @@ import net.asere.omni.core.ExecutableContainer
  * @param coroutineExceptionHandler Execution handler intended to catch thrown exceptions
  * during execution
  */
- class StateContainerConcretion<State, Effect> internal constructor(
+ class StateContainerConcretion<State : Any, Effect : Any> internal constructor(
     override val initialState: State,
     override val coroutineScope: CoroutineScope,
     override val coroutineExceptionHandler: CoroutineExceptionHandler,
@@ -50,7 +50,7 @@ import net.asere.omni.core.ExecutableContainer
  * @param coroutineExceptionHandler Execution handler intended to catch thrown exceptions
  * during execution
  */
-fun <State, Effect>
+fun <State : Any, Effect : Any>
         StateContainerHost<State, Effect>.stateContainer(
     initialState: State,
     coroutineScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext),
@@ -62,5 +62,5 @@ fun <State, Effect>
 ).decorate { DelegatorContainer(it) }
 
 
-fun <State, Effect> StateContainer<State, Effect>.asStateContainer() =
+fun <State : Any, Effect : Any> StateContainer<State, Effect>.asStateContainer() =
     this as InnerStateContainer<State, Effect>

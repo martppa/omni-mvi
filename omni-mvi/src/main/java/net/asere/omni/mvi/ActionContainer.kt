@@ -1,3 +1,3 @@
 package net.asere.omni.mvi
 
-interface ActionContainer<State, Effect, Action> : StateContainer<State, Effect>
+interface ActionContainer<State : Any, Effect : Any, Action : Any> : StateContainer<State, Effect>

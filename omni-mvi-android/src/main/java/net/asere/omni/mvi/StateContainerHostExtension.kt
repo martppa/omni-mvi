@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
  * Composable callback to deal with emitted effects from within the Host.
  */
 @Composable
-fun <UiState, Effect> StateContainerHost<UiState, Effect>.OnEffect(
+fun <UiState : Any, Effect : Any> StateContainerHost<UiState, Effect>.OnEffect(
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
     action: FlowCollector<Effect>
 ) {
@@ -37,7 +37,7 @@ fun <UiState, Effect> StateContainerHost<UiState, Effect>.OnEffect(
  * Emitted states delegate.
  */
 @Composable
-fun <UiState> StateContainerHost<UiState, *>.state(
+fun <UiState : Any> StateContainerHost<UiState, *>.state(
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
 ): State<UiState> {
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -53,7 +53,7 @@ fun <UiState> StateContainerHost<UiState, *>.state(
 /**
  * Set callback function to receive emitted states from within the Host
  */
-fun <UiState> StateContainerHost<UiState, *>.observeState(
+fun <UiState : Any> StateContainerHost<UiState, *>.observeState(
     lifecycleOwner: LifecycleOwner,
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
     onState: (suspend (state: UiState) -> Unit)
@@ -68,7 +68,7 @@ fun <UiState> StateContainerHost<UiState, *>.observeState(
 /**
  * Set callback function to receive emitted effect from within the Host
  */
-fun <Effect> StateContainerHost<*, Effect>.observeEffect(
+fun <Effect : Any> StateContainerHost<*, Effect>.observeEffect(
     lifecycleOwner: LifecycleOwner,
     lifecycleState: Lifecycle.State = Lifecycle.State.STARTED,
     onEffect: (suspend (effect: Effect) -> Unit)

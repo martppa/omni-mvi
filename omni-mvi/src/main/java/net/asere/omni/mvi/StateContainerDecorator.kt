@@ -6,7 +6,7 @@ import net.asere.omni.core.ExecutableContainer
  * Basic container decorator implementation. Its function is to decorate any
  * container with its own features.
  */
-open class StateContainerDecorator<State, Effect>(
+open class StateContainerDecorator<State : Any, Effect : Any>(
     internal val container: StateContainer<State, Effect>
 ) : ExecutableContainer(
     coroutineScope = container.coroutineScope,
@@ -28,7 +28,7 @@ open class StateContainerDecorator<State, Effect>(
  * @param block Block of code where decoration takes place
  * @return Decorated container
  */
-fun<State, Effect> InnerStateContainer<State, Effect>.decorate(
+fun<State : Any, Effect : Any> InnerStateContainer<State, Effect>.decorate(
     block: (InnerStateContainer<State, Effect>) -> InnerStateContainer<State, Effect>
 ): InnerStateContainer<State, Effect> {
     return block(this)

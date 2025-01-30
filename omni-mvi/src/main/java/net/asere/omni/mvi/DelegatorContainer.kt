@@ -3,7 +3,7 @@ package net.asere.omni.mvi
 /**
  * Delegates any state or effect emitted to the inner container
  */
-open class DelegatorContainer<State, Effect>(
+open class DelegatorContainer<State : Any, Effect : Any>(
     container: StateContainer<State, Effect>,
 ) : StateContainerDecorator<State, Effect>(
     container

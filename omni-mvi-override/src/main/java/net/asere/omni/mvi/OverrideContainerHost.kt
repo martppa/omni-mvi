@@ -5,7 +5,7 @@ import net.asere.omni.core.OmniHostDsl
 /**
  * Host of Override Containers
  */
-interface OverrideContainerHost<State, Effect>
+interface OverrideContainerHost<State : Any, Effect : Any>
     : StateContainerHost<State, Effect> {
     override val container: StateContainer<State, Effect>
 }
@@ -17,7 +17,7 @@ interface OverrideContainerHost<State, Effect>
  * @param block Intent's content
  */
 @OmniHostDsl
-fun <State, Effect>
+fun <State : Any, Effect : Any>
         OverrideContainerHost<State, Effect>.overrideIntent(
     intentId: Any = Unit,
     block: suspend IntentScope<State, Effect>.() -> Unit

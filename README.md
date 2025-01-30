@@ -171,8 +171,7 @@ If your `Host` executes intents during its construction you can capture its stat
 @Test
 fun `On creation must request first page to repository`() = runTest {
     val firstPage = 1
-    testConstructor { createViewModel() }.evaluate(relax = true) {
-        coVerify { getRepositories(firstPage) }
+    testConstructor { createViewModel() }.evaluate(relaxed = true) {
         Assert.assertEquals(2, emittedStates.size)
         Assert.assertEquals(emittedStates.first().currentPage, firstPage)
     }
@@ -182,7 +181,7 @@ fun `On creation must request first page to repository`() = runTest {
 `testConstructor()` function will construct you host under a controlled context to allow state and effects recording. Call `evaluate` to get inline access to test results.
 
 ### Strict evaluation
-By default, the evaluation runs not relaxed (`relax = false`), this means evaluation will force the validation of each emitted state or effect. Test will not pass if the exact amount or order is not evaluated. Use `expectState` and `expectEffect` to validate them.
+By default, the evaluation runs not relaxed (`relaxed = false`), this means evaluation will force the validation of each emitted state or effect. Test will not pass if the exact amount or order is not evaluated. Use `expectState` and `expectEffect` to validate them.
 
 ```kotlin
 @Test
@@ -202,11 +201,16 @@ fun `On creation request first page to repository and`() = runTest {
 ```
 
 ### Relaxed evaluation
-Evaluation can run relaxed (`relaxed = true`), this mode will not force you to match the exact amount of emitted states and effects. You can access `nextState` and `nextEffect`. `nextState` provides previous and current state to let you perform a proper evaluation by your own. `nextEffect` provides next emitted effect.
+Evaluation can run relaxed (`relaxed = true`), this mode will not force you to match the exact amount of emitted states and effects.
+
+### Manual assert
+If you wish to do manual assertions upon `states` and `effects` you can use `nextState` and `nextEffect` functions. `nextState` provides previous and current state to let you perform a proper evaluation by your own. `nextEffect` provides next emitted effect.
+Even relaxed, the evaluation will force you respect the order of emissions.
+
 ```kotlin
 @Test
 fun `On creation request first page to repository and`() = runTest {
-    testConstructor { createViewModel() }.evaluate(relax = true) {
+    testConstructor { createViewModel() }.evaluate(relaxed = true) {
         coVerify { getRepositories(1) }
         nextState { previous, current ->
             Assert.assertEquals(
@@ -230,13 +234,15 @@ fun `On creation request first page to repository and`() = runTest {
 }
 ```
 
+### Accessing emitted states and effects
+When relaxed, the evaluation process will not force you validate any emitted `state` or `effect`. Still you can access them through `emittedStates` and `emittedEffects` properties.
+
 ### Intents testing
 Call `testIntent()` to capture any emitted state or effect. Call `evaluate` to get inline access to resulting data:
 
 ```kotlin
 @Test
 fun `On NextPage intent called should request next page to repository`() = runTest {
-    val nextPage = 2
     createViewModel().testIntent { nextPage() }.evaluate {
         ...
     }
@@ -248,7 +254,6 @@ Use the `testOn()` function to test host actions:
 ```kotlin
 @Test
 fun `On NextPage action called should request next page to repository`() = runTest {
-    val nextPage = 2
     createViewModel().testOn(ListAction.NextPage).evaluate {
         ...
     }

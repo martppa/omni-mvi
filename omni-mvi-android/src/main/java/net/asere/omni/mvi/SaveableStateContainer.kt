@@ -20,7 +20,7 @@ private const val HANDLE_KEY = "omni_state"
  * @param coroutineScope Coroutine scope in which intents will be executed
  * @param coroutineExceptionHandler Handler to deal with exceptions
  */
-class SaveableStateContainer<State, Effect> internal constructor(
+class SaveableStateContainer<State : Any, Effect : Any> internal constructor(
     override val initialState: State,
     private val savedStateHandle: SavedStateHandle,
     override val coroutineScope: CoroutineScope,
@@ -53,7 +53,7 @@ class SaveableStateContainer<State, Effect> internal constructor(
  * @param coroutineScope Coroutine scope in which intents will be executed, defaulted to CoroutineScope(EmptyCoroutineContext)
  * @param coroutineExceptionHandler Handler to deal with exceptions, defaulted to EmptyCoroutineExceptionHandler
  */
-fun <State, Effect>
+fun <State : Any, Effect : Any>
         StateContainerHost<State, Effect>.saveableStateContainer(
     initialState: State,
     savedStateHandle: SavedStateHandle,

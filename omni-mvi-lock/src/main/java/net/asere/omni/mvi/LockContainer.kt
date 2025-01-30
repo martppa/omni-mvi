@@ -9,7 +9,7 @@ import net.asere.omni.core.Container
  * This container lets you control intents execution by locking them. Locking an intent
  * means that the same intent can't be execute again until previous execution ends.
  */
-open class LockContainer<State, Effect> internal constructor(
+open class LockContainer<State : Any, Effect : Any> internal constructor(
     override val container: StateContainer<State, Effect>,
 ) : StateContainerDecorator<State, Effect>(
     container
@@ -60,19 +60,19 @@ open class LockContainer<State, Effect> internal constructor(
     }
 }
 
-internal fun <State, Effect> lockContainer(
+internal fun <State : Any, Effect : Any> lockContainer(
     container: StateContainer<State, Effect>
 ) = LockContainer(container)
 
 /**
  * Turns this container into a lock container
  */
-fun <State, Effect> StateContainer<State, Effect>
+fun <State : Any, Effect : Any> StateContainer<State, Effect>
         .buildLockContainer() = lockContainer(this)
 
 /**
  * Seeks for a LockContainer from inside a decorated container
  */
-internal fun <State, Effect>
+internal fun <State : Any, Effect : Any>
         StateContainer<State, Effect>.asLockContainer() =
     asStateContainer().seek<LockContainer<State, Effect>> { it is LockContainer<*, *> }

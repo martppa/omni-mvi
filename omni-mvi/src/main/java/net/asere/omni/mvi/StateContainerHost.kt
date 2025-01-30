@@ -12,14 +12,14 @@ import net.asere.omni.core.execute
  * Implement this interface to turn your class
  * into a state host.
  */
-interface StateContainerHost<State, Effect> : ContainerHost {
+interface StateContainerHost<State : Any, Effect : Any> : ContainerHost {
     override val container: StateContainer<State, Effect>
 }
 
 /**
  * Current and last state emitted from within the state host
  */
-val <State> StateContainerHost<State, *>.currentState: State
+val <State : Any> StateContainerHost<State, *>.currentState: State
     get() = container.asStateContainer().state.value
 
 /**
@@ -30,7 +30,7 @@ val <State> StateContainerHost<State, *>.currentState: State
  * @param block Executable intent content
  */
 @OmniHostDsl
-fun <State, Effect> StateContainerHost<State, Effect>.intent(
+fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.intent(
     context: CoroutineContext = EmptyCoroutineContext,
     start: CoroutineStart = CoroutineStart.DEFAULT,
     block: suspend IntentScope<State, Effect>.() -> Unit
@@ -52,7 +52,7 @@ fun <State, Effect> StateContainerHost<State, Effect>.intent(
  * @return the job running the intent
  */
 @OmniHostDsl
-fun <State, Effect> StateContainerHost<State, Effect>.intentJob(
+fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.intentJob(
     context: CoroutineContext = EmptyCoroutineContext,
     start: CoroutineStart = CoroutineStart.DEFAULT,
     block: suspend IntentScope<State, Effect>.() -> Unit
@@ -71,7 +71,7 @@ fun <State, Effect> StateContainerHost<State, Effect>.intentJob(
  *
  * @param onState Block set here will receive emitted states
  */
-fun <State> StateContainerHost<State, *>.observeState(onState: (State) -> Unit) = intent {
+fun <State : Any> StateContainerHost<State, *>.observeState(onState: (State) -> Unit) = intent {
     container.state.collect { onState(it) }
 }
 
@@ -80,6 +80,6 @@ fun <State> StateContainerHost<State, *>.observeState(onState: (State) -> Unit) 
  *
  * @param onEffect Block set here will receive emitted effects
  */
-fun <Effect> StateContainerHost<*, Effect>.observeEffect(onEffect: (Effect) -> Unit) = intent {
+fun <Effect : Any> StateContainerHost<*, Effect>.observeEffect(onEffect: (Effect) -> Unit) = intent {
     container.effect.collect { onEffect(it) }
 }

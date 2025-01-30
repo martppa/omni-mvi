@@ -8,19 +8,22 @@ import java.lang.IllegalArgumentException
  * Puts the container host in evaluation status and offers a scope of with testing data such as
  * emitted states and emitted effects.
  *
- * @param relax Set true if you want to avoid iterating over all emitted states and effects
+ * @param relaxed Set true if you want to avoid iterating over all emitted states and effects
  * @param block Evaluation code block
  */
-fun <State, Effect> TestResult<State, Effect>.evaluate(
-    relax: Boolean = false,
-    block: TestResult<State, Effect>.() -> Unit
+fun <State : Any, Effect : Any> TestResult<State, Effect>.evaluate(
+    relaxed: Boolean = false,
+    block: EvaluationScope<State, Effect>.() -> Unit
 ) {
-    this.block()
-    if (!relax) {
-        if (effectIterator.hasNext())
-            throw IllegalStateException("${effectIterator.nextIndex()} effects were tested but ${emittedEffects.size} were emitted.")
-        if (stateIterator.hasNext())
-            throw IllegalStateException("${stateIterator.nextIndex()} states were tested but ${emittedStates.size} were emitted.")
+    val scope = EvaluationScope(this)
+    block(scope)
+    with(scope) {
+        if (!relaxed) {
+            if (effectIterator.hasNext())
+                throw IllegalStateException("${effectIterator.nextIndex()} effects were tested but ${emittedEffects.size} were emitted.")
+            if (stateIterator.hasNext())
+                throw IllegalStateException("${stateIterator.nextIndex()} states were tested but ${emittedStates.size} were emitted.")
+        }
     }
 }
 
@@ -30,12 +33,13 @@ fun <State, Effect> TestResult<State, Effect>.evaluate(
  * @param action Action to test
  * @param take argument to define how many data items must be collected
  */
-suspend fun <State, Effect, Action> ActionContainerHost<State, Effect, Action>.testOn(
+suspend fun <State : Any, Effect : Any, Action : Any> ActionContainerHost<State, Effect, Action>
+        .testOn(
     action: Action,
     take: Take? = null,
     withState: State? = null,
 ) = testIntent(
-    from = withState,
+    withState = withState,
     take = take
 ) { on(action) }
 
@@ -44,13 +48,14 @@ suspend fun <State, Effect, Action> ActionContainerHost<State, Effect, Action>.t
  *
  * @param testBlock intent reference or testing content
  * @param take argument to define how many data items must be collected
+ * @param withState the state initialized before the test. By default will be the host initial state
  */
-suspend fun <State, Effect, Host : StateContainerHost<State, Effect>> Host.testIntent(
+suspend fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>> Host.testIntent(
     take: Take? = null,
-    from: State? = null,
+    withState: State? = null,
     testBlock: Host.() -> Unit
 ) = withContext(ExecutableContainer.blockedContext()) {
-    val initialState = from ?: container.asStateContainer().initialState
+    val initialState = withState ?: container.asStateContainer().initialState
 
     if (take != null && take.count <= 0)
         throw IllegalArgumentException("take argument count should be grater than 0 if set")
@@ -69,9 +74,10 @@ suspend fun <State, Effect, Host : StateContainerHost<State, Effect>> Host.testI
                     take is TakeEffects && take.count == emittedEffects.size
         }
         TestResult(
-            initialState = from ?: initialState,
+            initialState = withState ?: initialState,
             emittedStates = emittedStates,
             emittedEffects = emittedEffects,
+            emittedElements = emittedElements,
         )
     }
 }
@@ -81,7 +87,7 @@ suspend fun <State, Effect, Host : StateContainerHost<State, Effect>> Host.testI
  *
  * @param builder Host construction builder function
  */
-suspend fun <State, Effect> testConstructor(
+suspend fun <State : Any, Effect : Any> testConstructor(
     initialState: State? = null,
     builder: () -> StateContainerHost<State, Effect>
 ) = withContext(ExecutableContainer.blockedContext()) {
@@ -98,6 +104,7 @@ suspend fun <State, Effect> testConstructor(
             initialState = chosenInitialState,
             emittedStates = emittedStates,
             emittedEffects = emittedEffects,
+            emittedElements = emittedElements,
         )
     }
 }

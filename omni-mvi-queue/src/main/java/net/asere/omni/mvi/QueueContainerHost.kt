@@ -5,7 +5,7 @@ import net.asere.omni.core.OmniHostDsl
 /**
  * Turn an object into a QueueContainer
  */
-interface QueueContainerHost<State, Effect>
+interface QueueContainerHost<State : Any, Effect : Any>
     : StateContainerHost<State, Effect> {
     override val container: StateContainer<State, Effect>
 }
@@ -14,7 +14,7 @@ interface QueueContainerHost<State, Effect>
  * Enqueue an intent
  */
 @OmniHostDsl
-fun <State, Effect>
+fun <State : Any, Effect : Any>
         QueueContainerHost<State, Effect>.queueIntent(
     block: suspend IntentScope<State, Effect>.() -> Unit
 ) = container.asQueueContainer().enqueue(block)
@@ -22,6 +22,6 @@ fun <State, Effect>
 /**
  * Clear container's intent queue
  */
-fun <State, Effect>
+fun <State : Any, Effect : Any>
         QueueContainerHost<State, Effect>.clearQueue() =
     container.asQueueContainer().clearQueue()

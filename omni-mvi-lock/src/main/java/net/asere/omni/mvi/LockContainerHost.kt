@@ -5,7 +5,7 @@ import net.asere.omni.core.OmniHostDsl
 /**
  * Host of Lock Containers
  */
-interface LockContainerHost<State, Effect>
+interface LockContainerHost<State : Any, Effect : Any>
     : StateContainerHost<State, Effect> {
     override val container: StateContainer<State, Effect>
 }
@@ -15,7 +15,7 @@ interface LockContainerHost<State, Effect>
  *
  * @param intentId intent identifier
  */
-fun <State, Effect>
+fun <State : Any, Effect : Any>
         LockContainerHost<State, Effect>.cancelIntent(
     intentId: Any = Unit,
 ) = container.asLockContainer().cancelIntent(intentId)
@@ -25,7 +25,7 @@ fun <State, Effect>
  *
  * @param intentId intent identifier
  */
-fun <State, Effect>
+fun <State : Any, Effect : Any>
         LockContainerHost<State, Effect>.unlockIntent(
     intentId: Any = Unit
 ) = container.asLockContainer().unlockIntent(intentId)
@@ -37,7 +37,7 @@ fun <State, Effect>
  * @param block intent content
  */
 @OmniHostDsl
-fun <State, Effect>
+fun <State : Any, Effect : Any>
         LockContainerHost<State, Effect>.lockIntent(
     intentId: Any = Unit,
     block: suspend IntentScope<State, Effect>.() -> Unit
@@ -48,7 +48,7 @@ fun <State, Effect>
  *
  * @param intentId intent identifier
  */
-fun <State, Effect>
+fun <State : Any, Effect : Any>
         LockContainerHost<State, Effect>.lockIntent(
     intentId: Any = Unit
 ) = container.asLockContainer().lockIntent(intentId)

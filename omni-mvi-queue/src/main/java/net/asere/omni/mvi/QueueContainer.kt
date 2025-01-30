@@ -9,7 +9,7 @@ import kotlinx.coroutines.channels.consumeEach
  * This is a state container capable of enqueuing intents. Each invoked intent
  * is placed into a queue of execution.
  */
-open class QueueContainer<State, Effect> internal constructor(
+open class QueueContainer<State : Any, Effect : Any> internal constructor(
     override val container: StateContainer<State, Effect>,
 ) : StateContainerDecorator<State, Effect>(
     container
@@ -54,13 +54,13 @@ open class QueueContainer<State, Effect> internal constructor(
     }
 }
 
-fun <State, Effect> queueContainer(
+fun <State : Any, Effect : Any> queueContainer(
     container: StateContainer<State, Effect>
 ) = QueueContainer(container)
 
-fun <State, Effect> StateContainer<State, Effect>
+fun <State : Any, Effect : Any> StateContainer<State, Effect>
         .buildQueueContainer() = queueContainer(this)
 
-internal fun <State, Effect>
+internal fun <State : Any, Effect : Any>
         StateContainer<State, Effect>.asQueueContainer() =
     asStateContainer().seek<QueueContainer<State, Effect>> { it is QueueContainer<*, *> }

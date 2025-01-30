@@ -7,7 +7,7 @@ import net.asere.omni.core.ExecutableContainer
 /**
  * State container
  */
-interface InnerStateContainer<State, Effect> : StateContainer<State, Effect> {
+interface InnerStateContainer<State : Any, Effect : Any> : StateContainer<State, Effect> {
     val initialState: State
     val state: StateFlow<State>
     val effect: Flow<Effect>

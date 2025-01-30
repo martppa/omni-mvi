@@ -11,14 +11,14 @@ import kotlin.coroutines.suspendCoroutine
 /**
  * Returns itself as an executable container
  */
-fun <State, Effect> StateContainer<State, Effect>.asExecutableContainer(): ExecutableContainer =
+fun <State : Any, Effect : Any> StateContainer<State, Effect>.asExecutableContainer(): ExecutableContainer =
     asStateContainer().seek { it is ExecutableContainer }
 
 /**
  * Seeks all children jobs and await them. Use this method to await all children executions.
  * This method does not join the container job itself.
  */
-suspend fun <State, Effect>
+suspend fun <State : Any, Effect : Any>
         StateContainerHost<State, Effect>.await() =
     container.asExecutableContainer().await()
 
@@ -27,7 +27,7 @@ suspend fun <State, Effect>
  * Use this method to await all nested children executions. This method does not
  * join the container job itself.
  */
-suspend fun <State, Effect>
+suspend fun <State : Any, Effect : Any>
         StateContainerHost<State, Effect>.deepAwait() =
     container.asExecutableContainer().deepAwait()
 
@@ -36,7 +36,7 @@ suspend fun <State, Effect>
  *
  * @param until Condition to meet in order to continue waiting for jobs.
  */
-suspend fun <State, Effect>
+suspend fun <State : Any, Effect : Any>
         StateContainer<State, Effect>.await(until: () -> Boolean) {
     val emptyScope = CoroutineScope(EmptyCoroutineContext)
     val awaitingJob = emptyScope.launch(start = CoroutineStart.LAZY) {
@@ -70,7 +70,7 @@ suspend fun <State, Effect>
  *
  * @return Delegated container
  */
-private fun <State, Effect> doOnAnyEmission(
+private fun <State : Any, Effect : Any> doOnAnyEmission(
     container: InnerStateContainer<State, Effect>,
     block: () -> Unit
 ): InnerStateContainer<State, Effect> {
@@ -90,28 +90,28 @@ private fun <State, Effect> doOnAnyEmission(
 /**
  * Start children jobs (not recursively)
  */
-fun <State, Effect>
+fun <State : Any, Effect : Any>
         StateContainerHost<State, Effect>.launchJobs() =
     container.asExecutableContainer().launchJobs()
 
 /**
  * Release the execution of intents in the container
  */
-fun <State, Effect>
+fun <State : Any, Effect : Any>
         StateContainerHost<State, Effect>.releaseExecution() =
     container.asExecutableContainer().releaseExecution()
 
 /**
  * Lock the execution of intents in the container
  */
-fun <State, Effect>
+fun <State : Any, Effect : Any>
         StateContainerHost<State, Effect>.lockExecution() =
     container.asExecutableContainer().lockExecution()
 
 /**
  * Recursively seeks a delegator container and return it
  */
-fun <State, Effect> StateContainer<State, Effect>.asDelegatorContainer(): DelegatorContainer<State, Effect> =
+fun <State : Any, Effect : Any> StateContainer<State, Effect>.asDelegatorContainer(): DelegatorContainer<State, Effect> =
     asStateContainer().seek { it is DelegatorContainer<*, *> }
 
 /**
@@ -119,14 +119,14 @@ fun <State, Effect> StateContainer<State, Effect>.asDelegatorContainer(): Delega
  *
  * @param container Delegating container
  */
-fun <State, Effect> StateContainer<State, Effect>.delegate(
+fun <State : Any, Effect : Any> StateContainer<State, Effect>.delegate(
     container: InnerStateContainer<State, Effect>
 ) = asDelegatorContainer().delegate(container)
 
 /**
  * Clears delegating container
  */
-fun <State, Effect> StateContainer<State, Effect>.clearDelegate() =
+fun <State : Any, Effect : Any> StateContainer<State, Effect>.clearDelegate() =
     asDelegatorContainer().clearDelegate()
 
 /**
@@ -134,12 +134,12 @@ fun <State, Effect> StateContainer<State, Effect>.clearDelegate() =
  *
  * @param container Delegating container
  */
-fun <State, Effect> StateContainerHost<State, Effect>.delegate(
+fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.delegate(
     container: InnerStateContainer<State, Effect>
 ) = this.container.delegate(container)
 
 /**
  * Clears delegating container
  */
-fun <State, Effect> StateContainerHost<State, Effect>.clearDelegate() =
+fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.clearDelegate() =
     container.clearDelegate()

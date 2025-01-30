@@ -69,7 +69,7 @@ class ListViewModelTest {
 
     @Test
     fun `On creation request first page to repository and`() = runTest {
-        testConstructor { createViewModel() }.evaluate(relax = true) {
+        testConstructor { createViewModel() }.evaluate(relaxed = true) {
             coVerify { getRepositories(1) }
             Assert.assertEquals(2, emittedStates.size)
             nextState { previous, current ->
@@ -94,7 +94,7 @@ class ListViewModelTest {
     @Test
     fun `On NextPage action called should request next page to repository`() = runTest {
         val nextPage = 2
-        createViewModel().testOn(ListAction.NextPage).evaluate(relax = true) {
+        createViewModel().testOn(ListAction.NextPage).evaluate(relaxed = true) {
             coVerify { getRepositories(nextPage) }
             Assert.assertEquals(3, emittedStates.size)
             Assert.assertEquals(emittedStates.first().currentPage, nextPage)
@@ -103,25 +103,25 @@ class ListViewModelTest {
 
     @Test
     fun `On NextPage intent called should request next page to repository`() = runTest {
-        createViewModel().testIntent(from = ListState()) { nextPage() }.evaluate {
+        createViewModel().testIntent(withState = ListState()) { nextPage() }.evaluate {
             expectState { copy(currentPage = 2) }
             expectState { copy(loading = true, error = String.empty()) }
+            expectEffect(ListEffect.ShowMessage("Fetched"))
             expectState {
                 copy(
                     loading = false,
                     currentPage = fakePagedRepos.currentPage,
                     items = fakePagedRepos.items.map { it.asPresentation() })
             }
-            expectEffect(ListEffect.ShowMessage("Fetched"))
         }
     }
 
     @Test
     fun `On continues emit intent called should take first 9 states`() = runTest {
         createViewModel().testIntent(
-            from = ListState(currentPage = 10),
+            withState = ListState(currentPage = 10),
             take = 9 times state
-        ) { continuesEmit() }.evaluate(relax = true) {
+        ) { continuesEmit() }.evaluate(relaxed = true) {
             Assert.assertEquals(9, emittedStates.size)
         }
     }
@@ -130,7 +130,7 @@ class ListViewModelTest {
     fun `On continues post intent called should take first 15 effects `() = runTest {
         createViewModel().testIntent(take exactly 15 times effect) {
             continuesPost()
-        }.evaluate(relax = true) {
+        }.evaluate(relaxed = true) {
             Assert.assertEquals(15, emittedEffects.size)
         }
     }
