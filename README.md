@@ -266,7 +266,7 @@ In case you want to test long running intents you can always truncate your evalu
 @Test
 fun `On continues emit intent called should take first 9 states`() = runTest {
     createViewModel().testIntent(
-        from = ListState(currentPage = 10),
+        withState = ListState(currentPage = 10),
         take = 9 times state
     ) { continuesEmit() }.evaluate {
         Assert.assertEquals(9, emittedStates.size)
@@ -283,7 +283,7 @@ fun `On continues post intent called should take first 15 effects `() = runTest 
 }
 ```
 
-Please note you can set the starting state for your intent at testing by setting `from` parameter. 
+Please note you can set the starting state for your intent at testing by setting `withState` parameter. 
 
 ### Infix
 Use the `infix` functions group to declare how many states or effect. You can use it in both ways:
@@ -297,7 +297,7 @@ Naming the parameter:
 testIntent(take = 1 time effect) { intentToTest() }
 ```
 
-# omni-android ![](https://img.shields.io/badge/mvi_android_version-1.7.3-03DAC5)
+# omni-android ![](https://img.shields.io/badge/mvi_android_version-1.8.0-03DAC5)
 Omni Android offers you an interface to interact with composable observers and collectors of state and effect.
 
 ## Installation
@@ -375,7 +375,7 @@ data class ListState(
 ) : Parcelable
 ```
 
-# omni-mvi-lock ![](https://img.shields.io/badge/mvi_lock_version-1.7.3-11AA00) ![](https://img.shields.io/badge/coverage-23%25-11AA00)
+# omni-mvi-lock ![](https://img.shields.io/badge/mvi_lock_version-1.8.0-11AA00) ![](https://img.shields.io/badge/coverage-23%25-11AA00)
 Omni MVI Lock is a container host decorator that allows you execute locking intents using `lockIntent()` DSL.
 
 ## Installation
@@ -431,7 +431,7 @@ private fun fetchContent() = lockIntent {
 ## Locking/Unlocking an intent
 The lock container host allows you to lock/unlock any intent at any time by calling `lockIntent(id)` or `unlockIntent(id)`. Id parameter is optional, if none is provided then the default intent will be handled.
 
-# omni-mvi-override ![](https://img.shields.io/badge/mvi_override_version-1.7.3-B41B00) ![](https://img.shields.io/badge/coverage-0%25-B41B00)
+# omni-mvi-override ![](https://img.shields.io/badge/mvi_override_version-1.8.0-B41B00) ![](https://img.shields.io/badge/coverage-0%25-B41B00)
 Omni MVI Override is a container host decorator that allows developers execute any intent replacing any previous ongoing execution of itself.
 
 ## Installation
@@ -479,7 +479,7 @@ private fun onQuery(value: String) = overrideIntent {
 }
 ```
 
-# omni-mvi-queue ![](https://img.shields.io/badge/mvi_queue_version-1.7.3-6300AA) ![](https://img.shields.io/badge/coverage-0%25-6300AA)
+# omni-mvi-queue ![](https://img.shields.io/badge/mvi_queue_version-1.8.0-6300AA) ![](https://img.shields.io/badge/coverage-0%25-6300AA)
 Omni MVI Queue is a container host decorator that allows developers push intents into a queue of execution. Queue intents will be then executed one by one.
 
 ## Installation
@@ -517,7 +517,7 @@ Queue container host will allow you enqueue intents and let them execute each. W
 
 # License - MIT
 
-Copyright 2023 Asere.net
+Copyright 2025 Asere.net
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
