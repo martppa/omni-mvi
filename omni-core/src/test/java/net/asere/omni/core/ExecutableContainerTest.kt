@@ -10,7 +10,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import kotlin.coroutines.EmptyCoroutineContext
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class ExecutableContainerTest {
 
     @Test

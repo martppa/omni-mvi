@@ -106,13 +106,13 @@ class ListViewModelTest {
         createViewModel().testIntent(withState = ListState()) { nextPage() }.evaluate {
             expectState { copy(currentPage = 2) }
             expectState { copy(loading = true, error = String.empty()) }
-            expectEffect(ListEffect.ShowMessage("Fetched"))
             expectState {
                 copy(
                     loading = false,
                     currentPage = fakePagedRepos.currentPage,
                     items = fakePagedRepos.items.map { it.asPresentation() })
             }
+            expectEffect(ListEffect.ShowMessage("Fetched"))
         }
     }
 

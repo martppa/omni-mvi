@@ -85,7 +85,7 @@ abstract class ExecutableContainer(
     /**
      * Start all children jobs
      */
-    fun launchJobs() = containerJob.startChildrenJobs()
+    fun launchJobs() = containerJob.startChildren()
 
     /**
      * Executes a block of code under specified context using container's scope.

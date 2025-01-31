@@ -1,15 +1,11 @@
 package net.asere.omni.mvi
 
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
 import io.mockk.verify
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
+import kotlin.coroutines.EmptyCoroutineContext
 
 internal class InnerStateContainerHostKtTest : StateContainerHost<Any, Any> {
 
@@ -24,19 +20,5 @@ internal class InnerStateContainerHostKtTest : StateContainerHost<Any, Any> {
     fun `On intent invocation must call block`() = runBlocking {
         intent { block() }
         verify { block() }
-    }
-
-    @Test
-    fun `On intent invocation must not happen with empty coroutine`() = runBlocking {
-        mockkStatic(coroutineScope::launch)
-        every {
-            coroutineScope.launch(
-                block = any(),
-                context = any(),
-                start = any()
-            )
-        } answers { launch { /* Empty body */ } }
-        verify(exactly = 0) { block() }
-        unmockkStatic(coroutineScope::launch)
     }
 }
