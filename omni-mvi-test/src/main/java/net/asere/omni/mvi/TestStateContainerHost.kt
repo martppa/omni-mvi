@@ -60,10 +60,11 @@ suspend fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>
     if (take != null && take.count <= 0)
         throw IllegalArgumentException("take argument count should be grater than 0 if set")
 
+    await() // Await constructor execution
+    container.asStateContainer().update { initialState }
+
     val testContainer = container.buildTestContainer().also { delegate(it) }
 
-    await()
-    container.asStateContainer().update { initialState }
     testContainer.reset()
 
     testBlock()
