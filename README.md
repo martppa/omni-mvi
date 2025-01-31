@@ -266,7 +266,7 @@ In case you want to test long running intents you can always truncate your evalu
 @Test
 fun `On continues emit intent called should take first 9 states`() = runTest {
     createViewModel().testIntent(
-        from = ListState(currentPage = 10),
+        withState = ListState(currentPage = 10),
         take = 9 times state
     ) { continuesEmit() }.evaluate {
         Assert.assertEquals(9, emittedStates.size)
@@ -283,7 +283,7 @@ fun `On continues post intent called should take first 15 effects `() = runTest 
 }
 ```
 
-Please note you can set the starting state for your intent at testing by setting `from` parameter. 
+Please note you can set the starting state for your intent at testing by setting `withState` parameter. 
 
 ### Infix
 Use the `infix` functions group to declare how many states or effect. You can use it in both ways:
@@ -517,7 +517,7 @@ Queue container host will allow you enqueue intents and let them execute each. W
 
 # License - MIT
 
-Copyright 2023 Asere.net
+Copyright 2025 Asere.net
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
