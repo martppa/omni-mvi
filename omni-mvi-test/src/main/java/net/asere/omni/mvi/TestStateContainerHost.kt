@@ -31,8 +31,8 @@ fun <State : Any, Effect : Any> TestResult<State, Effect>.evaluate(
  *
  * @param action Action to test
  * @param expect argument to define how many data items must be collected.
- * - EmittedStates -> Amount of states that must be collected before stopping execution
- * - EmittedEffects -> Amount of effects that must be collected before stopping execution
+ * - StatesEmitted -> Amount of states that must be collected before stopping execution
+ * - EffectsEmitted -> Amount of effects that must be collected before stopping execution
  * - AnyEmitted -> Amount of effects and states that must be collected before stopping execution
  * - DoNotExpect -> Does not await for completion
  * - Unlimited -> Awaits for intent completion. Default value.
@@ -51,8 +51,8 @@ suspend fun <State : Any, Effect : Any, Action : Any> ActionContainerHost<State,
  *
  * @param testBlock intent reference or testing content
  * @param expect argument to define how many data items must be collected.
- * - EmittedStates -> Amount of states that must be collected before stopping execution
- * - EmittedEffects -> Amount of effects that must be collected before stopping execution
+ * - StatesEmitted -> Amount of states that must be collected before stopping execution
+ * - EffectsEmitted -> Amount of effects that must be collected before stopping execution
  * - AnyEmitted -> Amount of effects and states that must be collected before stopping execution
  * - DoNotExpect -> Does not await for completion
  * - Unlimited -> Awaits for intent completion. Default value.
@@ -99,8 +99,8 @@ suspend fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>
  * @param builder Host construction builder function
  * @param initialState the state initialized before the test. By default will be the host initial state
  * @param expect argument to define how many data items must be collected.
- * - EmittedStates -> Amount of states that must be collected before stopping execution
- * - EmittedEffects -> Amount of effects that must be collected before stopping execution
+ * - StatesEmitted -> Amount of states that must be collected before stopping execution
+ * - EffectsEmitted -> Amount of effects that must be collected before stopping execution
  * - AnyEmitted -> Amount of effects and states that must be collected before stopping execution
  * - DoNotExpect -> Does not await for completion
  * - Unlimited -> Awaits for intent completion. Default value.

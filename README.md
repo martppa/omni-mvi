@@ -264,8 +264,8 @@ fun `On NextPage action called should request next page to repository`() = runTe
 
 Sometimes intents execution can take forever, for example, flow collections. In such cases you must truncate the evaluation to a certain amount of emitted `states` or `effects`. You can truncate the evaluation using the `expect` parameter. `expect` parameter can also be applied to `testConstructor` function.
 
-- EmittedStates -> Amount of `states` that must be collected before stopping execution. As soon as the specified amount of `states` are emitted the execution of the intent stops and the evaluation is launched. 
-- EmittedEffects -> Amount of `effects` that must be collected before stopping execution. As soon as the specified amount of `effects` are emitted the execution of the intent stops and the evaluation is launched.
+- StatesEmitted -> Amount of `states` that must be collected before stopping execution. As soon as the specified amount of `states` are emitted the execution of the intent stops and the evaluation is launched. 
+- EffectsEmitted -> Amount of `effects` that must be collected before stopping execution. As soon as the specified amount of `effects` are emitted the execution of the intent stops and the evaluation is launched.
 - AnyEmitted -> Amount of effects and states that must be collected before stopping execution. As soon as the specified amount of combined `states` and `effects` are emitted the execution of the intent stops and the evaluation is launched.
 - DoNotExpect -> Does not await for completion. The intent will run asynchronously and wont be interrupted.
 - Unlimited -> Awaits for intent completion. Endless intents like flow collection will not let the intent end execution. This will lead to timed out test. This is the default value. If your tests time out, you probably must change this value in order to truncate intent execution.
@@ -277,7 +277,7 @@ The sample code below tests an intent and awaits for 9 `states` before truncatin
 fun `On continues emit intent called should take first 9 states`() = runTest {
     createViewModel().testIntent(
         withState = ListState(currentPage = 10),
-        expect = EmittedStates(9)
+        expect = StatesEmitted(9)
     ) { continuesEmit() }.evaluate {
         Assert.assertEquals(9, emittedStates.size)
     }
@@ -287,7 +287,7 @@ Or `effects`:
 ```kotlin
 @Test
 fun `On continues post intent called should take first 15 effects `() = runTest {
-    createViewModel().testIntent(expect = EffectEmitted(15)) { continuesPost() }.evaluate {
+    createViewModel().testIntent(expect = EffectsEmitted(15)) { continuesPost() }.evaluate {
         Assert.assertEquals(15, emittedEffects.size)
     }
 }
