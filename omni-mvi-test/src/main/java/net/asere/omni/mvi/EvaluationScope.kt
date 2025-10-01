@@ -17,7 +17,9 @@ class EvaluationScope<State : Any, Effect : Any>(
 
         elementIterator.next().apply {
             if (this.type != EmittedElement.Type.State)
-                throw IllegalStateException("Emitted ${this.element} at position " +
+                throw IllegalStateException("A state was expected but an effect " +
+                        "was emitted at position ${elementIterator.previousIndex()}. " +
+                        "The emitted effect ${this.element} at position " +
                         "${elementIterator.previousIndex()} is not the next state")
         }
 
@@ -34,8 +36,10 @@ class EvaluationScope<State : Any, Effect : Any>(
 
         elementIterator.next().apply {
             if (this.type != EmittedElement.Type.State)
-                throw IllegalStateException("Emitted ${this.element} at position " +
-                        "${elementIterator.previousIndex()} is not the expected state")
+                throw IllegalStateException("A state was expected but an effect " +
+                        "was emitted at position ${elementIterator.previousIndex()}. " +
+                        "The emitted effect ${this.element} at position " +
+                        "${elementIterator.previousIndex()} is not the next state")
         }
 
         val expected = if (!stateIterator.hasPrevious()) {
@@ -52,8 +56,10 @@ class EvaluationScope<State : Any, Effect : Any>(
 
         elementIterator.next().apply {
             if (this.type != EmittedElement.Type.Effect)
-                throw IllegalStateException("Emitted ${this.element} at position " +
-                        "${elementIterator.previousIndex()} is not the next effect")
+                throw IllegalStateException("An effect was expected but a state " +
+                        "was emitted at position ${elementIterator.previousIndex()}. " +
+                        "The emitted ${this.element} at position " +
+                        "${elementIterator.previousIndex()} is not the expected effect")
         }
 
         block(effectIterator.next())
@@ -65,7 +71,9 @@ class EvaluationScope<State : Any, Effect : Any>(
 
         elementIterator.next().apply {
             if (this.type != EmittedElement.Type.Effect)
-                throw IllegalStateException("Emitted ${this.element} at position " +
+                throw IllegalStateException("An effect was expected but a state " +
+                        "was emitted at position ${elementIterator.previousIndex()}. " +
+                        "The emitted ${this.element} at position " +
                         "${elementIterator.previousIndex()} is not the expected effect")
         }
 

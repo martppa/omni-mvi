@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
@@ -50,8 +51,9 @@ abstract class ExecutableContainer(
     }
 
     /**
-     * When running under a blocked context this method
-     * will force the block of executions
+     * When running under a blocked context this method will force the block of executions.
+     * Lock the execution of intents in the container. This means, running executions will
+     * put on hold.
      */
     fun lockExecution() {
         locked = true
@@ -69,6 +71,12 @@ abstract class ExecutableContainer(
      * This method does not join the job itself.
      */
     suspend fun await() = containerJob.joinChildren()
+
+    /**
+     * Seeks all children jobs and cancels them. Use this method to cancel all children executions.
+     * This method does not cancel the job itself.
+     */
+    fun stop() = containerJob.cancelChildren()
 
     /**
      * Recursively seeks all children and nested jobs and

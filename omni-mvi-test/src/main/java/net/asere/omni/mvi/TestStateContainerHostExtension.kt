@@ -23,6 +23,14 @@ suspend fun <State : Any, Effect : Any>
     container.asExecutableContainer().await()
 
 /**
+ * Seeks all children jobs and cancel them. Use this method to cancel all children executions.
+ * This method does not cancel the container job itself.
+ */
+fun <State : Any, Effect : Any>
+        StateContainerHost<State, Effect>.cancelOngoingExecutions() =
+    container.asExecutableContainer().stop()
+
+/**
  * Recursively seeks all nested children jobs and await them.
  * Use this method to await all nested children executions. This method does not
  * join the container job itself.
@@ -32,7 +40,7 @@ suspend fun <State : Any, Effect : Any>
     container.asExecutableContainer().deepAwait()
 
 /**
- * Awaits all running jobs until the provided condition met.
+ * Awaits all running jobs until the provided condition is met.
  *
  * @param until Condition to meet in order to continue waiting for jobs.
  */
@@ -95,14 +103,17 @@ fun <State : Any, Effect : Any>
     container.asExecutableContainer().launchJobs()
 
 /**
- * Release the execution of intents in the container
+ * Release the execution of intents in the container. This means unblock executions when
+ * running under a blocked context. Any holding execution will be started.
  */
 fun <State : Any, Effect : Any>
         StateContainerHost<State, Effect>.releaseExecution() =
     container.asExecutableContainer().releaseExecution()
 
 /**
- * Lock the execution of intents in the container
+ * When running under a blocked context this method will force the block of executions.
+ * Lock the execution of intents in the container. This means, running executions will
+ * put on hold.
  */
 fun <State : Any, Effect : Any>
         StateContainerHost<State, Effect>.lockExecution() =

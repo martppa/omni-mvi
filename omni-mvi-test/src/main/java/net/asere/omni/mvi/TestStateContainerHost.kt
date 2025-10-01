@@ -2,7 +2,6 @@ package net.asere.omni.mvi
 
 import kotlinx.coroutines.withContext
 import net.asere.omni.core.ExecutableContainer
-import java.lang.IllegalArgumentException
 
 /**
  * Puts the container host in evaluation status and offers a scope of with testing data such as
@@ -13,7 +12,7 @@ import java.lang.IllegalArgumentException
  */
 fun <State : Any, Effect : Any> TestResult<State, Effect>.evaluate(
     relaxed: Boolean = false,
-    block: EvaluationScope<State, Effect>.() -> Unit
+    block: EvaluationScope<State, Effect>.() -> Unit = {}
 ) {
     val scope = EvaluationScope(this)
     block(scope)
@@ -31,36 +30,42 @@ fun <State : Any, Effect : Any> TestResult<State, Effect>.evaluate(
  * Call this extension function to start testing an action
  *
  * @param action Action to test
- * @param take argument to define how many data items must be collected
+ * @param expect argument to define how many data items must be collected.
+ * - EmittedStates -> Amount of states that must be collected before stopping execution
+ * - EmittedEffects -> Amount of effects that must be collected before stopping execution
+ * - AnyEmitted -> Amount of effects and states that must be collected before stopping execution
+ * - DoNotExpect -> Does not await for completion
+ * - Unlimited -> Awaits for intent completion. Default value.
  */
-suspend fun <State : Any, Effect : Any, Action : Any> ActionContainerHost<State, Effect, Action>
-        .testOn(
+suspend fun <State : Any, Effect : Any, Action : Any> ActionContainerHost<State, Effect, Action>.testOn(
     action: Action,
-    take: Take? = null,
     withState: State? = null,
+    expect: ExpectedEmissions = Unlimited,
 ) = testIntent(
     withState = withState,
-    take = take
+    expect = expect
 ) { on(action) }
 
 /**
  * Call this method to start testing an intent
  *
  * @param testBlock intent reference or testing content
- * @param take argument to define how many data items must be collected
+ * @param expect argument to define how many data items must be collected.
+ * - EmittedStates -> Amount of states that must be collected before stopping execution
+ * - EmittedEffects -> Amount of effects that must be collected before stopping execution
+ * - AnyEmitted -> Amount of effects and states that must be collected before stopping execution
+ * - DoNotExpect -> Does not await for completion
+ * - Unlimited -> Awaits for intent completion. Default value.
  * @param withState the state initialized before the test. By default will be the host initial state
  */
 suspend fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>> Host.testIntent(
-    take: Take? = null,
     withState: State? = null,
+    expect: ExpectedEmissions = Unlimited,
     testBlock: Host.() -> Unit
 ) = withContext(ExecutableContainer.blockedContext()) {
     val initialState = withState ?: container.asStateContainer().initialState
 
-    if (take != null && take.count <= 0)
-        throw IllegalArgumentException("take argument count should be grater than 0 if set")
-
-    await() // Await constructor execution
+    cancelOngoingExecutions()
     container.asStateContainer().update { initialState }
 
     val testContainer = container.buildTestContainer().also { delegate(it) }
@@ -70,9 +75,14 @@ suspend fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>
     testBlock()
 
     with(testContainer) {
-        await {
-            take is TakeStates && take.count == emittedStates.size ||
-                    take is TakeEffects && take.count == emittedEffects.size
+        when (expect) {
+            Unlimited -> await()
+            DoNotExpect -> launchJobs()
+            else -> await {
+                expect is StatesEmitted && expect.count == emittedStates.size ||
+                        expect is EffectsEmitted && expect.count == emittedEffects.size ||
+                        expect is AnyEmitted && expect.count == emittedStates.size + emittedEffects.size
+            }
         }
         TestResult(
             initialState = withState ?: initialState,
@@ -87,9 +97,17 @@ suspend fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>
  * Test a host constructor
  *
  * @param builder Host construction builder function
+ * @param initialState the state initialized before the test. By default will be the host initial state
+ * @param expect argument to define how many data items must be collected.
+ * - EmittedStates -> Amount of states that must be collected before stopping execution
+ * - EmittedEffects -> Amount of effects that must be collected before stopping execution
+ * - AnyEmitted -> Amount of effects and states that must be collected before stopping execution
+ * - DoNotExpect -> Does not await for completion
+ * - Unlimited -> Awaits for intent completion. Default value.
  */
 suspend fun <State : Any, Effect : Any> testConstructor(
     initialState: State? = null,
+    expect: ExpectedEmissions = Unlimited,
     builder: () -> StateContainerHost<State, Effect>
 ) = withContext(ExecutableContainer.blockedContext()) {
     val host = builder()
@@ -98,9 +116,16 @@ suspend fun <State : Any, Effect : Any> testConstructor(
     initialState?.let { host.container.asStateContainer().update { it } }
     val testContainer = host.container.buildTestContainer().also { host.delegate(it) }
 
-    host.await()
-
     with(testContainer) {
+        when (expect) {
+            Unlimited -> await()
+            DoNotExpect -> launchJobs()
+            else -> await {
+                expect is StatesEmitted && expect.count == emittedStates.size ||
+                        expect is EffectsEmitted && expect.count == emittedEffects.size ||
+                        expect is AnyEmitted && expect.count == emittedStates.size + emittedEffects.size
+            }
+        }
         TestResult(
             initialState = chosenInitialState,
             emittedStates = emittedStates,
