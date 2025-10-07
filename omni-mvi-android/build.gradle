@@ -6,13 +6,13 @@ plugins {
     id 'signing'
 }
 
-version = '1.8.1'
+version = '1.9.0'
 
 ext {
     VERSION = version
     ARTIFACT_ID = 'mvi-android'
     POM_NAME = 'Omni-MVI-Android'
-    POM_DESCRIPTON = 'Omni MVI Android is a Omni MVI interface that allows developers ' +
+    POM_DESCRIPTION = 'Omni MVI Android is a Omni MVI interface that allows developers ' +
             'listen to Omni MVI exposed states as composables'
 }
 

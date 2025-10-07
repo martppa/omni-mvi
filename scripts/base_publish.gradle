@@ -24,35 +24,27 @@ publishing {
                 url = 'https://github.com/martppa/omni-mvi'
                 licenses {
                     license {
-                        name = 'MIT License'
-                        url = 'https://opensource.org/licenses/MIT'
+                        name.set("MIT License")
+                        url.set("https://opensource.org/licenses/MIT")
                     }
                 }
                 developers {
                     developer {
-                        id = 'martppa'
-                        name = 'Humberto Martín Dieppa'
-                        email = 'hm.dieppa@gmail.com'
+                        id.set("martppa")
+                        name.set("Humberto Martín Dieppa")
+                        email.set("hm.dieppa@gmail.com")
                     }
                 }
                 scm {
-                    connection = 'scm:git:git://github.com/martppa/omni-mvi.git'
-                    developerConnection = 'scm:git:ssh://github.com/martppa/omni-mvi.git'
-                    url = 'https://github.com/martppa/omni-mvi'
+                    connection.set("scm:git:git://github.com/martppa/omni-mvi.git")
+                    developerConnection.set("scm:git:ssh://github.com/martppa/omni-mvi.git")
+                    url.set("https://github.com/martppa/omni-mvi")
                 }
-            }
-        }
-    }
-    repositories {
-        maven {
-            url = uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = project.localProperties["ossrhUsername"]
-                password = project.localProperties["ossrhPassword"]
             }
         }
     }
 }
+
 signing {
     useGpgCmd()
     sign publishing.publications.mavenJava

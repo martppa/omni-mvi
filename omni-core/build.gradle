@@ -25,7 +25,8 @@ compileTestKotlin {
     }
 }
 
-version = '1.8.1'
+group = 'net.asere.omni.mvi'
+version = '1.9.0'
 
 ext {
     VERSION = version
