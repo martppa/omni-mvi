@@ -134,3 +134,6 @@ suspend fun <State : Any, Effect : Any> testConstructor(
         )
     }
 }
+
+internal val <State : Any, Effect : Any> StateContainer<State, Effect>.coroutineContext
+    get() = coroutineScope.coroutineContext

@@ -67,23 +67,23 @@ abstract class ExecutableContainer(
     }
 
     /**
-     * Seeks all children jobs and await them. Use this method to await all children executions.
-     * This method does not join the job itself.
+     * Await children completion. Use this method to await all
+     * children asynchronous execution completion. This method does not
+     * await the container main job.
      */
-    suspend fun await() = containerJob.joinChildren()
+    suspend fun await() = containerJob.awaitChildren()
+
+    /**
+     * Seeks all children jobs and joins them. Use this method to join all children executions.
+     * This method does not join the container job itself.
+     */
+    suspend fun joinChildren() = containerJob.joinChildren()
 
     /**
      * Seeks all children jobs and cancels them. Use this method to cancel all children executions.
      * This method does not cancel the job itself.
      */
     fun stop() = containerJob.cancelChildren()
-
-    /**
-     * Recursively seeks all children and nested jobs and
-     * await them. Use this method to await for all nested underlying executions. This method does
-     * not join the job itself.
-     */
-    suspend fun deepAwait() = containerJob.recursiveJoinChildren()
 
     /**
      * Join container job

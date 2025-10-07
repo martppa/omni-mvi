@@ -2,6 +2,7 @@ package net.asere.omni.mvi
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import net.asere.omni.core.ExecutableContainer
@@ -31,23 +32,13 @@ fun <State : Any, Effect : Any>
     container.asExecutableContainer().stop()
 
 /**
- * Recursively seeks all nested children jobs and await them.
- * Use this method to await all nested children executions. This method does not
- * join the container job itself.
- */
-suspend fun <State : Any, Effect : Any>
-        StateContainerHost<State, Effect>.deepAwait() =
-    container.asExecutableContainer().deepAwait()
-
-/**
  * Awaits all running jobs until the provided condition is met.
  *
  * @param until Condition to meet in order to continue waiting for jobs.
  */
 suspend fun <State : Any, Effect : Any>
         StateContainer<State, Effect>.await(until: () -> Boolean) {
-    val emptyScope = CoroutineScope(EmptyCoroutineContext)
-    val awaitingJob = emptyScope.launch(start = CoroutineStart.LAZY) {
+    val awaitingJob = coroutineScope.launch(start = CoroutineStart.LAZY) {
         asExecutableContainer().await()
     }
     suspendCoroutine { continuation ->
@@ -63,8 +54,8 @@ suspend fun <State : Any, Effect : Any>
                 block = ::verify
             )
         )
-        emptyScope.launch {
-            awaitingJob.join()
+        coroutineScope.launch {
+            async { awaitingJob.start() }.await()
             continuation.resumeWith(Result.success(Unit))
         }
     }
