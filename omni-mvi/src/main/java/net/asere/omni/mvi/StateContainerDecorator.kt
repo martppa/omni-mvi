@@ -11,7 +11,8 @@ open class StateContainerDecorator<State : Any, Effect : Any>(
 ) : ExecutableContainer(
     coroutineScope = container.coroutineScope,
     coroutineExceptionHandler = container.coroutineExceptionHandler,
-), InnerStateContainer<State, Effect> {
+),
+    InnerStateContainer<State, Effect> {
 
     override val initialState = container.asStateContainer().initialState
     override val state = container.asStateContainer().state

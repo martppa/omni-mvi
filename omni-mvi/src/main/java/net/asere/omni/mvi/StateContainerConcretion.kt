@@ -1,6 +1,5 @@
 package net.asere.omni.mvi
 
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
@@ -10,6 +9,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import net.asere.omni.core.EmptyCoroutineExceptionHandler
 import net.asere.omni.core.ExecutableContainer
+import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * Actual StateContainer implementation
@@ -19,14 +19,15 @@ import net.asere.omni.core.ExecutableContainer
  * @param coroutineExceptionHandler Execution handler intended to catch thrown exceptions
  * during execution
  */
- class StateContainerConcretion<State : Any, Effect : Any> internal constructor(
+class StateContainerConcretion<State : Any, Effect : Any> internal constructor(
     override val initialState: State,
     override val coroutineScope: CoroutineScope,
     override val coroutineExceptionHandler: CoroutineExceptionHandler,
 ) : ExecutableContainer(
     coroutineScope = coroutineScope,
     coroutineExceptionHandler = coroutineExceptionHandler
-), InnerStateContainer<State, Effect> {
+),
+    InnerStateContainer<State, Effect> {
     private val _state: MutableStateFlow<State> = MutableStateFlow(initialState)
     override val state = _state.asStateFlow()
 
@@ -52,15 +53,14 @@ import net.asere.omni.core.ExecutableContainer
  */
 fun <State : Any, Effect : Any>
         StateContainerHost<State, Effect>.stateContainer(
-    initialState: State,
-    coroutineScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext),
-    coroutineExceptionHandler: CoroutineExceptionHandler = EmptyCoroutineExceptionHandler
-) = StateContainerConcretion<State, Effect>(
+        initialState: State,
+        coroutineScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext),
+        coroutineExceptionHandler: CoroutineExceptionHandler = EmptyCoroutineExceptionHandler
+    ) = StateContainerConcretion<State, Effect>(
     initialState = initialState,
     coroutineScope = coroutineScope,
     coroutineExceptionHandler = coroutineExceptionHandler
 ).decorate { DelegatorContainer(it) }
-
 
 fun <State : Any, Effect : Any> StateContainer<State, Effect>.asStateContainer() =
     this as InnerStateContainer<State, Effect>

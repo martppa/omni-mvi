@@ -7,7 +7,8 @@ open class DelegatorContainer<State : Any, Effect : Any>(
     container: StateContainer<State, Effect>,
 ) : StateContainerDecorator<State, Effect>(
     container
-), InnerStateContainer<State, Effect> {
+),
+    InnerStateContainer<State, Effect> {
 
     private var delegatedContainer: InnerStateContainer<State, Effect>? = null
 

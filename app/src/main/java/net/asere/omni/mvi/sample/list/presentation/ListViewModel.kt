@@ -3,7 +3,10 @@ package net.asere.omni.mvi.sample.list.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
+import net.asere.omni.core.onError
 import net.asere.omni.mvi.ActionContainerHost
 import net.asere.omni.mvi.LockContainerHost
 import net.asere.omni.mvi.OverrideContainerHost
@@ -13,14 +16,11 @@ import net.asere.omni.mvi.currentState
 import net.asere.omni.mvi.intent
 import net.asere.omni.mvi.lockIntent
 import net.asere.omni.mvi.onAction
-import net.asere.omni.core.onError
 import net.asere.omni.mvi.overrideIntent
 import net.asere.omni.mvi.post
 import net.asere.omni.mvi.reduce
 import net.asere.omni.mvi.sample.list.domain.GetRepositories
 import net.asere.omni.mvi.sample.list.domain.SearchRepositories
-import net.asere.omni.mvi.sample.list.presentation.exception.ExceptionHandler
-import net.asere.omni.mvi.sample.list.presentation.exception.coroutineExceptionHandler
 import net.asere.omni.mvi.sample.shared.core.extension.requireMessage
 import net.asere.omni.mvi.sample.shared.domain.extension.empty
 import net.asere.omni.mvi.sample.shared.presentation.model.asPresentation
@@ -29,7 +29,7 @@ import net.asere.omni.mvi.unlockIntent
 
 class ListViewModel(
     savedStateHandle: SavedStateHandle,
-    exceptionHandler: ExceptionHandler,
+    coroutineExceptionHandler: CoroutineExceptionHandler,
     private val getRepositories: GetRepositories,
     private val searchRepositories: SearchRepositories,
 ) : ViewModel(),
@@ -45,7 +45,7 @@ class ListViewModel(
         initialState = ListState(),
         savedStateHandle = savedStateHandle,
         coroutineScope = viewModelScope,
-        coroutineExceptionHandler = coroutineExceptionHandler(exceptionHandler)
+        coroutineExceptionHandler = coroutineExceptionHandler
     ).buildLockContainer()
         .buildOverrideContainer()
         .onAction(::onAction)
@@ -108,16 +108,29 @@ class ListViewModel(
 
     // Intentionally created for test purposes
     fun continuesEmit() = intent {
-        while (true) {
-            reduce { copy(loading = false) }
-            delay(200)
-        }
+        reduce { copy(loading = false) }
+        reduce { copy(loading = false) }
+        reduce { copy(loading = false) }
+        reduce { copy(loading = false) }
+        reduce { copy(loading = false) }
+        reduce { copy(loading = false) }
+        reduce { copy(loading = false) }
+        reduce { copy(loading = false) }
+        reduce { copy(loading = false) }
+        reduce { copy(loading = false) }
+        reduce { copy(loading = false) }
+        reduce { copy(loading = false) }
+        reduce { copy(loading = false) }
     }
 
     fun continuesPost() = intent {
-        while (true) {
-            post(ListEffect.ShowMessage("List is full"))
-            delay(200)
-        }
+        post(ListEffect.ShowMessage("List is full"))
+        post(ListEffect.ShowMessage("List is full"))
+        post(ListEffect.ShowMessage("List is full"))
+        post(ListEffect.ShowMessage("List is full"))
+        post(ListEffect.ShowMessage("List is full"))
+        post(ListEffect.ShowMessage("List is full"))
+        post(ListEffect.ShowMessage("List is full"))
+        post(ListEffect.ShowMessage("List is full"))
     }
 }

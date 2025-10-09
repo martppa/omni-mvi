@@ -1,11 +1,12 @@
 package net.asere.omni.mvi
 
-open class ExpectedEmissions(
-    val count: Int
-)
+sealed interface ExecutionPolicy
 
-open class EffectsEmitted(count: Int) : ExpectedEmissions(count)
-open class StatesEmitted(count: Int) : ExpectedEmissions(count)
-open class AnyEmitted(count: Int) : ExpectedEmissions(count)
-object DoNotExpect : ExpectedEmissions(0)
-object Unlimited : ExpectedEmissions(-1)
+sealed interface RunUntil : ExecutionPolicy {
+    class StatesEmitted(val count: Int) : RunUntil
+    class EffectsEmitted(val count: Int) : RunUntil
+    class TotalEmitted(val count: Int) : RunUntil
+}
+
+data object Unlimited : ExecutionPolicy
+data object DoNotAwait : ExecutionPolicy

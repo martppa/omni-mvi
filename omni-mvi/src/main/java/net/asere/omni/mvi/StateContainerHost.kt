@@ -1,12 +1,12 @@
 package net.asere.omni.mvi
 
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Job
 import net.asere.omni.core.ContainerHost
 import net.asere.omni.core.OmniHostDsl
 import net.asere.omni.core.execute
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * Implement this interface to turn your class

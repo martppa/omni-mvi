@@ -57,6 +57,9 @@ internal fun <State : Any, Effect : Any> testStateContainer(
 fun <State : Any, Effect : Any> StateContainer<State, Effect>.buildTestContainer() =
     testStateContainer(this)
 
-fun <T> MutableList<T>.synchronizedAdd(element: T) = synchronized(this) { add(element) }
-fun <T> MutableList<T>.synchronizedClear() = synchronized(this) { clear() }
-
+fun <T> MutableList<T>.synchronizedAdd(element: T) = synchronized(this) {
+    add(element)
+}
+fun <T> MutableList<T>.synchronizedClear() = synchronized(this) {
+    clear()
+}

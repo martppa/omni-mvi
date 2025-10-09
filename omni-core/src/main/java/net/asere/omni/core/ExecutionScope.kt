@@ -13,7 +13,7 @@ open class ExecutionScope(
  */
 @OmniHostDsl
 fun ExecutionScope.onError(
-    block:  (Throwable) -> Unit
+    block: (Throwable) -> Unit
 ) { errorBlock = block }
 
 /**
@@ -22,7 +22,7 @@ fun ExecutionScope.onError(
 fun <Scope : ExecutionScope> ExecutionScope.map(
     scope: Scope,
     block: suspend Scope.() -> Unit
-): suspend Scope.() -> Unit  {
+): suspend Scope.() -> Unit {
     onError { scope.errorBlock(it) }
     return block
 }

@@ -26,12 +26,12 @@ import net.asere.omni.mvi.sample.list.presentation.component.RepoItem
 import net.asere.omni.mvi.sample.list.presentation.component.RetryComponent
 import net.asere.omni.mvi.sample.list.presentation.extension.showSnackbar
 import net.asere.omni.mvi.state
-import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun ListScreen(
     scaffoldState: ScaffoldState = rememberScaffoldState(),
-    viewModel: ListViewModel = getViewModel()
+    viewModel: ListViewModel = koinViewModel()
 ) {
     val state by viewModel.state()
     viewModel.OnEffect {

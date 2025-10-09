@@ -1,12 +1,9 @@
 package net.asere.omni.mvi
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.async
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import net.asere.omni.core.ExecutableContainer
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.suspendCoroutine
 
 /**
@@ -20,15 +17,15 @@ fun <State : Any, Effect : Any> StateContainer<State, Effect>.asExecutableContai
  * This method does not join the container job itself.
  */
 suspend fun <State : Any, Effect : Any>
-        StateContainerHost<State, Effect>.await() =
-    container.asExecutableContainer().await()
+    StateContainerHost<State, Effect>.await() =
+    container.asExecutableContainer().joinChildren()
 
 /**
  * Seeks all children jobs and cancel them. Use this method to cancel all children executions.
  * This method does not cancel the container job itself.
  */
 fun <State : Any, Effect : Any>
-        StateContainerHost<State, Effect>.cancelOngoingExecutions() =
+    StateContainerHost<State, Effect>.cancelOngoingExecutions() =
     container.asExecutableContainer().stop()
 
 /**
@@ -37,26 +34,33 @@ fun <State : Any, Effect : Any>
  * @param until Condition to meet in order to continue waiting for jobs.
  */
 suspend fun <State : Any, Effect : Any>
-        StateContainer<State, Effect>.await(until: () -> Boolean) {
+    StateContainer<State, Effect>.await(until: () -> Boolean) {
     val awaitingJob = coroutineScope.launch(start = CoroutineStart.LAZY) {
-        asExecutableContainer().await()
+        joinChildren()
     }
     suspendCoroutine { continuation ->
         fun verify() {
             if (until()) {
+                clearDelegate()
                 awaitingJob.cancelChildren()
                 awaitingJob.cancel()
             }
         }
-        asDelegatorContainer().delegate(
+        delegate(
             doOnAnyEmission(
                 container = this@await.asStateContainer(),
                 block = ::verify
             )
         )
         coroutineScope.launch {
-            async { awaitingJob.start() }.await()
-            continuation.resumeWith(Result.success(Unit))
+            fun resume() {
+                continuation.resumeWith(Result.success(Unit))
+            }
+            this@await.coroutineExceptionHandler.onError {
+                resume()
+            }
+            awaitingJob.join()
+            resume()
         }
     }
 }
@@ -90,7 +94,7 @@ private fun <State : Any, Effect : Any> doOnAnyEmission(
  * Start children jobs (not recursively)
  */
 fun <State : Any, Effect : Any>
-        StateContainerHost<State, Effect>.launchJobs() =
+    StateContainerHost<State, Effect>.launchJobs() =
     container.asExecutableContainer().launchJobs()
 
 /**
@@ -98,7 +102,7 @@ fun <State : Any, Effect : Any>
  * running under a blocked context. Any holding execution will be started.
  */
 fun <State : Any, Effect : Any>
-        StateContainerHost<State, Effect>.releaseExecution() =
+    StateContainerHost<State, Effect>.releaseExecution() =
     container.asExecutableContainer().releaseExecution()
 
 /**
@@ -107,7 +111,7 @@ fun <State : Any, Effect : Any>
  * put on hold.
  */
 fun <State : Any, Effect : Any>
-        StateContainerHost<State, Effect>.lockExecution() =
+    StateContainerHost<State, Effect>.lockExecution() =
     container.asExecutableContainer().lockExecution()
 
 /**
@@ -145,3 +149,9 @@ fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.delegate(
  */
 fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.clearDelegate() =
     container.clearDelegate()
+
+/**
+ * Joins container children
+ */
+suspend fun <State : Any, Effect : Any> StateContainer<State, Effect>.joinChildren() =
+    asExecutableContainer().joinChildren()

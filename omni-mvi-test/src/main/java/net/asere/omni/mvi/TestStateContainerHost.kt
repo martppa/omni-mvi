@@ -1,7 +1,10 @@
 package net.asere.omni.mvi
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.asere.omni.core.ExecutableContainer
+import kotlin.coroutines.coroutineContext
 
 /**
  * Puts the container host in evaluation status and offers a scope of with testing data such as
@@ -30,66 +33,71 @@ fun <State : Any, Effect : Any> TestResult<State, Effect>.evaluate(
  * Call this extension function to start testing an action
  *
  * @param action Action to test
- * @param expect argument to define how many data items must be collected.
- * - StatesEmitted -> Amount of states that must be collected before stopping execution
- * - EffectsEmitted -> Amount of effects that must be collected before stopping execution
- * - AnyEmitted -> Amount of effects and states that must be collected before stopping execution
- * - DoNotExpect -> Does not await for completion
+ * @param policy argument to define the behavior of the execution.
+ * - RunUntil.StatesEmitted -> Amount of states that must be collected before stopping execution
+ * - RunUntil.EffectsEmitted -> Amount of effects that must be collected before stopping execution
+ * - RunUntil.TotalEmitted -> Amount of effects and states that must be collected before stopping execution
+ * - DoNotAwait -> Does not await for completion
  * - Unlimited -> Awaits for intent completion. Default value.
  */
 suspend fun <State : Any, Effect : Any, Action : Any> ActionContainerHost<State, Effect, Action>.testOn(
     action: Action,
     withState: State? = null,
-    expect: ExpectedEmissions = Unlimited,
+    policy: ExecutionPolicy = Unlimited,
 ) = testIntent(
     withState = withState,
-    expect = expect
+    policy = policy
 ) { on(action) }
 
 /**
  * Call this method to start testing an intent
  *
  * @param testBlock intent reference or testing content
- * @param expect argument to define how many data items must be collected.
- * - StatesEmitted -> Amount of states that must be collected before stopping execution
- * - EffectsEmitted -> Amount of effects that must be collected before stopping execution
- * - AnyEmitted -> Amount of effects and states that must be collected before stopping execution
- * - DoNotExpect -> Does not await for completion
+ * @param policy argument to define the behavior of the execution.
+ * - RunUntil.StatesEmitted -> Amount of states that must be collected before stopping execution
+ * - RunUntil.EffectsEmitted -> Amount of effects that must be collected before stopping execution
+ * - RunUntil.TotalEmitted -> Amount of effects and states that must be collected before stopping execution
+ * - DoNotAwait -> Does not await for completion
  * - Unlimited -> Awaits for intent completion. Default value.
  * @param withState the state initialized before the test. By default will be the host initial state
  */
 suspend fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>> Host.testIntent(
     withState: State? = null,
-    expect: ExpectedEmissions = Unlimited,
+    policy: ExecutionPolicy = Unlimited,
     testBlock: Host.() -> Unit
-) = withContext(ExecutableContainer.blockedContext()) {
-    val initialState = withState ?: container.asStateContainer().initialState
+): TestResult<State, Effect> {
+    val testContext = coroutineContext
+    return withContext(ExecutableContainer.blockedContext()) {
+        val initialState = withState ?: container.asStateContainer().initialState
 
-    cancelOngoingExecutions()
-    container.asStateContainer().update { initialState }
-
-    val testContainer = container.buildTestContainer().also { delegate(it) }
-
-    testContainer.reset()
-
-    testBlock()
-
-    with(testContainer) {
-        when (expect) {
-            Unlimited -> await()
-            DoNotExpect -> launchJobs()
-            else -> await {
-                expect is StatesEmitted && expect.count == emittedStates.size ||
-                        expect is EffectsEmitted && expect.count == emittedEffects.size ||
-                        expect is AnyEmitted && expect.count == emittedStates.size + emittedEffects.size
+        cancelOngoingExecutions()
+        container.asStateContainer().update { initialState }
+        container.onError {
+            CoroutineScope(testContext).launch {
+                throw it
             }
         }
-        TestResult(
-            initialState = withState ?: initialState,
-            emittedStates = emittedStates,
-            emittedEffects = emittedEffects,
-            emittedElements = emittedElements,
-        )
+        val testContainer = container.buildTestContainer().also { delegate(it) }
+        testContainer.reset()
+        testBlock()
+
+        with(testContainer) {
+            when (policy) {
+                Unlimited -> await()
+                DoNotAwait -> launchJobs()
+                else -> await {
+                    policy is RunUntil.StatesEmitted && policy.count == emittedStates.size ||
+                        policy is RunUntil.EffectsEmitted && policy.count == emittedEffects.size ||
+                        policy is RunUntil.TotalEmitted && policy.count == emittedStates.size + emittedEffects.size
+                }
+            }
+            TestResult(
+                initialState = withState ?: initialState,
+                emittedStates = emittedStates,
+                emittedEffects = emittedEffects,
+                emittedElements = emittedElements,
+            )
+        }
     }
 }
 
@@ -98,42 +106,55 @@ suspend fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>
  *
  * @param builder Host construction builder function
  * @param initialState the state initialized before the test. By default will be the host initial state
- * @param expect argument to define how many data items must be collected.
- * - StatesEmitted -> Amount of states that must be collected before stopping execution
- * - EffectsEmitted -> Amount of effects that must be collected before stopping execution
- * - AnyEmitted -> Amount of effects and states that must be collected before stopping execution
- * - DoNotExpect -> Does not await for completion
+ * @param policy argument to define the behavior of the execution.
+ * - RunUntil.StatesEmitted -> Amount of states that must be collected before stopping execution
+ * - RunUntil.EffectsEmitted -> Amount of effects that must be collected before stopping execution
+ * - RunUntil.TotalEmitted -> Amount of effects and states that must be collected before stopping execution
+ * - DoNotAwait -> Does not await for completion
  * - Unlimited -> Awaits for intent completion. Default value.
  */
 suspend fun <State : Any, Effect : Any> testConstructor(
     initialState: State? = null,
-    expect: ExpectedEmissions = Unlimited,
+    policy: ExecutionPolicy = Unlimited,
     builder: () -> StateContainerHost<State, Effect>
-) = withContext(ExecutableContainer.blockedContext()) {
-    val host = builder()
+): TestResult<State, Effect> {
+    val testContext = coroutineContext
+    return withContext(ExecutableContainer.blockedContext()) {
+        val host = builder()
 
-    val chosenInitialState = initialState ?: host.currentState
-    initialState?.let { host.container.asStateContainer().update { it } }
-    val testContainer = host.container.buildTestContainer().also { host.delegate(it) }
-
-    with(testContainer) {
-        when (expect) {
-            Unlimited -> await()
-            DoNotExpect -> launchJobs()
-            else -> await {
-                expect is StatesEmitted && expect.count == emittedStates.size ||
-                        expect is EffectsEmitted && expect.count == emittedEffects.size ||
-                        expect is AnyEmitted && expect.count == emittedStates.size + emittedEffects.size
+        val chosenInitialState = initialState ?: host.currentState
+        initialState?.let { host.container.asStateContainer().update { it } }
+        val testContainer = host.container.buildTestContainer().also { host.delegate(it) }
+        host.onError {
+            CoroutineScope(testContext).launch {
+                throw it
             }
         }
-        TestResult(
-            initialState = chosenInitialState,
-            emittedStates = emittedStates,
-            emittedEffects = emittedEffects,
-            emittedElements = emittedElements,
-        )
+
+        with(testContainer) {
+            when (policy) {
+                Unlimited -> await()
+                DoNotAwait -> launchJobs()
+                else -> await {
+                    policy is RunUntil.StatesEmitted && policy.count == emittedStates.size ||
+                        policy is RunUntil.EffectsEmitted && policy.count == emittedEffects.size ||
+                        policy is RunUntil.TotalEmitted && policy.count == emittedStates.size + emittedEffects.size
+                }
+            }
+            TestResult(
+                initialState = chosenInitialState,
+                emittedStates = emittedStates,
+                emittedEffects = emittedEffects,
+                emittedElements = emittedElements,
+            )
+        }
     }
 }
 
-internal val <State : Any, Effect : Any> StateContainer<State, Effect>.coroutineContext
-    get() = coroutineScope.coroutineContext
+private fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.onError(block: (Throwable) -> Unit) {
+    container.coroutineExceptionHandler.onError(block)
+}
+
+private fun <State : Any, Effect : Any> StateContainer<State, Effect>.onError(block: (Throwable) -> Unit) {
+    coroutineExceptionHandler.onError(block)
+}

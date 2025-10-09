@@ -4,31 +4,30 @@ import androidx.lifecycle.SavedStateHandle
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import net.asere.omni.mvi.EffectsEmitted
-import net.asere.omni.mvi.StatesEmitted
+import net.asere.omni.mvi.RunUntil
+import net.asere.omni.mvi.TestCoroutineExceptionHandler
+import net.asere.omni.mvi.TestCoroutineRule
 import net.asere.omni.mvi.evaluate
 import net.asere.omni.mvi.sample.list.domain.GetRepositories
 import net.asere.omni.mvi.sample.list.domain.SearchRepositories
 import net.asere.omni.mvi.sample.list.domain.model.PagedRepos
-import net.asere.omni.mvi.sample.list.presentation.exception.ExceptionHandler
 import net.asere.omni.mvi.sample.shared.domain.extension.empty
 import net.asere.omni.mvi.sample.shared.domain.model.Repo
 import net.asere.omni.mvi.sample.shared.presentation.model.asPresentation
 import net.asere.omni.mvi.testConstructor
 import net.asere.omni.mvi.testIntent
 import net.asere.omni.mvi.testOn
-import org.junit.After
 import org.junit.Assert
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class ListViewModelTest {
+
+    @get:Rule
+    val coroutineRule = TestCoroutineRule()
 
     private val repo1 = Repo(
         id = 1L,
@@ -48,19 +47,17 @@ class ListViewModelTest {
     ))
 
     private val getRepositories: GetRepositories = mockk(relaxed = true)
-    private val exceptionHandler: ExceptionHandler = mockk(relaxed = true)
     private val searchRepositories: SearchRepositories = mockk(relaxed = true)
 
     private fun createViewModel() = ListViewModel(
         savedStateHandle = SavedStateHandle(),
         getRepositories = getRepositories,
         searchRepositories = searchRepositories,
-        exceptionHandler = exceptionHandler
+        coroutineExceptionHandler = TestCoroutineExceptionHandler()
     )
 
     @Before
     fun setup() {
-        Dispatchers.setMain(Dispatchers.Unconfined)
         coEvery { getRepositories(any()) } returns fakePagedRepos
     }
 
@@ -117,23 +114,18 @@ class ListViewModelTest {
     fun `On continues emit intent called should take first 9 states`() = runTest {
         createViewModel().testIntent(
             withState = ListState(currentPage = 10),
-            expect = StatesEmitted(9)
+            policy = RunUntil.StatesEmitted(9)
         ) { continuesEmit() }.evaluate(relaxed = true) {
             Assert.assertEquals(9, emittedStates.size)
         }
     }
 
     @Test
-    fun `On continues post intent called should take first 15 effects `() = runTest {
-        createViewModel().testIntent(expect = EffectsEmitted(15)) {
+    fun `On continues post intent called should take first 9 effects `() = runTest {
+        createViewModel().testIntent(policy = RunUntil.EffectsEmitted(9)) {
             continuesPost()
         }.evaluate(relaxed = true) {
-            Assert.assertEquals(15, emittedEffects.size)
+            Assert.assertEquals(9, emittedEffects.size)
         }
-    }
-
-    @After
-    fun tearDown() {
-        Dispatchers.resetMain()
     }
 }

@@ -41,10 +41,9 @@ abstract class ExecutableContainer(
 
     private var locked: Boolean = false
 
-
     /**
-     * Unblock executions when running under a
-     * blocked context
+     * Release the execution of intents in the container. This means unblock executions when
+     * running under a blocked context. Any holding execution will be started.
      */
     fun releaseExecution() {
         locked = false
@@ -67,15 +66,8 @@ abstract class ExecutableContainer(
     }
 
     /**
-     * Await children completion. Use this method to await all
-     * children asynchronous execution completion. This method does not
-     * await the container main job.
-     */
-    suspend fun await() = containerJob.awaitChildren()
-
-    /**
-     * Seeks all children jobs and joins them. Use this method to join all children executions.
-     * This method does not join the container job itself.
+     * Seeks all children jobs and joins them sequentially. Use this method to join all
+     * children executions. This method does not join the container job itself.
      */
     suspend fun joinChildren() = containerJob.joinChildren()
 
