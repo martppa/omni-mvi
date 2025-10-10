@@ -3,7 +3,18 @@ package net.asere.omni.mvi
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlin.coroutines.CoroutineContext
 
-class TestCoroutineExceptionHandler(
+class AssertableTestCoroutineExceptionHandler(
+    private val assertBlock: (Throwable) -> Boolean
+) : TestCoroutineExceptionHandler() {
+
+    override fun handleException(context: CoroutineContext, exception: Throwable) {
+        if (!assertBlock(exception)) {
+            super.handleException(context, exception)
+        }
+    }
+}
+
+open class TestCoroutineExceptionHandler(
     private val coroutineExceptionHandler: CoroutineExceptionHandler = CoroutineExceptionHandler { _, _ -> }
 ) : CoroutineExceptionHandler {
     private val errorCallBacks: MutableList<(Throwable) -> Unit> = mutableListOf()
@@ -25,6 +36,6 @@ fun CoroutineExceptionHandler.onError(block: (Throwable) -> Unit) {
         onError(block)
     } else {
         throw IllegalArgumentException("Provided CoroutineExceptionHandler is not a TestCoroutineExceptionHandler, " +
-            "please provide a TestCoroutineExceptionHandler when building the viewModel")
+                "please provide a TestCoroutineExceptionHandler when building the viewModel")
     }
 }
