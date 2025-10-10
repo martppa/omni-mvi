@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import net.asere.omni.core.onError
 import net.asere.omni.mvi.ActionContainerHost
 import net.asere.omni.mvi.LockContainerHost
@@ -15,7 +14,6 @@ import net.asere.omni.mvi.buildOverrideContainer
 import net.asere.omni.mvi.currentState
 import net.asere.omni.mvi.intent
 import net.asere.omni.mvi.lockIntent
-import net.asere.omni.mvi.onAction
 import net.asere.omni.mvi.overrideIntent
 import net.asere.omni.mvi.post
 import net.asere.omni.mvi.reduce
@@ -48,13 +46,12 @@ class ListViewModel(
         coroutineExceptionHandler = coroutineExceptionHandler
     ).buildLockContainer()
         .buildOverrideContainer()
-        .onAction(::onAction)
 
     init {
         fetchContent()
     }
 
-    private fun onAction(action: ListAction) {
+    override fun on(action: ListAction) {
         when (action) {
             ListAction.NextPage -> nextPage()
             ListAction.Retry -> retry()
