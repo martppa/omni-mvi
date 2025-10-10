@@ -1,5 +1,6 @@
 package net.asere.omni.mvi
 
+import kotlinx.coroutines.launch
 import net.asere.omni.core.ExecutionScope
 import net.asere.omni.core.OmniHostDsl
 
@@ -29,4 +30,17 @@ fun <Effect : Any> IntentScope<*, Effect>.post(
     vararg effects: Effect
 ) {
     effects.forEach { container.post(it) }
+}
+
+/**
+ * Joins any code placed inside it's body. Behaves similar to 'runBlocking' but
+ * without the impact in the coroutine.
+ */
+@OmniHostDsl
+suspend fun IntentScope<*, *>.join(
+    block: suspend () -> Unit
+) {
+    container.coroutineScope.launch {
+        block()
+    }.join()
 }
