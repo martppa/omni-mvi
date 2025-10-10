@@ -6,7 +6,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
@@ -63,6 +66,16 @@ abstract class ExecutableContainer(
      */
     private fun isExecutionLocked(): Boolean {
         return Thread.currentThread().name == BLOCKED_EXECUTION_THREAD_NAME || locked
+    }
+
+    /**
+     * Seeks all children jobs and await their completion. Use this method to await all
+     * children completions asynchronously. This method does not join the container job itself.
+     */
+    suspend fun await() {
+        coroutineScope {
+            containerJob.children.map { async { it.join() } }.toList().awaitAll()
+        }
     }
 
     /**

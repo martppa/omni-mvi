@@ -82,15 +82,7 @@ suspend fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>
         testBlock()
 
         with(testContainer) {
-            when (policy) {
-                Unlimited -> await()
-                DoNotAwait -> launchJobs()
-                else -> await {
-                    policy is RunUntil.StatesEmitted && policy.count == emittedStates.size ||
-                        policy is RunUntil.EffectsEmitted && policy.count == emittedEffects.size ||
-                        policy is RunUntil.TotalEmitted && policy.count == emittedStates.size + emittedEffects.size
-                }
-            }
+            runWithPolicy(policy)
             TestResult(
                 initialState = withState ?: initialState,
                 emittedStates = emittedStates,
@@ -132,15 +124,7 @@ suspend fun <State : Any, Effect : Any> testConstructor(
         }
 
         with(testContainer) {
-            when (policy) {
-                Unlimited -> await()
-                DoNotAwait -> launchJobs()
-                else -> await {
-                    policy is RunUntil.StatesEmitted && policy.count == emittedStates.size ||
-                        policy is RunUntil.EffectsEmitted && policy.count == emittedEffects.size ||
-                        policy is RunUntil.TotalEmitted && policy.count == emittedStates.size + emittedEffects.size
-                }
-            }
+            runWithPolicy(policy)
             TestResult(
                 initialState = chosenInitialState,
                 emittedStates = emittedStates,
@@ -151,10 +135,27 @@ suspend fun <State : Any, Effect : Any> testConstructor(
     }
 }
 
-private fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.onError(block: (Throwable) -> Unit) {
+internal fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.onError(block: (Throwable) -> Unit) {
     container.coroutineExceptionHandler.onError(block)
 }
 
-private fun <State : Any, Effect : Any> StateContainer<State, Effect>.onError(block: (Throwable) -> Unit) {
+internal fun <State : Any, Effect : Any> StateContainer<State, Effect>.onError(block: (Throwable) -> Unit) {
     coroutineExceptionHandler.onError(block)
+}
+
+private suspend fun <State : Any, Effect : Any> TestStateContainer<State, Effect>.runWithPolicy(
+    policy: ExecutionPolicy,
+) {
+    when (policy) {
+        Unlimited -> joinChildren()
+        DoNotAwait -> launchJobs()
+        is RunUntil -> {
+            await(mode = policy.mode) {
+                policy is RunUntil.StatesEmitted && policy.count == emittedStates.size ||
+                        policy is RunUntil.EffectsEmitted && policy.count == emittedEffects.size ||
+                        policy is RunUntil.TotalEmitted &&
+                        policy.count == emittedStates.size + emittedEffects.size
+            }
+        }
+    }
 }

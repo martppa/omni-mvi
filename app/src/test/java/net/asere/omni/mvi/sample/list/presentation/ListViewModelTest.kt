@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import net.asere.omni.mvi.RunUntil
 import net.asere.omni.mvi.TestCoroutineExceptionHandler

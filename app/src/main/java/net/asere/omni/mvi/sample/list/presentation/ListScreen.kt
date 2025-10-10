@@ -19,7 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import net.asere.omni.mvi.OnEffect
-import net.asere.omni.mvi.on
 import net.asere.omni.mvi.sample.R
 import net.asere.omni.mvi.sample.list.presentation.component.LoadingComponent
 import net.asere.omni.mvi.sample.list.presentation.component.RepoItem
@@ -53,7 +52,7 @@ fun ListScreen(
                 modifier = Modifier
                     .fillMaxWidth(),
                 value = state.query.orEmpty(),
-                onValueChange = { viewModel.on(ListAction.Query(it)) },
+                onValueChange = { value -> viewModel.on(ListAction.Query(value)) },
                 singleLine = true,
                 placeholder = {
                     Text(
