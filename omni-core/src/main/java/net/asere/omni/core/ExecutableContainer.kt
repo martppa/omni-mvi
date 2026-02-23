@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -39,6 +40,7 @@ abstract class ExecutableContainer(
         /**
          * Creates a new blocked context
          */
+        @OptIn(ExperimentalCoroutinesApi::class)
         fun blockedContext() = newSingleThreadContext(BLOCKED_EXECUTION_THREAD_NAME)
     }
 

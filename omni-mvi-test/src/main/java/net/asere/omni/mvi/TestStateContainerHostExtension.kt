@@ -70,9 +70,6 @@ suspend fun <State : Any, Effect : Any>
             fun resume() {
                 continuation.resumeWith(Result.success(Unit))
             }
-            this@await.onError {
-                resume()
-            }
             awaitingJob.join()
             resume()
         }

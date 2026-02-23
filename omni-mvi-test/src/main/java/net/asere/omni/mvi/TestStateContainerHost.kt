@@ -1,10 +1,8 @@
 package net.asere.omni.mvi
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.withContext
 import net.asere.omni.core.ExecutableContainer
-import kotlin.coroutines.coroutineContext
 
 /**
  * Puts the container host in evaluation status and offers a scope of with testing data such as
@@ -46,17 +44,12 @@ suspend fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>
     policy: ExecutionPolicy = Unlimited,
     testBlock: Host.() -> Unit
 ): TestResult<State, Effect> {
-    val testContext = coroutineContext
     return withContext(ExecutableContainer.blockedContext()) {
         val initialState = withState ?: container.asStateContainer().initialState
 
         cancelOngoingExecutions()
+        await()
         container.asStateContainer().update { initialState }
-        container.onError {
-            CoroutineScope(testContext).launch {
-                throw it
-            }
-        }
         val testContainer = container.buildTestContainer().also { delegate(it) }
         testContainer.reset()
         testBlock()
@@ -85,23 +78,18 @@ suspend fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>
  * - DoNotAwait -> Does not await for completion
  * - Unlimited -> Awaits for intent completion. Default value.
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 suspend fun <State : Any, Effect : Any> testConstructor(
     initialState: State? = null,
     policy: ExecutionPolicy = Unlimited,
     builder: () -> StateContainerHost<State, Effect>
 ): TestResult<State, Effect> {
-    val testContext = coroutineContext
     return withContext(ExecutableContainer.blockedContext()) {
         val host = builder()
 
         val chosenInitialState = initialState ?: host.currentState
         initialState?.let { host.container.asStateContainer().update { it } }
         val testContainer = host.container.buildTestContainer().also { host.delegate(it) }
-        host.onError {
-            CoroutineScope(testContext).launch {
-                throw it
-            }
-        }
 
         with(testContainer) {
             runWithPolicy(policy)
@@ -113,14 +101,6 @@ suspend fun <State : Any, Effect : Any> testConstructor(
             )
         }
     }
-}
-
-internal fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.onError(block: (Throwable) -> Unit) {
-    container.coroutineExceptionHandler.onError(block)
-}
-
-internal fun <State : Any, Effect : Any> StateContainer<State, Effect>.onError(block: (Throwable) -> Unit) {
-    coroutineExceptionHandler.onError(block)
 }
 
 private suspend fun <State : Any, Effect : Any> TestStateContainer<State, Effect>.runWithPolicy(

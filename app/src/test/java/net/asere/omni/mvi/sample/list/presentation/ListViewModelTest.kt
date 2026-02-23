@@ -6,12 +6,13 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import net.asere.omni.mvi.RunUntil
-import net.asere.omni.mvi.TestCoroutineExceptionHandler
 import net.asere.omni.mvi.TestCoroutineRule
 import net.asere.omni.mvi.evaluate
 import net.asere.omni.mvi.sample.list.domain.GetRepositories
 import net.asere.omni.mvi.sample.list.domain.SearchRepositories
 import net.asere.omni.mvi.sample.list.domain.model.PagedRepos
+import net.asere.omni.mvi.sample.list.presentation.exception.ExceptionHandler
+import net.asere.omni.mvi.sample.list.presentation.exception.toCoroutineExceptionHandler
 import net.asere.omni.mvi.sample.shared.domain.extension.empty
 import net.asere.omni.mvi.sample.shared.domain.model.Repo
 import net.asere.omni.mvi.sample.shared.presentation.model.asPresentation
@@ -44,6 +45,9 @@ class ListViewModelTest {
         repo3
     ))
 
+    private val exceptionHandler = ExceptionHandler {
+        throw it
+    }
     private val getRepositories: GetRepositories = mockk(relaxed = true)
     private val searchRepositories: SearchRepositories = mockk(relaxed = true)
 
@@ -51,7 +55,7 @@ class ListViewModelTest {
         savedStateHandle = SavedStateHandle(),
         getRepositories = getRepositories,
         searchRepositories = searchRepositories,
-        coroutineExceptionHandler = TestCoroutineExceptionHandler()
+        coroutineExceptionHandler = exceptionHandler.toCoroutineExceptionHandler()
     )
 
     @Before
