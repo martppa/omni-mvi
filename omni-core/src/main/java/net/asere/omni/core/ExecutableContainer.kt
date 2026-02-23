@@ -90,7 +90,7 @@ abstract class ExecutableContainer(
      * Seeks all children jobs and cancels them. Use this method to cancel all children executions.
      * This method does not cancel the job itself.
      */
-    fun stop() = containerJob.cancelChildren()
+    fun cancel() = containerJob.cancelChildren()
 
     /**
      * Join container job

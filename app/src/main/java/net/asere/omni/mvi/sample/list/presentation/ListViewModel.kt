@@ -101,32 +101,4 @@ class ListViewModel(
         reduce { copy(currentPage = currentPage + 1) }
         fetchContent()
     }
-
-    // Intentionally created for test purposes
-    fun continuesEmit() = intent {
-        reduce { copy(loading = false) }
-        reduce { copy(loading = false) }
-        reduce { copy(loading = false) }
-        reduce { copy(loading = false) }
-        reduce { copy(loading = false) }
-        reduce { copy(loading = false) }
-        reduce { copy(loading = false) }
-        reduce { copy(loading = false) }
-        reduce { copy(loading = false) }
-        reduce { copy(loading = false) }
-        reduce { copy(loading = false) }
-        reduce { copy(loading = false) }
-        reduce { copy(loading = false) }
-    }
-
-    fun continuesPost() = intent {
-        post(ListEffect.ShowMessage("List is full"))
-        post(ListEffect.ShowMessage("List is full"))
-        post(ListEffect.ShowMessage("List is full"))
-        post(ListEffect.ShowMessage("List is full"))
-        post(ListEffect.ShowMessage("List is full"))
-        post(ListEffect.ShowMessage("List is full"))
-        post(ListEffect.ShowMessage("List is full"))
-        post(ListEffect.ShowMessage("List is full"))
-    }
 }

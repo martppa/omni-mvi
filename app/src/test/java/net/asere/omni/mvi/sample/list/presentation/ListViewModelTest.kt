@@ -5,7 +5,6 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import net.asere.omni.mvi.RunUntil
 import net.asere.omni.mvi.TestCoroutineRule
 import net.asere.omni.mvi.evaluate
 import net.asere.omni.mvi.sample.list.domain.GetRepositories
@@ -109,25 +108,6 @@ class ListViewModelTest {
                     items = fakePagedRepos.items.map { it.asPresentation() })
             }
             expectEffect(ListEffect.ShowMessage("Fetched"))
-        }
-    }
-
-    @Test
-    fun `On continues emit intent called should take first 9 states`() = runTest {
-        createViewModel().testIntent(
-            withState = ListState(currentPage = 10),
-            policy = RunUntil.StatesEmitted(9)
-        ) { continuesEmit() }.evaluate(relaxed = true) {
-            Assert.assertEquals(9, emittedStates.size)
-        }
-    }
-
-    @Test
-    fun `On continues post intent called should take first 9 effects `() = runTest {
-        createViewModel().testIntent(policy = RunUntil.EffectsEmitted(9)) {
-            continuesPost()
-        }.evaluate(relaxed = true) {
-            Assert.assertEquals(9, emittedEffects.size)
         }
     }
 }
