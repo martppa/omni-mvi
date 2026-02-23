@@ -30,26 +30,6 @@ fun <State : Any, Effect : Any> TestResult<State, Effect>.evaluate(
 }
 
 /**
- * Call this extension function to start testing an action
- *
- * @param action Action to test
- * @param policy argument to define the behavior of the execution.
- * - RunUntil.StatesEmitted -> Amount of states that must be collected before stopping execution
- * - RunUntil.EffectsEmitted -> Amount of effects that must be collected before stopping execution
- * - RunUntil.TotalEmitted -> Amount of effects and states that must be collected before stopping execution
- * - DoNotAwait -> Does not await for completion
- * - Unlimited -> Awaits for intent completion. Default value.
- */
-suspend fun <State : Any, Effect : Any, Action : Any> ActionContainerHost<State, Effect, Action>.testOn(
-    action: Action,
-    withState: State? = null,
-    policy: ExecutionPolicy = Unlimited,
-) = testIntent(
-    withState = withState,
-    policy = policy
-) { on(action) }
-
-/**
  * Call this method to start testing an intent
  *
  * @param testBlock intent reference or testing content

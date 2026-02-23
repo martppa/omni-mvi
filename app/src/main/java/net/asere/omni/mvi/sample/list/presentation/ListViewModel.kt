@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.delay
 import net.asere.omni.core.onError
-import net.asere.omni.mvi.ActionContainerHost
 import net.asere.omni.mvi.LockContainerHost
 import net.asere.omni.mvi.OverrideContainerHost
 import net.asere.omni.mvi.buildLockContainer
@@ -31,7 +30,7 @@ class ListViewModel(
     private val getRepositories: GetRepositories,
     private val searchRepositories: SearchRepositories,
 ) : ViewModel(),
-    ActionContainerHost<ListState, ListEffect, ListAction>,
+    ActionHost<ListAction>,
     LockContainerHost<ListState, ListEffect>,
     OverrideContainerHost<ListState, ListEffect> {
 

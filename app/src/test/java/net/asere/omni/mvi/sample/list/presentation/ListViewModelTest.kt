@@ -17,7 +17,6 @@ import net.asere.omni.mvi.sample.shared.domain.model.Repo
 import net.asere.omni.mvi.sample.shared.presentation.model.asPresentation
 import net.asere.omni.mvi.testConstructor
 import net.asere.omni.mvi.testIntent
-import net.asere.omni.mvi.testOn
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
@@ -87,7 +86,7 @@ class ListViewModelTest {
     @Test
     fun `On NextPage action called should request next page to repository`() = runTest {
         val nextPage = 2
-        createViewModel().testOn(ListAction.NextPage).evaluate(relaxed = true) {
+        createViewModel().testIntent { on(ListAction.NextPage) }.evaluate(relaxed = true) {
             coVerify { getRepositories(nextPage) }
             Assert.assertEquals(3, emittedStates.size)
             Assert.assertEquals(emittedStates.first().currentPage, nextPage)
