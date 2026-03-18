@@ -67,6 +67,19 @@ fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.intentJob(
 }
 
 /**
+ * Executes a block in a suspending IntentScope
+ *
+ * @param block Executable intent content
+ */
+@OmniHostDsl
+suspend fun <State : Any, Effect : Any, Result> StateContainerHost<State, Effect>.suspendIntent(
+    block: suspend IntentScope<State, Effect>.() -> Result
+): Result {
+    val scope: IntentScope<State, Effect> = IntentScope(container = container.asStateContainer())
+    return block(scope)
+}
+
+/**
  * Emits each state to the provided callback
  *
  * @param onState Block set here will receive emitted states
