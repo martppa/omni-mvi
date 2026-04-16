@@ -1,7 +1,15 @@
 package net.asere.omni.mvi
 
 /**
- * Delegates any state or effect emitted to the inner container
+ * A [StateContainerDecorator] that delegates state updates and effects to another container.
+ *
+ * This allows for intercepting or duplicating state and effect emissions. By setting a
+ * [delegatedContainer], any call to [update] or [post] will be forwarded to both the
+ * decorated container and the delegate.
+ *
+ * @param State The type of the UI state.
+ * @param Effect The type of the side effect.
+ * @param container The original container to be decorated.
  */
 open class DelegatorContainer<State : Any, Effect : Any>(
     container: StateContainer<State, Effect>,
@@ -13,21 +21,21 @@ open class DelegatorContainer<State : Any, Effect : Any>(
     private var delegatedContainer: InnerStateContainer<State, Effect>? = null
 
     /**
-     * Sets the container to delegate to
+     * Sets the container that will also receive state updates and effects.
      */
     fun delegate(container: InnerStateContainer<State, Effect>) {
         delegatedContainer = container
     }
 
     /**
-     * Clears delegating container
+     * Removes the current delegate container.
      */
     fun clearDelegate() {
         delegatedContainer = null
     }
 
     /**
-     * Updates the state and delegates the update
+     * Updates the state in both the decorated container and the delegate (if present).
      */
     override fun update(function: State.() -> State) {
         delegatedContainer?.update(function)
@@ -35,7 +43,7 @@ open class DelegatorContainer<State : Any, Effect : Any>(
     }
 
     /**
-     * Post the effect and delegates it
+     * Posts an effect to both the decorated container and the delegate (if present).
      */
     override fun post(effect: Effect) {
         delegatedContainer?.post(effect)

@@ -6,11 +6,15 @@ import kotlinx.coroutines.withContext
 import net.asere.omni.core.ExecutableContainer
 
 /**
- * Puts the container host in evaluation status and offers a scope of with testing data such as
- * emitted states and emitted effects.
+ * Puts the container host in evaluation status and provides a scope for asserting
+ * emitted states and effects.
  *
- * @param relaxed Set true if you want to avoid iterating over all emitted states and effects
- * @param block Evaluation code block
+ * @param State The type of the UI state.
+ * @param Effect The type of the side effect.
+ * @param relaxed If `true`, the evaluation won't fail if some emissions were not asserted.
+ *                If `false` (default), it will throw an [IllegalStateException] if there
+ *                are any remaining unverified emissions.
+ * @param block A lambda executed within an [EvaluationScope] to perform assertions.
  */
 fun <State : Any, Effect : Any> TestResult<State, Effect>.evaluate(
     relaxed: Boolean = false,
@@ -28,11 +32,24 @@ fun <State : Any, Effect : Any> TestResult<State, Effect>.evaluate(
     }
 }
 
+/**
+ * A wrapper class that associates an MVI host with a [TestScope] for testing.
+ *
+ * @param Host The type of the [StateContainerHost] being tested.
+ * @property host The actual host instance.
+ * @property scope The [TestScope] used to control coroutine timing.
+ */
 class TestStateContainerHost<State : Any, Effect : Any, Host : StateContainerHost<State, Effect>> internal constructor(
     internal val host: Host,
     internal val scope: TestScope,
 )
 
+/**
+ * Factory function to create a [TestStateContainerHost] within a [TestScope].
+ *
+ * @param block A lambda that returns an instance of the host to be tested.
+ * @return A configured [TestStateContainerHost].
+ */
 fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>> TestScope.createTestHost(
     block: () -> Host
 ): TestStateContainerHost<State, Effect, Host> {
@@ -44,6 +61,13 @@ fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>> TestSc
     return testHost
 }
 
+/**
+ * Launches an intent for testing and records all resulting emissions.
+ *
+ * @param withState An optional initial state to set before running the intent.
+ * @param testBlock A lambda where the intent is invoked on the host.
+ * @return A [TestResult] containing all states and effects emitted during the intent execution.
+ */
 fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>>
         TestStateContainerHost<State, Effect, Host>.testIntent(
     withState: State? = null,
@@ -69,6 +93,16 @@ fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>>
     }
 }
 
+/**
+ * Tests the constructor (initialization) logic of a host.
+ *
+ * This function uses a blocked context to ensure that any intents launched during
+ * host initialization are captured sequentially.
+ *
+ * @param initialState An optional initial state to set.
+ * @param builder A lambda that creates the [TestStateContainerHost].
+ * @return A [TestResult] containing emissions from the initialization phase.
+ */
 suspend fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>> TestScope.testConstructor(
     initialState: State? = null,
     builder: TestScope.() -> TestStateContainerHost<State, Effect, Host>

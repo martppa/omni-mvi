@@ -9,25 +9,35 @@ import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 
 /**
- * Implement this interface to turn your class
- * into a state host.
+ * Interface to be implemented by classes that host an MVI state container.
+ *
+ * This is usually implemented by a ViewModel. It provides convenient extension
+ * functions for launching intents, observing state, and observing effects.
+ *
+ * @param State The type of the UI state.
+ * @param Effect The type of the side effect.
  */
 interface StateContainerHost<State : Any, Effect : Any> : ContainerHost {
+    /**
+     * The [StateContainer] managed by this host.
+     */
     override val container: StateContainer<State, Effect>
 }
 
 /**
- * Current and last state emitted from within the state host
+ * Returns the current [State] value from the hosted container.
  */
 val <State : Any> StateContainerHost<State, *>.currentState: State
     get() = container.asStateContainer().state.value
 
 /**
- * Executes an intent
+ * Launches an asynchronous intent.
  *
- * @param context Defines the context to run instructions
- * @param start CoroutineStart policy
- * @param block Executable intent content
+ * This is the primary way to perform actions that might change the state or post effects.
+ *
+ * @param context Additional [CoroutineContext] for the intent execution.
+ * @param start Coroutine start policy.
+ * @param block The block of code to execute within an [IntentScope].
  */
 @OmniHostDsl
 fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.intent(
@@ -42,6 +52,13 @@ fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.intent(
     )
 }
 
+/**
+ * Executes a block of code directly within an [IntentScope] without launching a new coroutine.
+ *
+ * This is useful for calling intent-specific logic from a context that already has a scope.
+ *
+ * @param block The block of code to execute.
+ */
 @OmniHostDsl
 suspend fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.intentScope(
     block: suspend IntentScope<State, Effect>.() -> Unit
@@ -51,13 +68,12 @@ suspend fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.intent
 }
 
 /**
- * Executes an intent and returns its job
+ * Launches an asynchronous intent and returns the resulting [Job].
  *
- * @param context Defines the context to run instructions
- * @param start CoroutineStart policy
- * @param block Executable intent content
- *
- * @return the job running the intent
+ * @param context Additional [CoroutineContext] for the intent execution.
+ * @param start Coroutine start policy.
+ * @param block The block of code to execute.
+ * @return The [Job] representing the intent execution.
  */
 @OmniHostDsl
 fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.intentJob(
@@ -75,9 +91,10 @@ fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.intentJob(
 }
 
 /**
- * Executes a block in a suspending IntentScope
+ * Executes a block in a suspending [IntentScope] and returns its result.
  *
- * @param block Executable intent content
+ * @param block The logic to execute.
+ * @return The result of the [block].
  */
 @OmniHostDsl
 suspend fun <State : Any, Effect : Any, Result> StateContainerHost<State, Effect>.suspendIntent(
@@ -88,19 +105,21 @@ suspend fun <State : Any, Effect : Any, Result> StateContainerHost<State, Effect
 }
 
 /**
- * Emits each state to the provided callback
+ * Helper function to observe state changes using a simple callback.
  *
- * @param onState Block set here will receive emitted states
+ * @param onState The callback that will be triggered for every new state emission.
+ * @return The [Job] that is collecting the state flow.
  */
 fun <State : Any> StateContainerHost<State, *>.observeState(onState: (State) -> Unit) = intent {
-    container.state.collect { onState(it) }
+    container.asStateContainer().state.collect { onState(it) }
 }
 
 /**
- * Emits each effect to the provided callback
+ * Helper function to observe effects using a simple callback.
  *
- * @param onEffect Block set here will receive emitted effects
+ * @param onEffect The callback that will be triggered for every new effect emission.
+ * @return The [Job] that is collecting the effect flow.
  */
 fun <Effect : Any> StateContainerHost<*, Effect>.observeEffect(onEffect: (Effect) -> Unit) = intent {
-    container.effect.collect { onEffect(it) }
+    container.asStateContainer().effect.collect { onEffect(it) }
 }

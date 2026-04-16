@@ -12,12 +12,14 @@ import net.asere.omni.core.ExecutableContainer
 import kotlin.coroutines.EmptyCoroutineContext
 
 /**
- * Actual StateContainer implementation
+ * The default concrete implementation of [InnerStateContainer].
  *
- * @param initialState Starting state of the container
- * @param coroutineScope Execution coroutine scope
- * @param coroutineExceptionHandler Execution handler intended to catch thrown exceptions
- * during execution
+ * This class manages the actual [MutableStateFlow] for state and a [Channel] for side effects.
+ * It is marked `internal` to encourage using the [stateContainer] factory function.
+ *
+ * @param initialState The starting state.
+ * @param coroutineScope The scope for internal operations.
+ * @param coroutineExceptionHandler Handler for unexpected errors.
  */
 class StateContainerConcretion<State : Any, Effect : Any> internal constructor(
     override val initialState: State,
@@ -44,12 +46,15 @@ class StateContainerConcretion<State : Any, Effect : Any> internal constructor(
 }
 
 /**
- * StateContainer builder. Use this function to create it.
+ * Creates and configures a new [StateContainer] for a [StateContainerHost].
  *
- * @param initialState Starting state of the container
- * @param coroutineScope Execution coroutine scope
- * @param coroutineExceptionHandler Execution handler intended to catch thrown exceptions
- * during execution
+ * This is the standard way to initialize a container in a ViewModel or other host.
+ * It automatically wraps the container in a [DelegatorContainer] to support delegation.
+ *
+ * @param initialState The starting state of the container.
+ * @param coroutineScope The scope where intents will run. Defaults to a new scope.
+ * @param coroutineExceptionHandler Handler for errors. Defaults to [EmptyCoroutineExceptionHandler].
+ * @return A fully configured [InnerStateContainer].
  */
 fun <State : Any, Effect : Any>
         StateContainerHost<State, Effect>.stateContainer(
@@ -62,5 +67,8 @@ fun <State : Any, Effect : Any>
     coroutineExceptionHandler = coroutineExceptionHandler
 ).decorate { DelegatorContainer(it) }
 
+/**
+ * Extension to safely cast a [StateContainer] to its internal [InnerStateContainer] representation.
+ */
 fun <State : Any, Effect : Any> StateContainer<State, Effect>.asStateContainer() =
     this as InnerStateContainer<State, Effect>

@@ -3,8 +3,15 @@ package net.asere.omni.mvi
 import net.asere.omni.core.ExecutableContainer
 
 /**
- * Basic container decorator implementation. Its function is to decorate any
- * container with its own features.
+ * Base class for decorating a [StateContainer] with additional functionality.
+ *
+ * This follows the Decorator pattern, allowing behaviors (like logging, delegation, or
+ * threading constraints) to be added to a container dynamically. It implements
+ * [InnerStateContainer] by delegating all calls to the wrapped [container].
+ *
+ * @param State The type of the UI state.
+ * @param Effect The type of the side effect.
+ * @property container The inner container being decorated.
  */
 open class StateContainerDecorator<State : Any, Effect : Any>(
     internal val container: StateContainer<State, Effect>
@@ -17,6 +24,7 @@ open class StateContainerDecorator<State : Any, Effect : Any>(
     override val initialState = container.asStateContainer().initialState
     override val state = container.asStateContainer().state
     override val effect = container.asStateContainer().effect
+
     override fun update(function: State.() -> State) =
         container.asStateContainer().update(function)
 
@@ -24,10 +32,10 @@ open class StateContainerDecorator<State : Any, Effect : Any>(
 }
 
 /**
- * Helper function that eases container decoration
+ * DSL helper for decorating an [InnerStateContainer].
  *
- * @param block Block of code where decoration takes place
- * @return Decorated container
+ * @param block A lambda that takes the current container and returns a decorated version.
+ * @return The decorated container.
  */
 fun<State : Any, Effect : Any> InnerStateContainer<State, Effect>.decorate(
     block: (InnerStateContainer<State, Effect>) -> InnerStateContainer<State, Effect>
@@ -36,11 +44,14 @@ fun<State : Any, Effect : Any> InnerStateContainer<State, Effect>.decorate(
 }
 
 /**
- * Recursively seeks decorators that match the predicate
+ * Recursively searches through a chain of decorators for a container that matches the [predicate].
  *
- * @param predicate Predicate lambda that performs comparison
- * @return Matching container
- * @throws RuntimeException when no container matches the predicate
+ * This is useful for finding specific decorator types (e.g., finding the `ExecutableContainer`
+ * in a stack of decorators).
+ *
+ * @param predicate A lambda used to identify the target container.
+ * @return The matching container cast to type [T].
+ * @throws RuntimeException if no container in the chain matches the predicate.
  */
 @Suppress("UNCHECKED_CAST")
 fun <T> InnerStateContainer<*, *>.seek(predicate: (Any) -> Boolean): T {

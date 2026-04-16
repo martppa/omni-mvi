@@ -3,24 +3,27 @@ package net.asere.omni.mvi
 import kotlinx.coroutines.Job
 
 /**
- * Type of intent that allows execution blocking
+ * Represents an intent that can be locked to prevent concurrent executions of the same action.
  *
- * @param job Running job
- * @param locked defines whether is the intent blocked or not
+ * This class wraps a coroutine [Job] and a manual [locked] flag. It is used by [LockContainer]
+ * to keep track of active or restricted intents.
+ *
+ * @property job The currently running coroutine [Job] for this intent.
+ * @property locked A manual override flag to keep the intent locked even after the job finishes.
  */
 internal class LockableIntent(
     internal val job: Job,
     internal var locked: Boolean = false
 ) {
     /**
-     * Lock this intent and avoid it to be overridden
+     * Locks this intent, preventing further executions even if the current job finishes.
      */
     fun lock() {
         locked = true
     }
 
     /**
-     * Release this intent and allow it to be overridden
+     * Unlocks this intent, allowing it to be executed again.
      */
     fun unlock() {
         locked = false
@@ -28,6 +31,11 @@ internal class LockableIntent(
 }
 
 /**
- * Returns whether or not the intent is locked
+ * Extension to check if a [LockableIntent] is currently in a locked state.
+ *
+ * An intent is considered locked if its associated job is still active or if it has
+ * been manually locked.
+ *
+ * @return `true` if locked, `false` otherwise.
  */
 internal fun LockableIntent?.isLocked() = this?.job?.isActive == true || this?.locked == true

@@ -3,17 +3,26 @@ package net.asere.omni.mvi
 import net.asere.omni.core.OmniHostDsl
 
 /**
- * Host of Lock Containers
+ * A specialized [StateContainerHost] that supports locked intents.
+ *
+ * Implement this interface in your ViewModel or host class to enable the `lockIntent`,
+ * `unlockIntent`, and `cancelIntent` DSL functions.
  */
 interface LockContainerHost<State : Any, Effect : Any>
     : StateContainerHost<State, Effect> {
+    /**
+     * The [StateContainer] managed by this host.
+     */
     override val container: StateContainer<State, Effect>
 }
 
 /**
- * Cancels the intent identified with provided id
+ * Cancels the intent identified by [intentId].
  *
- * @param intentId intent identifier
+ * This stops the execution of the coroutine associated with the intent ID and removes
+ * its lock status.
+ *
+ * @param intentId The identifier of the intent to cancel. Defaults to [Unit].
  */
 fun <State : Any, Effect : Any>
         LockContainerHost<State, Effect>.cancelIntent(
@@ -21,9 +30,12 @@ fun <State : Any, Effect : Any>
 ) = container.asLockContainer().cancelIntent(intentId)
 
 /**
- * Unlocks the intent identified with provided id
+ * Unlocks the intent identified by [intentId].
  *
- * @param intentId intent identifier
+ * This allows the intent to be executed again if it was manually locked or if
+ * its previous execution was stuck.
+ *
+ * @param intentId The identifier of the intent to unlock. Defaults to [Unit].
  */
 fun <State : Any, Effect : Any>
         LockContainerHost<State, Effect>.unlockIntent(
@@ -31,10 +43,13 @@ fun <State : Any, Effect : Any>
 ) = container.asLockContainer().unlockIntent(intentId)
 
 /**
- * Launches a lock intent
+ * Launches an intent that is locked by [intentId].
  *
- * @param intentId intent identifier
- * @param block intent content
+ * If another intent with the same ID is already running or manually locked,
+ * this block will be ignored.
+ *
+ * @param intentId The identifier used for locking. Defaults to [Unit].
+ * @param block The suspendable logic to execute.
  */
 @OmniHostDsl
 fun <State : Any, Effect : Any>
@@ -44,9 +59,10 @@ fun <State : Any, Effect : Any>
 ) = container.asLockContainer().lockIntent(intentId, block)
 
 /**
- * Locks the intent identified with provided id
+ * Manually locks an intent ID, preventing any [lockIntent] calls with the same ID
+ * from executing until [unlockIntent] is called.
  *
- * @param intentId intent identifier
+ * @param intentId The identifier to lock. Defaults to [Unit].
  */
 fun <State : Any, Effect : Any>
         LockContainerHost<State, Effect>.lockIntent(

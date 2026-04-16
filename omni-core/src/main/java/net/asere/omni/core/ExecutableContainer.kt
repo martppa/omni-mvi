@@ -19,13 +19,21 @@ import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * Use this object as a default handler for coroutine
- * exceptions if you don't want to apply any.
+ * exceptions if you don't want to apply any specific error handling logic.
  */
 val EmptyCoroutineExceptionHandler = CoroutineExceptionHandler { _, _ -> }
 
 /**
- * This container is capable of executing intents under provided scope
- * and handler. A huge percent of existing containers extend this one.
+ * An abstract [Container] capable of executing intents within a provided [CoroutineScope]
+ * and [CoroutineExceptionHandler]. Most specialized containers in Omni MVI extend this class.
+ *
+ * It provides mechanisms for:
+ * - Executing blocks of code asynchronously ([execute]).
+ * - Managing execution lifecycle (wait, cancel, join).
+ * - Locking/unlocking execution (useful for testing or specific synchronization needs).
+ *
+ * @param coroutineScope The scope used for launching jobs.
+ * @param coroutineExceptionHandler The handler for uncaught exceptions.
  */
 abstract class ExecutableContainer(
     override val coroutineScope: CoroutineScope,
@@ -38,7 +46,8 @@ abstract class ExecutableContainer(
         private const val BLOCKED_EXECUTION_THREAD_NAME = "BlockedExecutionThread"
 
         /**
-         * Creates a new blocked context
+         * Creates a new [CoroutineContext] that uses a single dedicated thread
+         * intended for blocked execution scenarios.
          */
         @OptIn(ExperimentalCoroutinesApi::class)
         fun blockedContext() = newSingleThreadContext(BLOCKED_EXECUTION_THREAD_NAME)
@@ -47,32 +56,39 @@ abstract class ExecutableContainer(
     private var locked: Boolean = false
 
     /**
-     * Release the execution of intents in the container. This means unblock executions when
-     * running under a blocked context. Any holding execution will be started.
+     * Resumes the execution of intents in the container.
+     *
+     * If the container was previously locked or running under a blocked context,
+     * this will allow queued or future executions to proceed.
      */
     fun releaseExecution() {
         locked = false
     }
 
     /**
-     * When running under a blocked context this method will force the block of executions.
-     * Lock the execution of intents in the container. This means, running executions will
-     * put on hold.
+     * Prevents new intent executions from starting immediately.
+     *
+     * When locked, any call to [execute] will result in a [CoroutineStart.LAZY] job
+     * that won't start until [releaseExecution] is called or the job is explicitly started.
      */
     fun lockExecution() {
         locked = true
     }
 
     /**
-     * Returns whether are the executions blocked or not
+     * Checks if intent execution is currently restricted.
+     *
+     * Execution is considered locked if [lockExecution] was called or if the
+     * current thread is the dedicated blocked execution thread.
      */
     private fun isExecutionLocked(): Boolean {
         return Thread.currentThread().name == BLOCKED_EXECUTION_THREAD_NAME || locked
     }
 
     /**
-     * Seeks all children jobs and await their completion. Use this method to await all
-     * children completions asynchronously. This method does not join the container job itself.
+     * Suspends until all active child jobs within this container's scope have completed.
+     *
+     * This method does not join or cancel the container's main job itself.
      */
     suspend fun await() {
         coroutineScope {
@@ -81,34 +97,37 @@ abstract class ExecutableContainer(
     }
 
     /**
-     * Seeks all children jobs and joins them sequentially. Use this method to join all
-     * children executions. This method does not join the container job itself.
+     * Joins all child jobs sequentially.
+     *
+     * Unlike [await], this iterates through children and joins them one by one.
      */
     suspend fun joinChildren() = containerJob.joinChildren()
 
     /**
-     * Seeks all children jobs and cancels them. Use this method to cancel all children executions.
-     * This method does not cancel the job itself.
+     * Cancels all child jobs currently running in this container.
+     *
+     * The container's scope remains active, allowing for future executions.
      */
     fun cancel() = containerJob.cancelChildren()
 
     /**
-     * Join container job
+     * Joins the main job associated with the container's [CoroutineScope].
      */
     suspend fun join() = containerJob.join()
 
     /**
-     * Start all children jobs
+     * Explicitly starts all child jobs that are currently in a lazy state.
      */
     fun launchJobs() = containerJob.startChildren()
 
     /**
-     * Executes a block of code under specified context using container's scope.
+     * Launches a new coroutine to execute a block of code.
      *
-     * @param context Defines the context to run instructions
-     * @param start CoroutineStart policy
-     * @param onError Will be triggered everytime an error occurs during execution
-     * @param block Executable content
+     * @param context Additional [CoroutineContext] to be merged with the container's context.
+     * @param start The [CoroutineStart] policy. If execution is locked, this is overridden to [CoroutineStart.LAZY].
+     * @param onError Callback triggered if an exception occurs during the execution of [block].
+     * @param block The suspendable block of code to execute.
+     * @return The [Job] representing the execution.
      */
     fun execute(
         context: CoroutineContext,
@@ -135,6 +154,10 @@ abstract class ExecutableContainer(
     }
 }
 
+/**
+ * Extension to handle failures in a coroutine-friendly way.
+ * Re-throws [CancellationException] to ensure proper coroutine cancellation flow.
+ */
 private fun <T> Result<T>.onCoroutineFailure(block: (Throwable) -> Unit): Result<T> {
     onFailure {
         if (it is CancellationException) throw it
@@ -144,12 +167,16 @@ private fun <T> Result<T>.onCoroutineFailure(block: (Throwable) -> Unit): Result
 }
 
 /**
- * Executes a block of code under specified context using container's scope.
+ * Executes a block of code within the [ExecutableContainer] hosted by this [ContainerHost].
  *
- * @param context Defines the context to run instructions
- * @param start CoroutineStart policy
- * @param scope Execution scope (not a coroutine scope)
- * @param block Executable content
+ * This is the primary DSL entry point for running intents in a [ContainerHost].
+ *
+ * @param context The [CoroutineContext] for the execution.
+ * @param start The [CoroutineStart] policy.
+ * @param scope An [ExecutionScope] that provides local error handling.
+ * @param block The block of code to execute within the [scope].
+ * @return The [Job] representing the asynchronous execution.
+ * @throws IllegalStateException If the hosted [Container] is not an [ExecutableContainer].
  */
 @OmniHostDsl
 fun <Scope : ExecutionScope> ContainerHost.execute(

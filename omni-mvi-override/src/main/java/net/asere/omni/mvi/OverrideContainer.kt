@@ -5,7 +5,15 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 /**
- * Use this container to execute intents stopping their previous execution.
+ * A specialized [StateContainerDecorator] that allows intents to override previous executions.
+ *
+ * When an intent is launched via this container with an [intentId] that is currently running,
+ * the existing execution is canceled and joined before the new one starts. This pattern is
+ * commonly known as "restartable" or "latest" intent execution.
+ *
+ * @param State The type of the UI state.
+ * @param Effect The type of the side effect.
+ * @property container The inner [StateContainer] to be decorated with override capabilities.
  */
 open class OverrideContainer<State : Any, Effect : Any> internal constructor(
     override val container: StateContainer<State, Effect>,
@@ -18,10 +26,13 @@ open class OverrideContainer<State : Any, Effect : Any> internal constructor(
     private val intents = mutableMapOf<Any, Job>()
 
     /**
-     * Start an intent overriding its previous execution
+     * Starts an intent, overriding its previous execution if it exists.
      *
-     * @param intentId Intent identifier
-     * @param block Intent's content
+     * This method ensures thread-safety using a [Mutex] and manages the lifecycle
+     * of the [Job] associated with the [intentId].
+     *
+     * @param intentId The identifier for the intent. Defaults to [Unit].
+     * @param block The suspendable logic to execute.
      */
     internal fun overrideIntent(
         intentId: Any = Unit,
@@ -36,18 +47,26 @@ open class OverrideContainer<State : Any, Effect : Any> internal constructor(
     }
 }
 
+/**
+ * Internal factory function to create an [OverrideContainer].
+ */
 private fun <State : Any, Effect : Any> overrideContainer(
     container: StateContainer<State, Effect>
 ) = OverrideContainer(container)
 
 /**
- * Turns this container into an override container
+ * Extension to wrap an existing [StateContainer] into an [OverrideContainer].
+ *
+ * @return A new [OverrideContainer] instance decorating the original one.
  */
 fun <State : Any, Effect : Any> StateContainer<State, Effect>
         .buildOverrideContainer() = overrideContainer(this)
 
 /**
- * Seeks for an OverrideContainer from inside a decorated container
+ * Searches the decoration chain for an [OverrideContainer].
+ *
+ * @return The [OverrideContainer] found in the stack.
+ * @throws RuntimeException if no [OverrideContainer] is found.
  */
 internal fun <State : Any, Effect : Any>
         StateContainer<State, Effect>.asOverrideContainer() =
