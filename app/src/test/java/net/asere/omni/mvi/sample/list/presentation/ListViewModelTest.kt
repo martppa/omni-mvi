@@ -68,7 +68,7 @@ class ListViewModelTest {
 
     @Test
     fun `On creation request first page to repository and`() = runTest {
-        testConstructor { createViewModel() }.evaluate(relaxed = true) {
+        createViewModel().testConstructor().evaluate(relaxed = true) {
             coVerify { getRepositories(1) }
             Assert.assertEquals(2, emittedStates.size)
             nextState { previous, current ->

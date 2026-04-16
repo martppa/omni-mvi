@@ -33,14 +33,14 @@ fun <State : Any, Effect : Any> TestResult<State, Effect>.evaluate(
 }
 
 /**
- * A wrapper class that associates an MVI host with a [TestScope] for testing.
+ * A wrapper class that associates an MVI host builder with a [TestScope] for testing.
  *
  * @param Host The type of the [StateContainerHost] being tested.
- * @property host The actual host instance.
+ * @property hostBuilder A lambda that produces a new instance of the host.
  * @property scope The [TestScope] used to control coroutine timing.
  */
 class TestStateContainerHost<State : Any, Effect : Any, Host : StateContainerHost<State, Effect>> internal constructor(
-    internal val host: Host,
+    internal val hostBuilder: () -> Host,
     internal val scope: TestScope,
 )
 
@@ -53,19 +53,34 @@ class TestStateContainerHost<State : Any, Effect : Any, Host : StateContainerHos
 fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>> TestScope.createTestHost(
     block: () -> Host
 ): TestStateContainerHost<State, Effect, Host> {
-    val stateHost = block()
     val testHost = TestStateContainerHost(
-        host = stateHost,
+        hostBuilder = block,
         scope = this
     )
     return testHost
 }
 
 /**
+ * Tests the constructor (initialization) logic of the host.
+ *
+ * This is a convenience extension that delegates to the internal [testConstructor] logic,
+ * ensuring that any intents launched during host creation are captured.
+ *
+ * @param initialState An optional initial state to set before the host is created.
+ * @return A [TestResult] containing emissions from the initialization phase.
+ */
+suspend fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>>
+        TestStateContainerHost<State, Effect, Host>.testConstructor(
+    initialState: State? = null,
+): TestResult<State, Effect> = with(scope) {
+    testConstructor(initialState) { hostBuilder() }
+}
+
+/**
  * Launches an intent for testing and records all resulting emissions.
  *
  * @param withState An optional initial state to set before running the intent.
- * @param testBlock A lambda where the intent is invoked on the host.
+ * @param testBlock A lambda where the intent is invoked on a fresh host instance.
  * @return A [TestResult] containing all states and effects emitted during the intent execution.
  */
 fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>>
@@ -73,6 +88,8 @@ fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>>
     withState: State? = null,
     testBlock: Host.() -> Unit
 ): TestResult<State, Effect> {
+    val host = hostBuilder()
+    val scope = scope
     scope.advanceUntilIdle()
 
     val initialState = withState ?: host.container.asStateContainer().initialState
@@ -94,27 +111,28 @@ fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>>
 }
 
 /**
- * Tests the constructor (initialization) logic of a host.
+ * Internal implementation for testing the initialization logic of a host.
  *
- * This function uses a blocked context to ensure that any intents launched during
- * host initialization are captured sequentially.
+ * It uses a blocked context to synchronize intent execution during construction
+ * and ensures that the host is correctly wrapped with a [TestStateContainer]
+ * before any work begins.
  *
  * @param initialState An optional initial state to set.
  * @param builder A lambda that creates the [TestStateContainerHost].
  * @return A [TestResult] containing emissions from the initialization phase.
  */
-suspend fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>> TestScope.testConstructor(
+internal suspend fun <State : Any, Effect : Any> TestScope.testConstructor(
     initialState: State? = null,
-    builder: TestScope.() -> TestStateContainerHost<State, Effect, Host>
+    builder: TestScope.() -> StateContainerHost<State, Effect>
 ): TestResult<State, Effect> {
     return withContext(ExecutableContainer.blockedContext()) {
-        val testHost = builder()
+        val host = builder()
 
-        val chosenInitialState = initialState ?: testHost.host.currentState
-        initialState?.let { testHost.host.container.asStateContainer().update { it } }
-        val testContainer = testHost.host.container.buildTestContainer().also { testHost.host.delegate(it) }
+        val chosenInitialState = initialState ?: host.currentState
+        initialState?.let { host.container.asStateContainer().update { it } }
+        val testContainer = host.container.buildTestContainer().also { host.delegate(it) }
 
-        testHost.host.joinChildren()
+        host.joinChildren()
         advanceUntilIdle()
 
         with(testContainer) {
