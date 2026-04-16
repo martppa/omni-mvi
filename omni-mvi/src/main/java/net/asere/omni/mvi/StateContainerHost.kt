@@ -42,6 +42,14 @@ fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.intent(
     )
 }
 
+@OmniHostDsl
+suspend fun <State : Any, Effect : Any> StateContainerHost<State, Effect>.intentScope(
+    block: suspend IntentScope<State, Effect>.() -> Unit
+) {
+    val scope = IntentScope(container.asStateContainer())
+    block(scope)
+}
+
 /**
  * Executes an intent and returns its job
  *

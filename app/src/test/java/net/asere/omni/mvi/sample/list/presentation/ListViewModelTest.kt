@@ -4,8 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import net.asere.omni.mvi.TestCoroutineRule
+import net.asere.omni.mvi.createTestHost
 import net.asere.omni.mvi.evaluate
 import net.asere.omni.mvi.sample.list.domain.GetRepositories
 import net.asere.omni.mvi.sample.list.domain.SearchRepositories
@@ -50,12 +52,14 @@ class ListViewModelTest {
     private val getRepositories: GetRepositories = mockk(relaxed = true)
     private val searchRepositories: SearchRepositories = mockk(relaxed = true)
 
-    private fun createViewModel() = ListViewModel(
-        savedStateHandle = SavedStateHandle(),
-        getRepositories = getRepositories,
-        searchRepositories = searchRepositories,
-        coroutineExceptionHandler = exceptionHandler.toCoroutineExceptionHandler()
-    )
+    private fun TestScope.createViewModel() = createTestHost {
+        ListViewModel(
+            savedStateHandle = SavedStateHandle(),
+            getRepositories = getRepositories,
+            searchRepositories = searchRepositories,
+            coroutineExceptionHandler = exceptionHandler.toCoroutineExceptionHandler()
+        )
+    }
 
     @Before
     fun setup() {
