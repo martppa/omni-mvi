@@ -9,7 +9,7 @@ package net.asere.omni.core
  * @property errorBlock A callback that is triggered when a [Throwable] is caught during execution.
  */
 open class ExecutionScope(
-    internal var errorBlock: (Throwable) -> Unit = {}
+    internal var errorBlock: suspend (Throwable) -> Unit = {}
 )
 
 /**
@@ -20,7 +20,7 @@ open class ExecutionScope(
  */
 @OmniHostDsl
 fun ExecutionScope.onError(
-    block: (Throwable) -> Unit
+    block: suspend (Throwable) -> Unit
 ) {
     errorBlock = block
 }

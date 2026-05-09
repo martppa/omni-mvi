@@ -132,7 +132,7 @@ abstract class ExecutableContainer(
     fun execute(
         context: CoroutineContext,
         start: CoroutineStart,
-        onError: (throwable: Throwable) -> Unit,
+        onError: suspend (throwable: Throwable) -> Unit,
         block: suspend () -> Unit,
     ): Job {
         val startCriteria = if (isExecutionLocked()) {
@@ -158,7 +158,7 @@ abstract class ExecutableContainer(
  * Extension to handle failures in a coroutine-friendly way.
  * Re-throws [CancellationException] to ensure proper coroutine cancellation flow.
  */
-private fun <T> Result<T>.onCoroutineFailure(block: (Throwable) -> Unit): Result<T> {
+private inline fun <T> Result<T>.onCoroutineFailure(block: (Throwable) -> Unit): Result<T> {
     onFailure {
         if (it is CancellationException) throw it
         block(it)
@@ -185,7 +185,7 @@ fun <Scope : ExecutionScope> ContainerHost.execute(
     scope: Scope,
     block: suspend Scope.() -> Unit
 ): Job {
-    fun onError(throwable: Throwable) {
+    suspend fun onError(throwable: Throwable) {
         scope.errorBlock(throwable)
     }
     if (container !is ExecutableContainer)
