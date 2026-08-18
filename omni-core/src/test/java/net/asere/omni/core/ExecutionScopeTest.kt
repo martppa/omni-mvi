@@ -8,7 +8,7 @@ import org.junit.Test
 class ExecutionScopeTest {
 
     @Test
-    fun `On onError must update errorBlock`() {
+    fun `On onError must update errorBlock`() = runBlocking {
         val scope = ExecutionScope()
         val mockErrorBlock: (Throwable) -> Unit = mockk(relaxed = true)
         

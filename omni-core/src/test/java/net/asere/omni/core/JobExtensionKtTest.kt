@@ -56,4 +56,26 @@ class JobExtensionKtTest {
         job.join()
         assertEquals(4, jobCounter)
     }
+
+    @Test
+    fun `On start children will start lazy children`() = runTest {
+        val list = mutableListOf<String>()
+        val job = launch {
+            launch(start = CoroutineStart.LAZY) {
+                list.add("lazy1")
+            }
+            launch(start = CoroutineStart.LAZY) {
+                list.add("lazy2")
+            }
+        }
+        
+        delay(50)
+        assert(list.isEmpty())
+        
+        job.startChildren()
+        job.joinChildren()
+        assertEquals(2, list.size)
+        assert(list.contains("lazy1"))
+        assert(list.contains("lazy2"))
+    }
 }
