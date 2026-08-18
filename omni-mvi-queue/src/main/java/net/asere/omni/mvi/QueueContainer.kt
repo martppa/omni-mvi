@@ -1,7 +1,7 @@
 package net.asere.omni.mvi
 
 import kotlinx.coroutines.CoroutineStart
-import kotlinx.coroutines.Job
+
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 
@@ -24,8 +24,8 @@ open class QueueContainer<State : Any, Effect : Any> internal constructor(
 ), StateContainer<State, Effect>,
     QueueContainerHost<State, Effect> {
 
-    private lateinit var intentQueue: Channel<Job>
-    private lateinit var consumeJob: Job
+    private lateinit var intentQueue: Channel<Intent>
+    private lateinit var consumeJob: Intent
 
     init {
         startIntentQueue()
@@ -36,20 +36,20 @@ open class QueueContainer<State : Any, Effect : Any> internal constructor(
      */
     private fun startIntentQueue() {
         intentQueue = Channel(capacity = Channel.UNLIMITED)
-        consumeJob = intentJob {
+        consumeJob = intent {
             intentQueue.consumeEach { consumeIntent(it).join() }
         }
     }
 
     /**
-     * Joins the provided [job], effectively waiting for its completion within the queue.
+     * Joins the provided [intent], effectively waiting for its completion within the queue.
      */
-    private fun consumeIntent(job: Job) = intentJob { job.join() }
+    private fun consumeIntent(intent: Intent) = intent { intent.join() }
 
     /**
      * Cancels the current queue processing and the queue itself.
      *
-     * Active intents will be canceled, and the consumer job will be stopped.
+     * Active intents will be canceled, and the consumer execution will be stopped.
      */
     internal fun clearQueue() = intent {
         consumeJob.cancel()
@@ -69,7 +69,7 @@ open class QueueContainer<State : Any, Effect : Any> internal constructor(
     ) = intent {
         if (intentQueue.isClosed()) startIntentQueue()
         intentQueue.send(
-            intentJob(start = CoroutineStart.LAZY) { block() }
+            intent(start = CoroutineStart.LAZY) { block() }
         )
     }
 }

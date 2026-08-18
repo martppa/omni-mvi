@@ -1,6 +1,6 @@
 package net.asere.omni.mvi
 
-import kotlinx.coroutines.Job
+
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -23,13 +23,13 @@ open class OverrideContainer<State : Any, Effect : Any> internal constructor(
     OverrideContainerHost<State, Effect> {
 
     private val mutex = Mutex()
-    private val intents = mutableMapOf<Any, Job>()
+    private val intents = mutableMapOf<Any, Intent>()
 
     /**
      * Starts an intent, overriding its previous execution if it exists.
      *
      * This method ensures thread-safety using a [Mutex] and manages the lifecycle
-     * of the [Job] associated with the [intentId].
+     * of the [Intent] associated with the [intentId].
      *
      * @param intentId The identifier for the intent. Defaults to [Unit].
      * @param block The suspendable logic to execute.
@@ -39,10 +39,10 @@ open class OverrideContainer<State : Any, Effect : Any> internal constructor(
         block: suspend IntentScope<State, Effect>.() -> Unit
     ) = intent {
         mutex.withLock {
-            val job = intents[intentId]
-            job?.cancel()
-            job?.join()
-            intents[intentId] = intentJob { block() }
+            val intent = intents[intentId]
+            intent?.cancel()
+            intent?.join()
+            intents[intentId] = intent(id = intentId) { block() }
         }
     }
 }

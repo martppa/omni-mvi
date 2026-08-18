@@ -29,17 +29,17 @@ open class LockContainer<State : Any, Effect : Any> internal constructor(
     /**
      * Cancels any active intent identified by [intentId].
      *
-     * This will cancel the coroutine job and its children, then wait for completion
+     * This will cancel the coroutine intent and its children, then wait for completion
      * before removing the intent from the tracked map.
      *
      * @param intentId The identifier for the intent to cancel.
      */
     internal fun cancelIntent(intentId: Any) = intent {
         mutex.withLock {
-            val job = intents[intentId]?.job
-            job?.cancelChildren()
-            job?.cancel()
-            job?.join()
+            val intent = intents[intentId]
+            intent?.cancelChildren()
+            intent?.cancel()
+            intent?.join()
             intents.remove(intentId)
         }
     }
@@ -58,7 +58,7 @@ open class LockContainer<State : Any, Effect : Any> internal constructor(
         block: suspend IntentScope<State, Effect>.() -> Unit
     ) = intent {
         if (!intents[intentId].isLocked()) {
-            intents[intentId] = LockableIntent(intentJob { block() })
+            intents[intentId] = LockableIntent(intent(id = intentId) { block() })
         }
     }
 

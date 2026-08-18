@@ -10,6 +10,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -41,24 +42,29 @@ class StateContainerHostExtensionsTest {
         assertEquals("Hello from scope", result)
     }
 
+
     @Test
-    fun `On suspendIntent execution should return block result`() = runTest(testDispatcher) {
+    fun `On intent execution should return active intent with default UUID id`() = runTest(testDispatcher) {
         val host = stateContainerHost<String, String>("Initial", testScope())
-        val result = host.suspendIntent {
-            "Hello from suspendIntent"
+        val intent = host.intent {
+            reduce { "StateUpdated" }
         }
-        assertEquals("Hello from suspendIntent", result)
+        assertTrue(intent.isActive)
+        assertNotNull(intent.id)
+        assertTrue(intent.id is java.util.UUID)
+        intent.join()
+        assertEquals("StateUpdated", host.currentState)
     }
 
     @Test
-    fun `On intentJob execution should return active job`() = runTest(testDispatcher) {
+    fun `On intent execution with custom id should preserve id`() = runTest(testDispatcher) {
         val host = stateContainerHost<String, String>("Initial", testScope())
-        val job = host.intentJob {
+        val customId = "CUSTOM_ID"
+        val intent = host.intent(id = customId) {
             reduce { "StateUpdated" }
         }
-        assertTrue(job.isActive)
-        job.join()
-        assertEquals("StateUpdated", host.currentState)
+        assertEquals(customId, intent.id)
+        intent.join()
     }
 
     @Test
