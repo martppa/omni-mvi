@@ -1,0 +1,113 @@
+build:
+  maxIssues: 0
+  excludeCorrectable: false
+  weights:
+    complexity: 2
+    LongParameterList: 1
+    style: 1
+    comments: 1
+
+config:
+  validation: true
+  warningsAsErrors: false
+
+formatting:
+  active: false
+  NoWildcardImports:
+    active: false
+  SpacingAroundColon:
+    active: false
+  SpacingAroundComma:
+    active: false
+  SpacingAroundCurly:
+    active: false
+  ArgumentListWrapping:
+    active: false
+  FinalNewline:
+    active: false
+  MaximumLineLength:
+    active: false
+  NoConsecutiveBlankLines:
+    active: false
+  Indentation:
+    active: false
+  Wrapping:
+    active: false
+  FunctionTypeReferenceSpacing:
+    active: false
+  MultiLineIfElse:
+    active: false
+  ImportOrdering:
+    active: false
+  NoTrailingSpaces:
+    active: false
+  Filename:
+    active: false
+  SpacingBetweenDeclarationsWithComments:
+    active: false
+  NoSemicolons:
+    active: false
+  FunctionNaming:
+    active: false
+  WildcardImport:
+    active: false
+  FunctionOnlyReturningConstant:
+    active: false
+  MagicNumber:
+    active: false
+  UtilityClassWithPublicConstructor:
+    active: false
+  UseCheckOrError:
+    active: false
+  MaxLineLength:
+    active: false
+  ReturnCount:
+    active: false
+  LongMethod:
+    active: false
+  TooGenericExceptionThrown:
+    active: false
+  TopLevelPropertyNaming:
+    active: false
+  BlockCommentInitialStarAlignment:
+    active: false
+  NoUnusedImports:
+    active: false
+  UnusedPrivateProperty:
+    active: false
+
+style:
+  WildcardImport:
+    active: false
+  FunctionOnlyReturningConstant:
+    active: false
+  MagicNumber:
+    active: false
+  UtilityClassWithPublicConstructor:
+    active: false
+  UseCheckOrError:
+    active: false
+  MaxLineLength:
+    active: false
+  ReturnCount:
+    active: false
+  UnusedPrivateProperty:
+    active: false
+  UnusedPrivateClass:
+    active: false
+  UnusedPrivateMember:
+    active: false
+
+complexity:
+  LongMethod:
+    active: false
+
+exceptions:
+  TooGenericExceptionThrown:
+    active: false
+
+naming:
+  TopLevelPropertyNaming:
+    active: false
+  FunctionNaming:
+    active: false

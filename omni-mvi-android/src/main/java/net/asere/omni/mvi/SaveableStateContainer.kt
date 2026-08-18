@@ -33,7 +33,8 @@ class SaveableStateContainer<State : Any, Effect : Any> internal constructor(
 ) : ExecutableContainer(
     coroutineScope = coroutineScope,
     coroutineExceptionHandler = coroutineExceptionHandler
-), InnerStateContainer<State, Effect> {
+),
+    InnerStateContainer<State, Effect> {
 
     /**
      * A [kotlinx.coroutines.flow.StateFlow] backed by [SavedStateHandle].
@@ -72,12 +73,12 @@ class SaveableStateContainer<State : Any, Effect : Any> internal constructor(
  * @return A fully configured [InnerStateContainer] with persistence capabilities.
  */
 fun <State : Any, Effect : Any>
-        StateContainerHost<State, Effect>.saveableStateContainer(
-    initialState: State,
-    savedStateHandle: SavedStateHandle,
-    coroutineScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext),
-    coroutineExceptionHandler: CoroutineExceptionHandler = EmptyCoroutineExceptionHandler
-) = SaveableStateContainer<State, Effect>(
+    StateContainerHost<State, Effect>.saveableStateContainer(
+        initialState: State,
+        savedStateHandle: SavedStateHandle,
+        coroutineScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext),
+        coroutineExceptionHandler: CoroutineExceptionHandler = EmptyCoroutineExceptionHandler
+    ) = SaveableStateContainer<State, Effect>(
     initialState = initialState,
     savedStateHandle = savedStateHandle,
     coroutineScope = coroutineScope,

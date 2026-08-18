@@ -1,7 +1,6 @@
 package net.asere.omni.mvi
 
 import kotlinx.coroutines.CoroutineStart
-
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 
@@ -21,7 +20,8 @@ open class QueueContainer<State : Any, Effect : Any> internal constructor(
     override val container: StateContainer<State, Effect>,
 ) : StateContainerDecorator<State, Effect>(
     container
-), StateContainer<State, Effect>,
+),
+    StateContainer<State, Effect>,
     QueueContainerHost<State, Effect> {
 
     private lateinit var intentQueue: Channel<Intent>
@@ -86,8 +86,7 @@ fun <State : Any, Effect : Any> queueContainer(
  *
  * @return A new [QueueContainer] instance decorating the original one.
  */
-fun <State : Any, Effect : Any> StateContainer<State, Effect>
-        .buildQueueContainer() = queueContainer(this)
+fun <State : Any, Effect : Any> StateContainer<State, Effect>.buildQueueContainer() = queueContainer(this)
 
 /**
  * Searches the decoration chain for a [QueueContainer].
@@ -96,5 +95,5 @@ fun <State : Any, Effect : Any> StateContainer<State, Effect>
  * @throws RuntimeException if no [QueueContainer] is found.
  */
 internal fun <State : Any, Effect : Any>
-        StateContainer<State, Effect>.asQueueContainer() =
+    StateContainer<State, Effect>.asQueueContainer() =
     asStateContainer().seek<QueueContainer<State, Effect>> { it is QueueContainer<*, *> }

@@ -10,13 +10,13 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import net.asere.omni.mvi.shared.test.stateContainerHost
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import net.asere.omni.mvi.shared.test.stateContainerHost
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class QueueContainerTest {
@@ -66,9 +66,12 @@ class QueueContainerTest {
         testScheduler.advanceUntilIdle()
 
         val expected = listOf(
-            "start1", "finish1",
-            "start2", "finish2",
-            "start3", "finish3",
+            "start1",
+            "finish1",
+            "start2",
+            "finish2",
+            "start3",
+            "finish3",
         )
         assertEquals(expected, sequence)
     }

@@ -4,9 +4,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.yield
+import net.asere.omni.mvi.shared.test.stateContainerHost
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import net.asere.omni.mvi.shared.test.stateContainerHost
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DelegatorContainerTest {
@@ -15,7 +15,7 @@ class DelegatorContainerTest {
     fun `On DelegatorContainer with delegate should update both`() {
         val baseHost = stateContainerHost<String, String>("Initial")
         val delegator = DelegatorContainer(baseHost.container)
-        
+
         val delegateHost = stateContainerHost<String, String>("DelegateInitial")
         val delegateContainer = delegateHost.container.asStateContainer()
 
@@ -30,7 +30,7 @@ class DelegatorContainerTest {
     fun `On DelegatorContainer clearDelegate should stop delegating`() {
         val baseHost = stateContainerHost<String, String>("Initial")
         val delegator = DelegatorContainer(baseHost.container)
-        
+
         val delegateHost = stateContainerHost<String, String>("DelegateInitial")
         val delegateContainer = delegateHost.container.asStateContainer()
 
@@ -46,7 +46,7 @@ class DelegatorContainerTest {
     fun `On DelegatorContainer with delegate should post effect to both`() = runTest {
         val baseHost = stateContainerHost<String, String>("Initial")
         val delegator = DelegatorContainer(baseHost.container)
-        
+
         val delegateHost = stateContainerHost<String, String>("DelegateInitial")
         val delegateContainer = delegateHost.container.asStateContainer()
 

@@ -1,12 +1,12 @@
 package net.asere.omni.mvi.shared.test
 
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import net.asere.omni.core.EmptyCoroutineExceptionHandler
 import net.asere.omni.mvi.InnerStateContainer
 import net.asere.omni.mvi.StateContainerHost
 import net.asere.omni.mvi.stateContainer
+import kotlin.coroutines.EmptyCoroutineContext
 
 fun <State : Any, Effect : Any> stateContainerHost(
     initialState: State,

@@ -17,7 +17,8 @@ open class TestStateContainer<State : Any, Effect : Any> internal constructor(
     override val container: StateContainer<State, Effect>,
 ) : StateContainerDecorator<State, Effect>(
     container
-), StateContainer<State, Effect>,
+),
+    StateContainer<State, Effect>,
     StateContainerHost<State, Effect> {
 
     internal val emittedStates = Collections.synchronizedList(mutableListOf<State>())

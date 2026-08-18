@@ -9,13 +9,13 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import net.asere.omni.mvi.shared.test.stateContainerHost
 import org.junit.After
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import net.asere.omni.mvi.shared.test.stateContainerHost
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class OverrideContainerTest {

@@ -42,15 +42,19 @@ class EvaluationScope<State : Any, Effect : Any>(
      * @throws IllegalStateException if no more states are available or if the next emission is an effect.
      */
     fun nextState(block: (previous: State, current: State) -> Unit) {
-        if (!stateIterator.hasNext())
+        if (!stateIterator.hasNext()) {
             throw IllegalStateException("A maximum of ${testResult.emittedStates.size} states were emitted.")
+        }
 
         elementIterator.next().apply {
-            if (this.type != EmittedElement.Type.State)
-                throw IllegalStateException("A state was expected but an effect " +
-                    "was emitted at position ${elementIterator.previousIndex()}. " +
-                    "The emitted effect ${this.element} at position " +
-                    "${elementIterator.previousIndex()} is not the next state")
+            if (this.type != EmittedElement.Type.State) {
+                throw IllegalStateException(
+                    "A state was expected but an effect " +
+                        "was emitted at position ${elementIterator.previousIndex()}. " +
+                        "The emitted effect ${this.element} at position " +
+                        "${elementIterator.previousIndex()} is not the next state"
+                )
+            }
         }
 
         if (!stateIterator.hasPrevious()) {
@@ -68,15 +72,19 @@ class EvaluationScope<State : Any, Effect : Any>(
      * @throws IllegalStateException if no more states are available or if the next emission is an effect.
      */
     fun expectState(block: State.() -> State) {
-        if (!stateIterator.hasNext())
+        if (!stateIterator.hasNext()) {
             throw IllegalStateException("A maximum of ${emittedStates.size} states were emitted.")
+        }
 
         elementIterator.next().apply {
-            if (this.type != EmittedElement.Type.State)
-                throw IllegalStateException("A state was expected but an effect " +
-                    "was emitted at position ${elementIterator.previousIndex()}. " +
-                    "The emitted effect ${this.element} at position " +
-                    "${elementIterator.previousIndex()} is not the next state")
+            if (this.type != EmittedElement.Type.State) {
+                throw IllegalStateException(
+                    "A state was expected but an effect " +
+                        "was emitted at position ${elementIterator.previousIndex()}. " +
+                        "The emitted effect ${this.element} at position " +
+                        "${elementIterator.previousIndex()} is not the next state"
+                )
+            }
         }
 
         val expected = if (!stateIterator.hasPrevious()) {
@@ -94,15 +102,19 @@ class EvaluationScope<State : Any, Effect : Any>(
      * @throws IllegalStateException if no more effects are available or if the next emission is a state.
      */
     fun nextEffect(block: (Effect) -> Unit) {
-        if (!effectIterator.hasNext())
+        if (!effectIterator.hasNext()) {
             throw IllegalStateException("A maximum of ${emittedEffects.size} effects were emitted.")
+        }
 
         elementIterator.next().apply {
-            if (this.type != EmittedElement.Type.Effect)
-                throw IllegalStateException("An effect was expected but a state " +
-                    "was emitted at position ${elementIterator.previousIndex()}. " +
-                    "The emitted ${this.element} at position " +
-                    "${elementIterator.previousIndex()} is not the expected effect")
+            if (this.type != EmittedElement.Type.Effect) {
+                throw IllegalStateException(
+                    "An effect was expected but a state " +
+                        "was emitted at position ${elementIterator.previousIndex()}. " +
+                        "The emitted ${this.element} at position " +
+                        "${elementIterator.previousIndex()} is not the expected effect"
+                )
+            }
         }
 
         block(effectIterator.next())
@@ -115,17 +127,19 @@ class EvaluationScope<State : Any, Effect : Any>(
      * @throws IllegalStateException if no more effects are available or if the next emission is a state.
      */
     fun expectEffect(effect: Effect) {
-        if (!effectIterator.hasNext())
+        if (!effectIterator.hasNext()) {
             throw IllegalStateException("A maximum of ${emittedEffects.size} effects were emitted.")
+        }
 
         elementIterator.next().apply {
-            if (this.type != EmittedElement.Type.Effect)
+            if (this.type != EmittedElement.Type.Effect) {
                 throw IllegalStateException(
                     "An effect was expected but a state " +
-                            "was emitted at position ${elementIterator.previousIndex()}. " +
-                            "The emitted ${this.element} at position " +
-                            "${elementIterator.previousIndex()} is not the expected effect"
+                        "was emitted at position ${elementIterator.previousIndex()}. " +
+                        "The emitted ${this.element} at position " +
+                        "${elementIterator.previousIndex()} is not the expected effect"
                 )
+            }
         }
 
         Assert.assertEquals(effect, effectIterator.next())

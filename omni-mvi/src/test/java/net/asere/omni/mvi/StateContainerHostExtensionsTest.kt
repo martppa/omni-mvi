@@ -8,13 +8,13 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import net.asere.omni.mvi.shared.test.stateContainerHost
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import net.asere.omni.mvi.shared.test.stateContainerHost
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class StateContainerHostExtensionsTest {
@@ -41,7 +41,6 @@ class StateContainerHostExtensionsTest {
         }
         assertEquals("Hello from scope", result)
     }
-
 
     @Test
     fun `On intent execution should return active intent with default UUID id`() = runTest(testDispatcher) {
@@ -74,19 +73,19 @@ class StateContainerHostExtensionsTest {
         host.observeState {
             states.add(it)
         }
-        
+
         testScheduler.advanceUntilIdle()
-        
+
         host.intent {
             reduce { "State1" }
         }
         testScheduler.advanceUntilIdle()
-        
+
         host.intent {
             reduce { "State2" }
         }
         testScheduler.advanceUntilIdle()
-        
+
         assertEquals(listOf("Initial", "State1", "State2"), states)
         (host.container.asStateContainer() as net.asere.omni.core.ExecutableContainer).cancel()
     }
@@ -98,19 +97,19 @@ class StateContainerHostExtensionsTest {
         host.observeEffect {
             effects.add(it)
         }
-        
+
         testScheduler.advanceUntilIdle()
-        
+
         host.intent {
             post("Effect1")
         }
         testScheduler.advanceUntilIdle()
-        
+
         host.intent {
             post("Effect2")
         }
         testScheduler.advanceUntilIdle()
-        
+
         assertEquals(listOf("Effect1", "Effect2"), effects)
         (host.container.asStateContainer() as net.asere.omni.core.ExecutableContainer).cancel()
     }

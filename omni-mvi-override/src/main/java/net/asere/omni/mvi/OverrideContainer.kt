@@ -1,6 +1,5 @@
 package net.asere.omni.mvi
 
-
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -19,7 +18,8 @@ open class OverrideContainer<State : Any, Effect : Any> internal constructor(
     override val container: StateContainer<State, Effect>,
 ) : StateContainerDecorator<State, Effect>(
     container
-), StateContainer<State, Effect>,
+),
+    StateContainer<State, Effect>,
     OverrideContainerHost<State, Effect> {
 
     private val mutex = Mutex()
@@ -59,8 +59,7 @@ private fun <State : Any, Effect : Any> overrideContainer(
  *
  * @return A new [OverrideContainer] instance decorating the original one.
  */
-fun <State : Any, Effect : Any> StateContainer<State, Effect>
-        .buildOverrideContainer() = overrideContainer(this)
+fun <State : Any, Effect : Any> StateContainer<State, Effect>.buildOverrideContainer() = overrideContainer(this)
 
 /**
  * Searches the decoration chain for an [OverrideContainer].
@@ -69,7 +68,7 @@ fun <State : Any, Effect : Any> StateContainer<State, Effect>
  * @throws RuntimeException if no [OverrideContainer] is found.
  */
 internal fun <State : Any, Effect : Any>
-        StateContainer<State, Effect>.asOverrideContainer() =
+    StateContainer<State, Effect>.asOverrideContainer() =
     asStateContainer().seek<OverrideContainer<State, Effect>> {
         it is OverrideContainer<*, *>
     }

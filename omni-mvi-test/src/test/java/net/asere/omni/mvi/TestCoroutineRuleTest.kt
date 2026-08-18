@@ -23,7 +23,7 @@ class TestCoroutineRuleTest {
         launch(Dispatchers.Main) {
             executed = true
         }
-        
+
         assertTrue(!executed)
         testScheduler.advanceUntilIdle()
         assertTrue(executed)

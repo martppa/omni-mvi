@@ -56,7 +56,7 @@ fun <UiState : Any> StateContainerHost<UiState, *>.state(
     val lifecycleStateFlow = remember(this, lifecycleOwner) {
         container.asStateContainer().state.flowWithLifecycle(
             lifecycle = lifecycleOwner.lifecycle,
-             minActiveState = minActiveState
+            minActiveState = minActiveState
         )
     }
     return lifecycleStateFlow.collectAsState(currentState)

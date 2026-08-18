@@ -20,21 +20,33 @@ class JobExtensionKtTest {
         var jobCounter = 0
         val job = coroutineScope.launch {
             mutex.withLock { jobCounter++ }
-            launch { delay(200); mutex.withLock { jobCounter++ } }
             launch {
-                delay(100);
+                delay(200)
                 mutex.withLock { jobCounter++ }
-                launch { delay(30); mutex.withLock { jobCounter++ } }
+            }
+            launch {
+                delay(100)
+                mutex.withLock { jobCounter++ }
                 launch {
-                    delay(100);
+                    delay(30)
+                    mutex.withLock { jobCounter++ }
+                }
+                launch {
+                    delay(100)
                     launch {
-                        delay(300);
+                        delay(300)
                         mutex.withLock { jobCounter++ }
                     }
                 }
             }
-            launch { delay(100); mutex.withLock { jobCounter++ } }
-            launch { delay(400); mutex.withLock { jobCounter++ } }
+            launch {
+                delay(100)
+                mutex.withLock { jobCounter++ }
+            }
+            launch {
+                delay(400)
+                mutex.withLock { jobCounter++ }
+            }
         }
         job.joinChildren()
         job.join()
@@ -47,10 +59,22 @@ class JobExtensionKtTest {
         val coroutineScope = CoroutineScope(EmptyCoroutineContext)
         var jobCounter = 0
         val job = coroutineScope.launch {
-            launch { delay(200); mutex.withLock { jobCounter++ } }
-            launch { delay(100); mutex.withLock { jobCounter++ } }
-            launch { delay(50); mutex.withLock { jobCounter++ } }
-            launch { delay(10); mutex.withLock { jobCounter++ } }
+            launch {
+                delay(200)
+                mutex.withLock { jobCounter++ }
+            }
+            launch {
+                delay(100)
+                mutex.withLock { jobCounter++ }
+            }
+            launch {
+                delay(50)
+                mutex.withLock { jobCounter++ }
+            }
+            launch {
+                delay(10)
+                mutex.withLock { jobCounter++ }
+            }
         }
         job.joinChildren()
         job.join()
@@ -68,10 +92,10 @@ class JobExtensionKtTest {
                 list.add("lazy2")
             }
         }
-        
+
         delay(50)
         assert(list.isEmpty())
-        
+
         job.startChildren()
         job.joinChildren()
         assertEquals(2, list.size)

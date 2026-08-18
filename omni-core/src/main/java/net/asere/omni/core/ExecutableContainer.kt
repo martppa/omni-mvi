@@ -188,8 +188,9 @@ fun <Scope : ExecutionScope> ContainerHost.execute(
     suspend fun onError(throwable: Throwable) {
         scope.errorBlock(throwable)
     }
-    if (container !is ExecutableContainer)
+    if (container !is ExecutableContainer) {
         throw IllegalStateException("The container is not an Executable container!")
+    }
     return (container as ExecutableContainer).execute(
         context = context,
         start = start,

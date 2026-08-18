@@ -9,13 +9,13 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import net.asere.omni.mvi.shared.test.stateContainerHost
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import net.asere.omni.mvi.shared.test.stateContainerHost
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class LockContainerTest {
@@ -41,7 +41,9 @@ class LockContainerTest {
     }
 
     @Test
-    fun `On lockIntent with identical ID should ignore second execution if first is running`() = runTest(testDispatcher) {
+    fun `On lockIntent with identical ID should ignore second execution if first is running`() = runTest(
+        testDispatcher
+    ) {
         val host = Host(testScope())
         var execution1Count = 0
         var execution2Count = 0
@@ -64,7 +66,9 @@ class LockContainerTest {
     }
 
     @Test
-    fun `On lockIntent with identical ID should allow second execution if first has completed`() = runTest(testDispatcher) {
+    fun `On lockIntent with identical ID should allow second execution if first has completed`() = runTest(
+        testDispatcher
+    ) {
         val host = Host(testScope())
         var execution1Count = 0
         var execution2Count = 0

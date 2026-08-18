@@ -11,11 +11,11 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.coroutines.yield
+import net.asere.omni.mvi.shared.test.stateContainerHost
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import net.asere.omni.mvi.shared.test.stateContainerHost
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SaveableStateContainerTest {
@@ -106,7 +106,7 @@ class SaveableStateContainerTest {
         val savedStateHandle = SavedStateHandle()
         val scope = CoroutineScope(SupervisorJob() + testDispatcher)
         val host = stateContainerHost<String, String>("InitialState")
-        
+
         val saveableContainer = host.saveableStateContainer(
             initialState = "InitialState",
             savedStateHandle = savedStateHandle,

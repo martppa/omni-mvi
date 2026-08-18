@@ -8,8 +8,8 @@ import net.asere.omni.core.OmniHostDsl
  * Implement this interface in your ViewModel or host class to enable the `queueIntent`
  * and `clearQueue` DSL functions.
  */
-interface QueueContainerHost<State : Any, Effect : Any>
-    : StateContainerHost<State, Effect> {
+interface QueueContainerHost<State : Any, Effect : Any> :
+    StateContainerHost<State, Effect> {
     /**
      * The [StateContainer] managed by this host.
      */
@@ -26,9 +26,9 @@ interface QueueContainerHost<State : Any, Effect : Any>
  */
 @OmniHostDsl
 fun <State : Any, Effect : Any>
-        QueueContainerHost<State, Effect>.queueIntent(
-    block: suspend IntentScope<State, Effect>.() -> Unit
-) = container.asQueueContainer().enqueue(block)
+    QueueContainerHost<State, Effect>.queueIntent(
+        block: suspend IntentScope<State, Effect>.() -> Unit
+    ) = container.asQueueContainer().enqueue(block)
 
 /**
  * Clears the current intent queue of the hosted container.
@@ -36,5 +36,5 @@ fun <State : Any, Effect : Any>
  * This stops all pending and active queued intents.
  */
 fun <State : Any, Effect : Any>
-        QueueContainerHost<State, Effect>.clearQueue() =
+    QueueContainerHost<State, Effect>.clearQueue() =
     container.asQueueContainer().clearQueue()

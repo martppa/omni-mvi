@@ -60,5 +60,7 @@ fun <T> InnerStateContainer<*, *>.seek(predicate: (Any) -> Boolean): T {
         return this.container.asStateContainer().seek(predicate)
     } else if (predicate(this)) {
         return this as T
-    } else throw RuntimeException("Container decorator fails. Have you wrapped all containers?")
+    } else {
+        throw RuntimeException("Container decorator fails. Have you wrapped all containers?")
+    }
 }

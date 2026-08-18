@@ -3,6 +3,10 @@ package net.asere.omni.mvi
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkAll
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -11,15 +15,11 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import io.mockk.every
-import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkAll
+import net.asere.omni.mvi.shared.test.stateContainerHost
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import net.asere.omni.mvi.shared.test.stateContainerHost
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class StateContainerHostExtensionTest {
@@ -56,7 +56,9 @@ class StateContainerHostExtensionTest {
     private fun testScope() = CoroutineScope(SupervisorJob() + testDispatcher)
 
     @Test
-    fun `On observeState with repeatOnLifecycle should collect state when lifecycle is at least STARTED`() = runTest(testDispatcher) {
+    fun `On observeState with repeatOnLifecycle should collect state when lifecycle is at least STARTED`() = runTest(
+        testDispatcher
+    ) {
         val host = stateContainerHost<String, String>("Initial", testScope())
         val lifecycleOwner = TestLifecycleOwner()
 
@@ -100,7 +102,9 @@ class StateContainerHostExtensionTest {
     }
 
     @Test
-    fun `On observeEffect with repeatOnLifecycle should collect effects when lifecycle is at least STARTED`() = runTest(testDispatcher) {
+    fun `On observeEffect with repeatOnLifecycle should collect effects when lifecycle is at least STARTED`() = runTest(
+        testDispatcher
+    ) {
         val host = stateContainerHost<String, String>("Initial", testScope())
         val lifecycleOwner = TestLifecycleOwner()
 

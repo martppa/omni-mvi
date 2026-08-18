@@ -8,8 +8,8 @@ import net.asere.omni.core.OmniHostDsl
  * Implement this interface in your ViewModel or host class to enable the `overrideIntent`
  * DSL function.
  */
-interface OverrideContainerHost<State : Any, Effect : Any>
-    : StateContainerHost<State, Effect> {
+interface OverrideContainerHost<State : Any, Effect : Any> :
+    StateContainerHost<State, Effect> {
     /**
      * The [StateContainer] managed by this host.
      */
@@ -27,7 +27,7 @@ interface OverrideContainerHost<State : Any, Effect : Any>
  */
 @OmniHostDsl
 fun <State : Any, Effect : Any>
-        OverrideContainerHost<State, Effect>.overrideIntent(
-    intentId: Any = Unit,
-    block: suspend IntentScope<State, Effect>.() -> Unit
-) = container.asOverrideContainer().overrideIntent(intentId, block)
+    OverrideContainerHost<State, Effect>.overrideIntent(
+        intentId: Any = Unit,
+        block: suspend IntentScope<State, Effect>.() -> Unit
+    ) = container.asOverrideContainer().overrideIntent(intentId, block)

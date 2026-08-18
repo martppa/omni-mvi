@@ -8,8 +8,8 @@ import net.asere.omni.core.OmniHostDsl
  * Implement this interface in your ViewModel or host class to enable the `lockIntent`,
  * `unlockIntent`, and `cancelIntent` DSL functions.
  */
-interface LockContainerHost<State : Any, Effect : Any>
-    : StateContainerHost<State, Effect> {
+interface LockContainerHost<State : Any, Effect : Any> :
+    StateContainerHost<State, Effect> {
     /**
      * The [StateContainer] managed by this host.
      */
@@ -25,9 +25,9 @@ interface LockContainerHost<State : Any, Effect : Any>
  * @param intentId The identifier of the intent to cancel. Defaults to [Unit].
  */
 fun <State : Any, Effect : Any>
-        LockContainerHost<State, Effect>.cancelIntent(
-    intentId: Any = Unit,
-) = container.asLockContainer().cancelIntent(intentId)
+    LockContainerHost<State, Effect>.cancelIntent(
+        intentId: Any = Unit,
+    ) = container.asLockContainer().cancelIntent(intentId)
 
 /**
  * Unlocks the intent identified by [intentId].
@@ -38,9 +38,9 @@ fun <State : Any, Effect : Any>
  * @param intentId The identifier of the intent to unlock. Defaults to [Unit].
  */
 fun <State : Any, Effect : Any>
-        LockContainerHost<State, Effect>.unlockIntent(
-    intentId: Any = Unit
-) = container.asLockContainer().unlockIntent(intentId)
+    LockContainerHost<State, Effect>.unlockIntent(
+        intentId: Any = Unit
+    ) = container.asLockContainer().unlockIntent(intentId)
 
 /**
  * Launches an intent that is locked by [intentId].
@@ -53,10 +53,10 @@ fun <State : Any, Effect : Any>
  */
 @OmniHostDsl
 fun <State : Any, Effect : Any>
-        LockContainerHost<State, Effect>.lockIntent(
-    intentId: Any = Unit,
-    block: suspend IntentScope<State, Effect>.() -> Unit
-) = container.asLockContainer().lockIntent(intentId, block)
+    LockContainerHost<State, Effect>.lockIntent(
+        intentId: Any = Unit,
+        block: suspend IntentScope<State, Effect>.() -> Unit
+    ) = container.asLockContainer().lockIntent(intentId, block)
 
 /**
  * Manually locks an intent ID, preventing any [lockIntent] calls with the same ID
@@ -65,6 +65,6 @@ fun <State : Any, Effect : Any>
  * @param intentId The identifier to lock. Defaults to [Unit].
  */
 fun <State : Any, Effect : Any>
-        LockContainerHost<State, Effect>.lockIntent(
-    intentId: Any = Unit
-) = container.asLockContainer().lockIntent(intentId)
+    LockContainerHost<State, Effect>.lockIntent(
+        intentId: Any = Unit
+    ) = container.asLockContainer().lockIntent(intentId)

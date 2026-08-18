@@ -3,8 +3,8 @@ package net.asere.omni.mvi
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.junit.Test
 import org.junit.Assert.assertEquals
+import org.junit.Test
 
 internal class CurrentStateKtTest : StateContainerHost<Any, Any> {
 

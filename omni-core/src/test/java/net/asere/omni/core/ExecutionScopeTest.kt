@@ -11,12 +11,12 @@ class ExecutionScopeTest {
     fun `On onError must update errorBlock`() = runBlocking {
         val scope = ExecutionScope()
         val mockErrorBlock: (Throwable) -> Unit = mockk(relaxed = true)
-        
+
         scope.onError(mockErrorBlock)
-        
+
         val exception = RuntimeException("Test error")
         scope.errorBlock(exception)
-        
+
         verify { mockErrorBlock(exception) }
     }
 
@@ -25,16 +25,16 @@ class ExecutionScopeTest {
         val parentScope = ExecutionScope()
         val childScope = ExecutionScope()
         val mockChildErrorBlock: (Throwable) -> Unit = mockk(relaxed = true)
-        
+
         childScope.onError(mockChildErrorBlock)
-        
+
         val mappedBlock = parentScope.map(childScope) {
             // This block is intended to be executed in the context of parentScope
         }
-        
+
         val exception = RuntimeException("Parent error")
         parentScope.errorBlock(exception)
-        
+
         verify { mockChildErrorBlock(exception) }
     }
 
@@ -46,10 +46,10 @@ class ExecutionScopeTest {
         val block: suspend ExecutionScope.() -> Unit = {
             blockExecuted = true
         }
-        
+
         val resultBlock = parentScope.map(childScope, block)
         resultBlock(childScope)
-        
+
         assert(blockExecuted)
     }
 }

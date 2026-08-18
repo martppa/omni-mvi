@@ -38,7 +38,8 @@ fun RetryComponent(
         ) {
             Text(
                 text = stringResource(
-                    id = R.string.fetch_error, errorMessage
+                    id = R.string.fetch_error,
+                    errorMessage
                 ),
                 style = TextStyle(
                     color = Color.Black

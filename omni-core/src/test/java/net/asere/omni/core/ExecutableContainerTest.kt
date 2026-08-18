@@ -1,8 +1,8 @@
 package net.asere.omni.core
 
 import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
 import junit.framework.TestCase.assertFalse
+import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope

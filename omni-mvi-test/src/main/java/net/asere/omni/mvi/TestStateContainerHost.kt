@@ -24,10 +24,16 @@ fun <State : Any, Effect : Any> TestResult<State, Effect>.evaluate(
     block(scope)
     with(scope) {
         if (!relaxed) {
-            if (effectIterator.hasNext())
-                throw IllegalStateException("${effectIterator.nextIndex()} effects were tested but ${emittedEffects.size} were emitted.")
-            if (stateIterator.hasNext())
-                throw IllegalStateException("${stateIterator.nextIndex()} states were tested but ${emittedStates.size} were emitted.")
+            if (effectIterator.hasNext()) {
+                throw IllegalStateException(
+                    "${effectIterator.nextIndex()} effects were tested but ${emittedEffects.size} were emitted."
+                )
+            }
+            if (stateIterator.hasNext()) {
+                throw IllegalStateException(
+                    "${stateIterator.nextIndex()} states were tested but ${emittedStates.size} were emitted."
+                )
+            }
         }
     }
 }
@@ -70,9 +76,9 @@ fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>> TestSc
  * @return A [TestResult] containing emissions from the initialization phase.
  */
 suspend fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>>
-        TestStateContainerHost<State, Effect, Host>.testConstructor(
-    initialState: State? = null,
-): TestResult<State, Effect> = with(scope) {
+    TestStateContainerHost<State, Effect, Host>.testConstructor(
+        initialState: State? = null,
+    ): TestResult<State, Effect> = with(scope) {
     testConstructor(initialState) { hostBuilder() }
 }
 
@@ -84,10 +90,10 @@ suspend fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>
  * @return A [TestResult] containing all states and effects emitted during the intent execution.
  */
 fun <State : Any, Effect : Any, Host : StateContainerHost<State, Effect>>
-        TestStateContainerHost<State, Effect, Host>.testIntent(
-    withState: State? = null,
-    testBlock: Host.() -> Unit
-): TestResult<State, Effect> {
+    TestStateContainerHost<State, Effect, Host>.testIntent(
+        withState: State? = null,
+        testBlock: Host.() -> Unit
+    ): TestResult<State, Effect> {
     val host = hostBuilder()
     val scope = scope
     scope.advanceUntilIdle()

@@ -18,6 +18,7 @@ data class EmittedElement(
     enum class Type {
         /** Represents a UI state emission. */
         State,
+
         /** Represents a side effect emission. */
         Effect
     }

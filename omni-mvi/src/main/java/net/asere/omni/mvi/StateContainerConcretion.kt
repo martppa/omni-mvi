@@ -57,7 +57,7 @@ class StateContainerConcretion<State : Any, Effect : Any> internal constructor(
  * @return A fully configured [InnerStateContainer].
  */
 fun <State : Any, Effect : Any>
-        StateContainerHost<State, Effect>.stateContainer(
+    StateContainerHost<State, Effect>.stateContainer(
         initialState: State,
         coroutineScope: CoroutineScope = CoroutineScope(EmptyCoroutineContext),
         coroutineExceptionHandler: CoroutineExceptionHandler = EmptyCoroutineExceptionHandler

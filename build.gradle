@@ -16,6 +16,7 @@ plugins {
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin' version '2.0.1' apply false
     id 'io.github.gradle-nexus.publish-plugin' version "2.0.0"
     id 'org.jetbrains.kotlin.plugin.compose' version "2.2.20"
+    id "io.gitlab.arturbosch.detekt" version "1.23.8" apply false
 }
 
 group = 'net.asere.omni.mvi'
@@ -45,6 +46,7 @@ def getLocalProperties = { dir ->
 project.ext.localProperties = getLocalProperties(rootDir)
 
 allprojects {
+    apply plugin: "io.gitlab.arturbosch.detekt"
     beforeEvaluate { project ->
         def properties = getLocalProperties(project.projectDir);
         if (properties) {
@@ -52,6 +54,29 @@ allprojects {
         }
 
         project.ext.localProperties = rootProject.ext.localProperties
+    }
+
+    detekt {
+        config.setFrom(file("$rootDir/detekt-config.yml"))
+        buildUponDefaultConfig = true
+        autoCorrect = true
+        parallel = true
+    }
+    
+    dependencies {
+        detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.23.8"
+    }
+
+    tasks.register("detektFormat", io.gitlab.arturbosch.detekt.Detekt) {
+        description = "Runs over whole code base without the starting overhead for each module."
+        autoCorrect = true
+        buildUponDefaultConfig = true
+        setSource(files(projectDir))
+        config.setFrom(files("$rootDir/detekt-config.yml"))
+        include("**/*.kt")
+        include("**/*.kts")
+        exclude("**/resources/**")
+        exclude("**/build/**")
     }
 }
 

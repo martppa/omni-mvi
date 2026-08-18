@@ -21,7 +21,7 @@ fun <State : Any, Effect : Any> StateContainer<State, Effect>.asExecutableContai
  * asynchronous operations launched during an intent have finished before making assertions.
  */
 suspend fun <State : Any, Effect : Any>
-        StateContainerHost<State, Effect>.joinChildren() =
+    StateContainerHost<State, Effect>.joinChildren() =
     container.asExecutableContainer().joinChildren()
 
 /**

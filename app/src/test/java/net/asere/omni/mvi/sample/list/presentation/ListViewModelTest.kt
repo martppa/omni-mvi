@@ -40,11 +40,14 @@ class ListViewModelTest {
     private val repo2 = repo1.copy(id = 2L)
     private val repo3 = repo1.copy(id = 3L)
 
-    private val fakePagedRepos = PagedRepos(1, listOf(
-        repo1,
-        repo2,
-        repo3
-    ))
+    private val fakePagedRepos = PagedRepos(
+        1,
+        listOf(
+            repo1,
+            repo2,
+            repo3
+        )
+    )
 
     private val exceptionHandler = ExceptionHandler {
         throw it
@@ -72,17 +75,23 @@ class ListViewModelTest {
             coVerify { getRepositories(1) }
             Assert.assertEquals(2, emittedStates.size)
             nextState { previous, current ->
-                Assert.assertEquals(current, previous.copy(
-                    currentPage = 1,
-                    loading = true
-                ))
+                Assert.assertEquals(
+                    current,
+                    previous.copy(
+                        currentPage = 1,
+                        loading = true
+                    )
+                )
             }
             nextState { previous, current ->
-                Assert.assertEquals(current, previous.copy(
-                    loading = false,
-                    currentPage = fakePagedRepos.currentPage,
-                    items = fakePagedRepos.items.map { it.asPresentation() }
-                ))
+                Assert.assertEquals(
+                    current,
+                    previous.copy(
+                        loading = false,
+                        currentPage = fakePagedRepos.currentPage,
+                        items = fakePagedRepos.items.map { it.asPresentation() }
+                    )
+                )
             }
             nextEffect {
                 Assert.assertEquals(it, ListEffect.ShowMessage("Fetched"))
@@ -109,7 +118,8 @@ class ListViewModelTest {
                 copy(
                     loading = false,
                     currentPage = fakePagedRepos.currentPage,
-                    items = fakePagedRepos.items.map { it.asPresentation() })
+                    items = fakePagedRepos.items.map { it.asPresentation() }
+                )
             }
             expectEffect(ListEffect.ShowMessage("Fetched"))
         }

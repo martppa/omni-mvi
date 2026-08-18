@@ -20,7 +20,8 @@ open class LockContainer<State : Any, Effect : Any> internal constructor(
     override val container: StateContainer<State, Effect>,
 ) : StateContainerDecorator<State, Effect>(
     container
-), Container,
+),
+    Container,
     LockContainerHost<State, Effect> {
 
     private val mutex = Mutex()
@@ -94,8 +95,7 @@ internal fun <State : Any, Effect : Any> lockContainer(
  *
  * @return A new [LockContainer] instance decorating the original one.
  */
-fun <State : Any, Effect : Any> StateContainer<State, Effect>
-        .buildLockContainer() = lockContainer(this)
+fun <State : Any, Effect : Any> StateContainer<State, Effect>.buildLockContainer() = lockContainer(this)
 
 /**
  * Searches the decoration chain for a [LockContainer].
@@ -104,5 +104,5 @@ fun <State : Any, Effect : Any> StateContainer<State, Effect>
  * @throws RuntimeException if no [LockContainer] is found.
  */
 internal fun <State : Any, Effect : Any>
-        StateContainer<State, Effect>.asLockContainer() =
+    StateContainer<State, Effect>.asLockContainer() =
     asStateContainer().seek<LockContainer<State, Effect>> { it is LockContainer<*, *> }

@@ -58,7 +58,7 @@ class TestStateContainerHostTest {
     fun `On testConstructor must capture constructor emissions`() = runTest {
         val testHost = createTestHost { ConstructorHost() }
         val result = testHost.testConstructor()
-        
+
         result.evaluate {
             expectState { "ConstructorState" }
             expectEffect("ConstructorEffect")
@@ -69,7 +69,7 @@ class TestStateContainerHostTest {
     fun `On testIntent must capture intent emissions`() = runTest {
         val testHost = createTestHost { TestHost("Initial") }
         val result = testHost.testIntent { performAction() }
-        
+
         result.evaluate {
             expectState { "State1" }
             expectEffect("Effect1")
@@ -81,7 +81,7 @@ class TestStateContainerHostTest {
     fun `On evaluate without relaxed must throw if not all states are tested`() = runTest {
         val testHost = createTestHost { TestHost("Initial") }
         val result = testHost.testIntent { performAction() }
-        
+
         assertThrows(IllegalStateException::class.java) {
             result.evaluate(relaxed = false) {
                 expectState { "State1" }
@@ -95,7 +95,7 @@ class TestStateContainerHostTest {
     fun `On evaluate without relaxed must throw if not all effects are tested`() = runTest {
         val testHost = createTestHost { TestHost("Initial") }
         val result = testHost.testIntent { performAction() }
-        
+
         assertThrows(IllegalStateException::class.java) {
             result.evaluate(relaxed = false) {
                 expectState { "State1" }
@@ -109,7 +109,7 @@ class TestStateContainerHostTest {
     fun `On evaluate with relaxed must succeed even if not all emissions are tested`() = runTest {
         val testHost = createTestHost { TestHost("Initial") }
         val result = testHost.testIntent { performAction() }
-        
+
         result.evaluate(relaxed = true) {
             expectState { "State1" }
         }
@@ -119,7 +119,7 @@ class TestStateContainerHostTest {
     fun `On nextState verification must succeed with correct states`() = runTest {
         val testHost = createTestHost { TestHost("Initial") }
         val result = testHost.testIntent { performAction() }
-        
+
         result.evaluate {
             nextState { previous, current ->
                 assertEquals("Initial", previous)
@@ -139,7 +139,7 @@ class TestStateContainerHostTest {
     fun `On nextState must throw if expecting state but next is an effect`() = runTest {
         val testHost = createTestHost { TestHost("Initial") }
         val result = testHost.testIntent { performAction() }
-        
+
         assertThrows(IllegalStateException::class.java) {
             result.evaluate(relaxed = true) {
                 expectState { "State1" }
@@ -152,7 +152,7 @@ class TestStateContainerHostTest {
     fun `On expectState must throw if state transition does not match expectation`() = runTest {
         val testHost = createTestHost { TestHost("Initial") }
         val result = testHost.testIntent { performAction() }
-        
+
         assertThrows(AssertionError::class.java) {
             result.evaluate(relaxed = true) {
                 expectState { "WrongExpectedState" }
@@ -164,7 +164,7 @@ class TestStateContainerHostTest {
     fun `On expectEffect must throw if effect does not match expectation`() = runTest {
         val testHost = createTestHost { TestHost("Initial") }
         val result = testHost.testIntent { performAction() }
-        
+
         assertThrows(AssertionError::class.java) {
             result.evaluate(relaxed = true) {
                 expectState { "State1" }
@@ -177,7 +177,7 @@ class TestStateContainerHostTest {
     fun `On nextEffect must throw if expecting effect but next is a state`() = runTest {
         val testHost = createTestHost { TestHost("Initial") }
         val result = testHost.testIntent { performAction() }
-        
+
         assertThrows(IllegalStateException::class.java) {
             result.evaluate(relaxed = true) {
                 // First element is State1, but we try to assert effect
@@ -190,7 +190,7 @@ class TestStateContainerHostTest {
     fun `On nextState or expectState must throw if there are no more states`() = runTest {
         val testHost = createTestHost { TestHost("Initial") }
         val result = testHost.testIntent { performAction() }
-        
+
         assertThrows(IllegalStateException::class.java) {
             result.evaluate(relaxed = true) {
                 expectState { "State1" }
@@ -205,7 +205,7 @@ class TestStateContainerHostTest {
     fun `On nextEffect or expectEffect must throw if there are no more effects`() = runTest {
         val testHost = createTestHost { TestHost("Initial") }
         val result = testHost.testIntent { performAction() }
-        
+
         assertThrows(IllegalStateException::class.java) {
             result.evaluate(relaxed = true) {
                 expectState { "State1" }
@@ -233,13 +233,13 @@ class TestStateContainerHostTest {
     fun `On delegate and clearDelegate should configure delegator`() {
         val host = TestHost("Initial")
         val dummyContainer = host.container.buildTestContainer()
-        
+
         // Delegate using host extension
         host.delegate(dummyContainer)
-        
+
         // Delegate using container extension
         host.container.delegate(dummyContainer)
-        
+
         // Clear delegate
         host.container.clearDelegate()
     }
@@ -252,12 +252,12 @@ class TestStateContainerHostTest {
             kotlinx.coroutines.delay(100)
             childCompleted = true
         }
-        
+
         org.junit.Assert.assertTrue(!childCompleted)
-        
+
         // Wait/join children using host extension
         host.joinChildren()
-        
+
         org.junit.Assert.assertTrue(childCompleted)
     }
 
@@ -269,12 +269,12 @@ class TestStateContainerHostTest {
             kotlinx.coroutines.delay(100)
             childCompleted = true
         }
-        
+
         org.junit.Assert.assertTrue(!childCompleted)
-        
+
         // Wait/join children using container extension
         host.container.joinChildren()
-        
+
         org.junit.Assert.assertTrue(childCompleted)
     }
 }

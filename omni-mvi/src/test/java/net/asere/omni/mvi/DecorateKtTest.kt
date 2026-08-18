@@ -9,6 +9,9 @@ class DecorateKtTest : StateContainerHost<Any, Any> {
 
     @Test
     fun `On decorate, decorating object must be passed to block`() {
-        container.decorate { assertEquals(it, container); it }
+        container.decorate {
+            assertEquals(it, container)
+            it
+        }
     }
 }
