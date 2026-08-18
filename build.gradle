@@ -109,6 +109,7 @@ tasks.register('publishToSonatypeCentral') {
     dependsOn ':omni-mvi-android:publish'
     dependsOn ':omni-mvi-queue:publish'
     dependsOn ':omni-mvi-lock:publish'
+    dependsOn ':omni-mvi-pending:publish'
     dependsOn ':omni-mvi-override:publish'
     dependsOn ':omni-mvi-test:publish'
 

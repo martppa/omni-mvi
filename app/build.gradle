@@ -62,6 +62,7 @@ dependencies {
     implementation project(path: ':omni-core')
     implementation project(path: ':omni-mvi')
     implementation project(path: ':omni-mvi-lock')
+    implementation project(path: ':omni-mvi-pending')
     implementation project(path: ':omni-mvi-queue')
     implementation project(path: ':omni-mvi-override')
 

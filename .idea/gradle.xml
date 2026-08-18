@@ -16,6 +16,7 @@
             <option value="$PROJECT_DIR$/omni-mvi-android" />
             <option value="$PROJECT_DIR$/omni-mvi-lock" />
             <option value="$PROJECT_DIR$/omni-mvi-override" />
+            <option value="$PROJECT_DIR$/omni-mvi-pending" />
             <option value="$PROJECT_DIR$/omni-mvi-queue" />
             <option value="$PROJECT_DIR$/omni-mvi-test" />
             <option value="$PROJECT_DIR$/shared-test" />
